@@ -1,0 +1,42 @@
+## Interface: 11302
+## Title: ChaChing
+## Notes: Supports the bulk sales of classes of items
+## Author: mtpeterson1948 dot gmail dot com
+## Version: 1.0 (Beta)
+## X-Expansion: Classic
+## 9 November, 2018
+
+##---------------------------------------------
+## Required / prerequisite files
+##---------------------------------------------
+Locales\enUS.lua
+libs\LibStub\LibStub.lua
+libs\LibUIDropDownMenu\LibUIDropDownMenu.xml
+libs\ErrorMsgFrame.lua
+libs\Errors.lua
+libs\MsgFrame.lua
+libs\SandBox.lua
+
+##---------------------------------------------
+## Container Class Files
+##---------------------------------------------
+OO\BaseClass.lua
+OO\ItemClass.lua
+OO\SlotClass.lua
+OO\BagClass.lua
+libs\ContainerEventHandler.lua
+
+##---------------------------------------------
+## Files for Unit Testing
+##---------------------------------------------
+UnitTests\BaseTests.lua
+UnitTests\ContainerTests.lua
+UnitTests\BagTests.lua
+UnitTests\SlotTests.lua
+UnitTests\ItemTests.lua
+
+##---------------------------------------------
+## Application file
+##---------------------------------------------
+SellItems.lua
+
