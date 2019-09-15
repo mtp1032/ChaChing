@@ -29,11 +29,11 @@ libs\ContainerEventHandler.lua
 ##---------------------------------------------
 ## Files for Unit Testing
 ##---------------------------------------------
-UnitTests\BaseTests.lua
-UnitTests\ContainerTests.lua
-UnitTests\BagTests.lua
-UnitTests\SlotTests.lua
-UnitTests\ItemTests.lua
+##UnitTests\BaseTests.lua
+##UnitTests\ContainerTests.lua
+##UnitTests\BagTests.lua
+##UnitTests\SlotTests.lua
+##UnitTests\ItemTests.lua
 
 ##---------------------------------------------
 ## Application file
