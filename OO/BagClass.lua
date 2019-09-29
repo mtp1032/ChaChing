@@ -230,8 +230,8 @@ end
 function bg:initializeBagTable()
 
 	for installationSlot = 0, NUM_BAG_SLOTS do
-		local numBagSlots = GetContainerNumSlots( installationSlot )
-		if numBagSlots > 0 then
+		local containerNumSlots = GetContainerNumSlots( installationSlot )
+		if containerNumSlots > 0 then
 			bagTable[installationSlot + 1] = Bag(installationSlot )
 		else
 			bagTable[installationSlot + 1] = nil
