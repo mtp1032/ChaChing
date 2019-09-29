@@ -1,5 +1,6 @@
 ## Interface: 11302
 ## Title: ChaChing
+## SavedVariablesPerCharacter: ADDON_HAS_BEEN_LOADED, isBagChecked, sellGrey, sellWhite
 ## Notes: Supports the bulk sales of classes of items
 ## Author: mtpeterson1948 dot gmail dot com
 ## Version: 1.0 (Beta)
