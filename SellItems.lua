@@ -10,11 +10,6 @@ cha = MTP.SellItems
 local L = MTP.L
 local E = errors
 
-local isBagChecked = {	false, false, false, false, false }
-
-local sellGrey = false
-local sellWhite = false
-
 function cha:CHACHING_InitializeOptions()
  
     local ConfigurationPanel = CreateFrame("FRAME","CHACHING_MainFrame")
@@ -46,25 +41,30 @@ function cha:CHACHING_InitializeOptions()
     -- Create check button to sell grey items
     local GreyQualityButton = CreateFrame("CheckButton", "CHACHING_GreyQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     GreyQualityButton:SetPoint("TOPLEFT", 20, -80)
-    GreyQualityButton.tooltip = "Check to sell all poor (grey) items in your inventory."
-    _G[GreyQualityButton:GetName().."Text"]:SetText("Sell Grey Items?")
-    GreyQualityButton:SetScript("OnClick", function(self)
-        sellGrey = self:GetChecked() and true or false
-    end)
+    GreyQualityButton.tooltip = "Sell all poor quality (i.e., grey) items in your bags."
+	_G[GreyQualityButton:GetName().."Text"]:SetText("Sell Grey Items?")
+	GreyQualityButton:SetChecked( sellGrey )
+	GreyQualityButton:SetScript("OnClick", 
+		function(self)
+			sellGrey = self:GetChecked() and true or false
+			print( sellGrey )
+    	end)
  
     -- Create check button to sell white items
     local WhiteQualityButton = CreateFrame("CheckButton", "CHACHING_WhiteQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     WhiteQualityButton:SetPoint("TOPLEFT", 200, -80)
-    WhiteQualityButton.tooltip = L["TOOLTIP_CHECK_WHITE_BTN"]
-    _G[WhiteQualityButton:GetName().."Text"]:SetText("Sell White Items (Only Armor and Weapons?")
-    WhiteQualityButton:SetScript("OnClick", function(self)
-        sellWhite = self:GetChecked() and true or false
+    WhiteQualityButton.tooltip = "Sell all common quality (i.e., white) armor and weapon items in your bags."
+	_G[WhiteQualityButton:GetName().."Text"]:SetText("Sell White Items?")
+	WhiteQualityButton:SetChecked( sellWhite )
+	WhiteQualityButton:SetScript("OnClick", function(self)
+		sellWhite = self:GetChecked() and true or false
+		print( sellWhite )
     end)
  
     -- Create bag select buttons
     local bagsText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
     bagsText:SetPoint("TOPLEFT", 20, -200)
-    bagsText:SetText("Select a bag. All items in the selected bag will be sold! Bag[0] is your Backpack")
+    bagsText:SetText("Select a bag. All items in the selected bag will be sold!")
 
     local xpos = 20
     local ypos = -215
@@ -91,11 +91,12 @@ function cha:CHACHING_InitializeOptions()
 			local button = bagSelectButtons[id + 1]
 			local numBagSlots = GetContainerNumSlots( id )
 			if numBagSlots > 0 then
+				local b = bg:getBag(id + 1)
 				labelStr = string.format("Bag[%d] - %d free slots", id+1, GetContainerNumFreeSlots(id) )
 				button.label:SetText(labelStr)
 				button:SetEnabled(true)
 			else
-				local labelStr = string.format("Bag[%d] - slot empty", id+1)
+				local labelStr = string.format("Bag[%d] - Slot empty", id+1)
 				button.label:SetText(labelStr)
 				button:SetEnabled(false)
 			end
