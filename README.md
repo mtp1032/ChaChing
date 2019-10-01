@@ -1,6 +1,6 @@
 # ChaChing
 
-CURRENT VERSION: 1.0
+CURRENT VERSION: 1.0.0
 
 DESCRIPTION:
 
@@ -8,13 +8,11 @@ ChaChing is another AddOn that permits a player to sell items in bulk. However, 
 
 First, and in addition to bulk sales of poor (grey) items, Players can configure ChaChing to sell all common (white) weapon and armor items. This is particularly useful at lower levels when  many (most) drops and quest rewards are of common quality.
 
-Second, ChaChing allows a player to configure one or more bags such that all items in the selected bag(s) will be sold -- regardless of their quality (poor, common, uncommon, rare, or epic). This capability is particularly useful for non-Enchanters as well as higher level characters when drops and quest rewards are soulbound items no matter what the quality (i.e., uncommon, rare, or epic) quality that cannot be equipped by the character.
+Second, ChaChing allows a player to configure one or more bags from which all items in the selected bag(s) will be sold -- regardless of their quality (poor, common, uncommon, rare, or epic). This capability is particularly useful for non-Enchanters as well as higher level characters when drops and quest rewards are soulbound items that cannot be equipped by the character.
 
 INSTALLATION:
 
-Download and unpack the ChaChing-Master.zip into thr World of Warcraft's AddOn directory (..\World of Warcraft\_classic_\Interface\AddOns). After unpacking the AddOn, change its directory name from ChaChing-master to ChaChing.
-
-..\Interface\AddOn\ChaChing-Master -> ..\Interface\AddOn\ChaChing
+Download and unpack the ChaChing.zip into the World of Warcraft's AddOn directory (..\World of Warcraft\_classic_\Interface\AddOns).
 
 USAGE:
 
