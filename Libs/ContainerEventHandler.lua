@@ -80,8 +80,8 @@ local eventFrame = CreateFrame("Frame" )
 			-- if ADDON_HAS_BEEN_LOADED is false, then this is
 			--    the first time ChaChing has been loaded
 			if ADDON_HAS_BEEN_LOADED == false then
-				-- E:where()
 
+				-- 						UNCOMMENT FOR DEBUGGING
 				-- print(" ")
 				-- print("***************************************")
 				-- print("***      UPON ADDON LOADING         ***")
@@ -103,7 +103,8 @@ local eventFrame = CreateFrame("Frame" )
 		-- This event is called when the player first logs in, enters or leaves an instance, respawns at a graveyard,
 		-- and when the player's screen is reloaded.
 		if event == "PLAYER_ENTERING_WORLD" then
-			-- E:where()
+
+				-- 						UNCOMMENT FOR DEBUGGING
 			-- print(" ")
 			-- print("***************************************")
 			-- print("***   UPON PLAYER_ENTERING_WORLD    ***")
@@ -120,7 +121,8 @@ local eventFrame = CreateFrame("Frame" )
 			cha:CHACHING_InitializeOptions()
 		end
 
-		if event == "PLAYER_LOGOUT" then -- restore the defaults
+		-- Restore the saved variables (see ChaChing.toc) to their default states
+		if event == "PLAYER_LOGOUT" then
 			ADDON_HAS_BEEN_LOADED = false
 			isBagChecked( false, false, false, false, false )
 		end
