@@ -8,7 +8,7 @@
 ## 9 November, 2018
 
 ##---------------------------------------------
-## Required / prerequisite files
+## Required / Prerequisite files
 ##---------------------------------------------
 Locales\enUS.lua
 libs\LibStub\LibStub.lua
