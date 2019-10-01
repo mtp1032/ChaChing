@@ -21,23 +21,10 @@ function cha:CHACHING_InitializeOptions()
     IntroMessageHeader:SetPoint("TOPLEFT", 10, -10)
     IntroMessageHeader:SetText(L["ADDON_NAME_AND_VERSION"])
  
-    local AuthorSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
-    AuthorSubHeader:SetPoint("TOPLEFT", 20, -30)
-    AuthorSubHeader:SetText("Author: Shadowraith@Feathermoon")
- 
     local DescrSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
     DescrSubHeader:SetPoint("TOPLEFT", 20, -50)
     DescrSubHeader:SetText("Enables the bulk selling of selected items in player's inventory.")
         
-    local ReadmeMessageText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-    ReadmeMessageText:SetPoint("TOPLEFT", 10, -320)
-    ReadmeMessageText:SetText(strjoin("\n",
-        "                    *** IMPORTANT ***                               ",
-        "The merchant buyback window only has 12 slots. However, the merchant",
-        "will buy as many items as Cha-Ching is configured to sell. So, if more",
-        "than 12 items were sold, you will only be able to buyback the last 12"
-    ))
-
     -- Create check button to sell grey items
     local GreyQualityButton = CreateFrame("CheckButton", "CHACHING_GreyQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     GreyQualityButton:SetPoint("TOPLEFT", 20, -80)
@@ -47,7 +34,6 @@ function cha:CHACHING_InitializeOptions()
 	GreyQualityButton:SetScript("OnClick", 
 		function(self)
 			sellGrey = self:GetChecked() and true or false
-			print( sellGrey )
     	end)
  
     -- Create check button to sell white items
@@ -58,11 +44,10 @@ function cha:CHACHING_InitializeOptions()
 	WhiteQualityButton:SetChecked( sellWhite )
 	WhiteQualityButton:SetScript("OnClick", function(self)
 		sellWhite = self:GetChecked() and true or false
-		print( sellWhite )
     end)
  
     -- Create bag select buttons
-    local bagsText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
+    local bagsText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
     bagsText:SetPoint("TOPLEFT", 20, -200)
     bagsText:SetText("Select a bag. All items in the selected bag will be sold!")
 
@@ -113,8 +98,19 @@ function cha:CHACHING_InitializeOptions()
     ConfigurationPanel:SetScript("OnShow", function(self)
         self:RegisterEvent("BAG_UPDATE")
         UpdateBagSelectButtons()
-    end)
+	end)
+	
+	local str1 = string.format("\n%s","                                 *** WARNING ***")
+	local str2 = string.format("%s", "  The merchant buyback window only has 12 slots. However, the merchant")
+	local str3 = string.format("%s", "  will buy as many items as Cha-Ching is configured to sell. Thus, if")
+	local str4 = string.format("%s", "  more than 12 items were sold, you will only be able to buyback the")
+	local str5 = string.format("%s", "  last 12.")
 
+	local messageText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
+	messageText:SetJustifyH("LEFT")
+    messageText:SetPoint("TOPLEFT", 10, -320)
+	messageText:SetText(string.format("%s\n%s\n%s\n%s\n%s",
+											str1, str2, str3, str4, str5 ))
 end
 --------------------------------------------------------------------------------------
 --						QUALITY (i.e., RARITY) values
@@ -136,7 +132,13 @@ local function itemCanBeSold( itemLink )
 		-- Now, make sure that it is either an armor piece or a weapon.
 		local itemType = item:getType()
 		if itemType == "Armor" or itemType == "Weapon" then
-			itemIsSaleable = true
+			-- if item is a fishing pole don't allow the sale
+			local itemName = gsub(itemLink, "124", "124\124")
+			if string.find( itemName, "Fishing") then
+				itemIsSaleable = false
+			else
+				itemIsSaleable = true
+			end
 		end
 	end
 	return itemIsSaleable
