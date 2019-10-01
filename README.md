@@ -10,10 +10,6 @@ First, and in addition to bulk sales of poor (grey) items, Players can configure
 
 Second, ChaChing allows a player to configure one or more bags from which all items in the selected bag(s) will be sold -- regardless of their quality (poor, common, uncommon, rare, or epic). This capability is particularly useful for non-Enchanters as well as higher level characters when drops and quest rewards are soulbound items that cannot be equipped by the character.
 
-INSTALLATION:
-
-Download and unpack the ChaChing.zip into the World of Warcraft's AddOn directory (..\World of Warcraft\_classic_\Interface\AddOns).
-
 USAGE:
 
 When a player opens a merchant window, ChaChing will have placed a button at the top left of the window, [ChaChing]. When/if the button is clicked, ChaChing will vendor all of the items in the player's inventory that have been configured for bulk sales. If, for example, bag[2] was configured as a bulk sales bag, ChaChing will sell all items in bag[2] in addition to all grey items.
