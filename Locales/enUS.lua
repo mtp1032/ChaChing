@@ -29,10 +29,8 @@ if LOCALE == "enUS" then
 
     -- ChaChing Strings
     L["ADDON_NAME"] = "ChaChing"
-    L["ADDON_NAME_AND_VERSION"] = "ChaChing (1.0 Beta)"
-    L["AUTHOR"] = "Author: Shadowraith@Feathermoon"
-    L["DESCR_SUBHDR1"] = "Descr: automatically vendors all poor quality [grey] items."
-    L["DESCR_SUBHDR2"] = "Can be configured to automatically sell common [white] weapons and armor items."    
+    L["ADDON_NAME_AND_VERSION"] = "ChaChing (Version 1.0.0)"
+
     L["TOOLTIP_CHECK_WHITE_BTN"] = "Sell All Common (White) Weapons and Armor Items."
     L["LABEL_WHITE_CHECKBTN"] = "Sell All Common (White) Weapons and Armor Items."
     L["TOOLTIP_CHECK_REAGENT_BTN"] = "Danger: checking this box will vendor *all* white crafting reagents."
