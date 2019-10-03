@@ -102,7 +102,7 @@ local function createSelectButton( f )
 end
 local function createResetButton( parentFrame )
     local resetButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    resetButton:SetPoint("BOTTOM", 255, 10)
+    resetButton:SetPoint("BOTTOM", 190, 10)
     resetButton:SetHeight(25)
     resetButton:SetWidth(70)
     resetButton:SetText("Reset")
@@ -111,13 +111,14 @@ local function createResetButton( parentFrame )
             self:GetParent().Text:EnableMouse( false )    
             self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
-            self:GetParent().Text:ClearFocus()
+			self:GetParent().Text:ClearFocus()
+			exclusionTable = {}
            end)
     parentFrame.resetButton = resetButton
 end
 local function createClearButton( parentFrame )
     local clearButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    clearButton:SetPoint("BOTTOM", 1, 10)
+    clearButton:SetPoint("BOTTOM", -190, 10)
     clearButton:SetHeight(25)
     clearButton:SetWidth(70)
     clearButton:SetText("Clear")
@@ -126,7 +127,7 @@ local function createClearButton( parentFrame )
             self:GetParent().Text:EnableMouse( false )    
             self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
-            self:GetParent().Text:ClearFocus()
+			self:GetParent().Text:ClearFocus()
         end)
     parentFrame.clearButton = clearButton
 end
@@ -168,10 +169,10 @@ local function createMsgFrame()
 end
 
 local function createListFrame()
-    local f = createTopFrame("Exclusion List", 500, 300 )
+    local f = createTopFrame("ChaChing Excluded Items", 500, 300 )
     -- createReloadButton(f)
-    -- createSelectButton(f)
-    -- createClearButton(f)
+    createResetButton(f)
+    createClearButton(f)
     createTextDisplay(f)
     return f
 end
@@ -193,11 +194,15 @@ function mf:printList( exclusionTable )
 		listFrame:Hide()
 	end
 
-	for key, value in pairs( exclusionTable ) do
-		local s = string.format("%d : %s\n", key, value )
-		listFrame.Text:Insert( s )
-	end 
-	listFrame.Text:Insert( string.format("\n"))
+	if exclusionTable[1] == nil then
+		listFrame.Text:Insert("The Excluded Item Table is Empty." )
+	else
+		for key, value in pairs( exclusionTable ) do
+			local s = string.format("%d : %s\n", key, value )
+			listFrame.Text:Insert( s )
+		end
+		listFrame.Text:Insert( string.format("\n"))
+	end
 
 	listFrame:Show()
 end
