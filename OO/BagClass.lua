@@ -181,6 +181,15 @@ end
 --***********************************************************************************************
 --									Sell Methods
 --***********************************************************************************************
+local function isItemExcluded( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			return true
+		end
+	end 
+	return false
+end
+
 function Bag:sellAllItemsInBag()
 	local numItemsSold = 0
 	local totalEarnings = 0
@@ -190,19 +199,21 @@ function Bag:sellAllItemsInBag()
 		local slot = self.slotTable[slotId]
 		if slot ~= nil then
 			local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo( self.bagSlot, slotId )
-			local item = Item( itemLink )
+			if isItemExcluded( itemLink ) == false then
+				local item = Item( itemLink )
 
-			-- no need to check the filters. We're gonna sell everything
-			-- in this bag that can be sold (has a unit sales price)
-			local unitSalesPrice = item:getUnitSalesPrice()
-			if unitSalesPrice then
-				UseContainerItem( self.bagSlot, slotId )
-				totalEarnings = totalEarnings + unitSalesPrice * itemCount
-				numItemsSold = numItemsSold + itemCount		
+				-- no need to check the filters. We're gonna sell everything
+				-- in this bag that can be sold (has a unit sales price)
+				local unitSalesPrice = item:getUnitSalesPrice()
+				if unitSalesPrice then
+					UseContainerItem( self.bagSlot, slotId )
+					totalEarnings = totalEarnings + unitSalesPrice * itemCount
+					numItemsSold = numItemsSold + itemCount		
 
-				self.slotTable[slotId] = GetContainerItemID( self.bagSlot, slotId )
-			end -- end if slot ~= nil
-		end -- end for loop
+					self.slotTable[slotId] = GetContainerItemID( self.bagSlot, slotId )
+				end -- end if slot ~= nil
+			end -- end for loop
+		end
 	end
 	print( string.format("\nitems sold %d, total earnings %d", numItemsSold, totalEarnings ))
 	return numItemsSold, totalEarnings
