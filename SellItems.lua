@@ -10,6 +10,43 @@ cha = MTP.SellItems
 local L = MTP.L
 local E = errors
 
+local function insertIntoExclusionTable( itemLink )
+	if itemLink == nil or itemLink == "" then
+		print("Empty item link")
+		return
+	end
+	table.insert( exclusionTable, itemLink )
+end
+
+local function isItemExcluded( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			return true
+		end
+	end 
+	return false
+end
+
+local function removeFromExclusionTable( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			table.remove(exclusionTable, key )
+		end
+	end 
+end
+
+local function resetExclusionTable()
+	exclusionTable = {}
+	print("exclusionTable{} reset.")
+end
+
+local function printExclusionTable()
+	for key, value in pairs( exclusionTable ) do
+		local s = string.format("%d : %s\n", key, value )
+		mf:printList( s )
+	end 
+end
+
 function cha:CHACHING_InitializeOptions()
  
     local ConfigurationPanel = CreateFrame("FRAME","CHACHING_MainFrame")
@@ -23,8 +60,8 @@ function cha:CHACHING_InitializeOptions()
  
     local DescrSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
     DescrSubHeader:SetPoint("TOPLEFT", 20, -50)
-    DescrSubHeader:SetText("Enables the bulk selling of selected items in player's inventory.")
-        
+	DescrSubHeader:SetText("Enables the bulk selling of selected items in player's inventory.")
+
     -- Create check button to sell grey items
     local GreyQualityButton = CreateFrame("CheckButton", "CHACHING_GreyQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     GreyQualityButton:SetPoint("TOPLEFT", 20, -80)
@@ -46,6 +83,23 @@ function cha:CHACHING_InitializeOptions()
 		sellWhite = self:GetChecked() and true or false
     end)
  
+	-- Create the Exclusion List Input Edit Box
+	local DescrSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
+    DescrSubHeader:SetPoint("LEFT", 20, -150)
+	DescrSubHeader:SetText("Exclusion List: Drag item from inventory and drop into input box.")
+	local f = CreateFrame("EditBox", "InputEditBox", ConfigurationPanel, "InputBoxTemplate")
+	f:SetFrameStrata("DIALOG")
+	f:SetSize(200,50)
+	f:SetAutoFocus(false)
+	f:SetPoint("LEFT", 20, -180)
+	f:SetScript("OnMouseUp", 
+		function(self,button)
+			cursorInfo, _, itemLink = GetCursorInfo()
+			insertIntoExclusionTable( itemLink )
+			f:SetText( itemLink )	-- prints the item link to the chat dialog box
+			ClearCursor()
+	end)
+
     -- Create bag select buttons
     local bagsText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
     bagsText:SetPoint("TOPLEFT", 20, -200)
@@ -118,6 +172,9 @@ end
 --------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
+	if isItemExcluded( itemLink ) then
+		return istemIsSaleable
+	end
 
 	-- Setup the logic for selling/not selling POOR items
 	item = Item( itemLink )
@@ -198,3 +255,27 @@ ButtonChaChing:SetHeight(21)
 ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
+
+
+SLASH_DUMPTABLE1 = "/dumpex"
+SLASH_DUMPTABLE2 = "/printex"
+SlashCmdList["DUMPTABLE"] = function( msg )
+	if exclusionTable[1] == nil then
+		print("exclusionTable is empty.")
+		return
+	end
+
+	printExclusionTable()
+end
+
+SLASH_RESETTABLE1 = "/resetex"
+SLASH_RESETTABLE2 = "/reset"
+SLASH_RESETTABLE3 = "/rsex"
+SlashCmdList["RESETTABLE"] = function( msg )
+	if exclusionTable[1] == nil then
+		print("exclusionTable is empty.")
+		return
+	end
+
+	resetExclusionTable()
+end
