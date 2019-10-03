@@ -163,7 +163,7 @@ function cha:CHACHING_InitializeOptions()
 end
 --------------------------------------------------------------------------------------
 --						QUALITY (i.e., RARITY) values
---						are defuned in SlotClass.lua
+--						are defined in SlotClass.lua
 --------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
