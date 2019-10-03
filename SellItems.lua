@@ -264,9 +264,10 @@ SLASH_CHACHING_HELP1 = "/chaching"
 SLASH_CHACHING_HELP2 = "/cha"
 SlashCmdList["CHACHING_HELP"] = function( msg )
 
+	-- message("This is a message.")
 	inputStr = string.lower(msg)
 
-	if inputStr == nil or inputStr == "help" then
+	if inputStr == nil or inputStr == "" or inputStr == "help" then
 		DEFAULT_CHAT_FRAME:AddMessage(CR)
 		DEFAULT_CHAT_FRAME:AddMessage("COMMAND LINE OPTIONS:")
 		DEFAULT_CHAT_FRAME:AddMessage(helpStr)
@@ -282,8 +283,9 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 
 	elseif inputStr == "showlist" then
 		showExclusionTable()
-	elseif inputStr == "clearlist" then
+	elseif inputStr == "resetlist" then
 		resetExclusionTable()
+		DEFAULT_CHAT_FRAME:AddMessage("Exclusion Table Cleared.")
 	else
 		print( inputStr.." - Unknown or missing parameter.")
 	end
