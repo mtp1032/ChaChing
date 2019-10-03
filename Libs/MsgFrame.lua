@@ -44,7 +44,7 @@ local backdrop = {
  ---------------------------------------------------------------------------------------------------
  --                     Create the MAIN FRAME
  ---------------------------------------------------------------------------------------------------
- local function createTopFrame()
+ local function createTopFrame( frameTitle )
     local topFrame = CreateFrame("Frame", "MsgFrame", UIParent, "BasicFrameTemplateWithInset")
     topFrame:SetSize(FRAME_WIDTH_DEFAULT, FRAME_HEIGHT_DEFAULT)
     -- topFrame:SetPoint("CENTER")     -- ORIGINAL
@@ -63,7 +63,7 @@ local backdrop = {
     topFrame.title = topFrame:CreateFontString(nil, "OVERLAY");
     topFrame.title:SetFontObject("GameFontHighlight");
     topFrame.title:SetPoint("CENTER", topFrame.TitleBg, "CENTER", 5, 0);
-    topFrame.title:SetText("Messages");
+    topFrame.title:SetText(frameTitle);
 
     return topFrame
  end
@@ -159,14 +159,23 @@ local function createTextDisplay(f)
     f.SF:SetScrollChild(f.Text)
 end
 local function createMsgFrame()
-    local f = createTopFrame()
+    local f = createTopFrame("Messages")
     createReloadButton(f)
     createSelectButton(f)
-    -- createResetButton(f)
     createClearButton(f)
     createTextDisplay(f)
     return f
 end
+
+local function createListFrame()
+    local f = createTopFrame("Exclusion List")
+    createReloadButton(f)
+    createSelectButton(f)
+    createClearButton(f)
+    createTextDisplay(f)
+    return f
+end
+
 
 local msgFrame = createMsgFrame()
 
@@ -175,5 +184,14 @@ function mf:postMsg( msg )
 		msgFrame:Show()
 	end
 	msgFrame.Text:Insert( msg )
+end
+
+local listFrame = createListFrame()
+
+function mf:printList( listElement)
+	if listFrame:IsVisible() == false then
+		listFrame:Show()
+	end
+	listFrame.Text:Insert( listElement )
 end
 
