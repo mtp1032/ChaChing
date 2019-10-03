@@ -44,9 +44,9 @@ local backdrop = {
  ---------------------------------------------------------------------------------------------------
  --                     Create the MAIN FRAME
  ---------------------------------------------------------------------------------------------------
- local function createTopFrame( frameTitle )
+ local function createTopFrame( frameTitle, width, height )
     local topFrame = CreateFrame("Frame", "MsgFrame", UIParent, "BasicFrameTemplateWithInset")
-    topFrame:SetSize(FRAME_WIDTH_DEFAULT, FRAME_HEIGHT_DEFAULT)
+    topFrame:SetSize(width, height)
     -- topFrame:SetPoint("CENTER")     -- ORIGINAL
     topFrame:SetPoint("CENTER", 0, 200)
     topFrame:SetFrameStrata("BACKGROUND")
@@ -159,7 +159,7 @@ local function createTextDisplay(f)
     f.SF:SetScrollChild(f.Text)
 end
 local function createMsgFrame()
-    local f = createTopFrame("Messages")
+    local f = createTopFrame("Messages", FRAME_WIDTH_DEFAULT, FRAME_HEIGHT_DEFAULT )
     createReloadButton(f)
     createSelectButton(f)
     createClearButton(f)
@@ -168,10 +168,10 @@ local function createMsgFrame()
 end
 
 local function createListFrame()
-    local f = createTopFrame("Exclusion List")
-    createReloadButton(f)
-    createSelectButton(f)
-    createClearButton(f)
+    local f = createTopFrame("Exclusion List", 500, 300 )
+    -- createReloadButton(f)
+    -- createSelectButton(f)
+    -- createClearButton(f)
     createTextDisplay(f)
     return f
 end
@@ -188,10 +188,17 @@ end
 
 local listFrame = createListFrame()
 
-function mf:printList( listElement)
-	if listFrame:IsVisible() == false then
-		listFrame:Show()
+function mf:printList( exclusionTable )
+	if listFrame:IsVisible() == true then
+		listFrame:Hide()
 	end
-	listFrame.Text:Insert( listElement )
+
+	for key, value in pairs( exclusionTable ) do
+		local s = string.format("%d : %s\n", key, value )
+		listFrame.Text:Insert( s )
+	end 
+	listFrame.Text:Insert( string.format("\n"))
+
+	listFrame:Show()
 end
 
