@@ -12,7 +12,6 @@ local E = errors
 
 local function insertIntoExclusionTable( itemLink )
 	if itemLink == nil or itemLink == "" then
-		print("Empty item link")
 		return
 	end
 	table.insert( exclusionTable, itemLink )
@@ -37,14 +36,10 @@ end
 
 local function resetExclusionTable()
 	exclusionTable = {}
-	print("exclusionTable{} reset.")
 end
 
-local function printExclusionTable()
-	for key, value in pairs( exclusionTable ) do
-		local s = string.format("%d : %s\n", key, value )
-		mf:printList( s )
-	end 
+local function showExclusionTable()
+	mf:printList( exclusionTable )
 end
 
 function cha:CHACHING_InitializeOptions()
@@ -256,26 +251,40 @@ ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
 
+-----------------------------------------------------------------------------------------------------
+--					COMMAND LINE OPTIONS
+----------------------------------------------------------------------------------------------------
+local helpStr = string.format("  /chaching help - This message.")
+local optionsStr = string.format("  /chaching options - Display the ChaChing Interface Options Menu.")
+local showStr = string.format("  /chaching showlist - List the items in the Exclusion Table.")
+local clearStr = string.format("  /chaching clearlist - Remove all entries from the Exclusion Table.")
 
-SLASH_DUMPTABLE1 = "/dumpex"
-SLASH_DUMPTABLE2 = "/printex"
-SlashCmdList["DUMPTABLE"] = function( msg )
-	if exclusionTable[1] == nil then
-		print("exclusionTable is empty.")
-		return
+local CR = string.format("\n")
+SLASH_CHACHING_HELP1 = "/chaching"
+SLASH_CHACHING_HELP2 = "/cha"
+SlashCmdList["CHACHING_HELP"] = function( msg )
+
+	inputStr = string.lower(msg)
+
+	if inputStr == nil or inputStr == "help" then
+		DEFAULT_CHAT_FRAME:AddMessage(CR)
+		DEFAULT_CHAT_FRAME:AddMessage("COMMAND LINE OPTIONS:")
+		DEFAULT_CHAT_FRAME:AddMessage(helpStr)
+		DEFAULT_CHAT_FRAME:AddMessage(optionsStr)
+		DEFAULT_CHAT_FRAME:AddMessage(showStr)
+		DEFAULT_CHAT_FRAME:AddMessage(clearStr)
+		DEFAULT_CHAT_FRAME:AddMessage(CR)
+
+	elseif inputStr == "options" then
+		InterfaceOptionsFrame_OpenToCategory("ChaChing")
+		InterfaceOptionsFrame_OpenToCategory("ChaChing")
+		InterfaceOptionsFrame_OpenToCategory("ChaChing")
+
+	elseif inputStr == "showlist" then
+		showExclusionTable()
+	elseif inputStr == "clearlist" then
+		resetExclusionTable()
+	else
+		print( inputStr.." - Unknown or missing parameter.")
 	end
-
-	printExclusionTable()
-end
-
-SLASH_RESETTABLE1 = "/resetex"
-SLASH_RESETTABLE2 = "/reset"
-SLASH_RESETTABLE3 = "/rsex"
-SlashCmdList["RESETTABLE"] = function( msg )
-	if exclusionTable[1] == nil then
-		print("exclusionTable is empty.")
-		return
-	end
-
-	resetExclusionTable()
 end
