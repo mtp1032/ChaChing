@@ -14,7 +14,7 @@ local E = errors
 local RED = 1.00
 local GREEN = 1.00
 local BLUE = 0.00
-local DISPLAY_TIME = UIErrorsFrame:SetTimeVisible(8)	-- display for 8 seconds
+local DISPLAY_TIME = UIErrorsFrame:SetTimeVisible(10)	-- display for 10 seconds
 
 local function displayMsg( msg )
 	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, 1, DISPLAY_TIME ) 
