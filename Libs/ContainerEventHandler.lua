@@ -41,7 +41,9 @@ local E = errors
 sellGrey = true
 sellWhite = false
 isBagChecked = { false, false, false, false, false }
-exclusionTable = {}			
+exclusionTable = {}		
+
+CHACHING_INITIALIZED = false
 
 local eventFrame = CreateFrame("Frame" )
 	-- if arg2 ~= nil, arg1 is bagSlot, arg2 is slotId
@@ -85,7 +87,10 @@ local eventFrame = CreateFrame("Frame" )
 		-- This event is called when the player first logs in, enters or leaves an instance, respawns at a graveyard,
 		-- and when the player's screen is reloaded.
 		if event == "PLAYER_ENTERING_WORLD" then
-			cha:CHACHING_InitializeOptions()
+			if CHACHING_INITIALIZED == false then
+				cha:CHACHING_InitializeOptions()
+				CHACHING_INITIALIZED = true
+			end
 		end
 
 		-- Restore the saved variables (see ChaChing.toc) to their default states
