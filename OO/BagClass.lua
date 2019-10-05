@@ -215,7 +215,6 @@ function Bag:sellAllItemsInBag()
 			end -- end for loop
 		end
 	end
-	print( string.format("\nitems sold %d, total earnings %d", numItemsSold, totalEarnings ))
 	return numItemsSold, totalEarnings
 end
 

@@ -10,6 +10,16 @@ cha = MTP.SellItems
 local L = MTP.L
 local E = errors
 
+-- System message color - Yellow
+local RED = 1.00
+local GREEN = 1.00
+local BLUE = 0.00
+local DISPLAY_TIME = UIErrorsFrame:SetTimeVisible(8)	-- display for 8 seconds
+
+local function displayMsg( msg )
+	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, 1, DISPLAY_TIME ) 
+end
+
 local function insertIntoExclusionTable( itemLink )
 	if itemLink == nil or itemLink == "" then
 		return
@@ -184,13 +194,7 @@ local function itemCanBeSold( itemLink )
 		-- Now, make sure that it is either an armor piece or a weapon.
 		local itemType = item:getType()
 		if itemType == "Armor" or itemType == "Weapon" then
-			-- if item is a fishing pole don't allow the sale
-			local itemName = gsub(itemLink, "124", "124\124")
-			if string.find( itemName, "Fishing") then
-				itemIsSaleable = false
-			else
-				itemIsSaleable = true
-			end
+			itemIsSaleable = true
 		end
 	end
 	return itemIsSaleable
@@ -199,7 +203,7 @@ end
 -- called when the player clicks on the [Sell Items] button
 local function sellItems()
 	local totalEarnings = 0
-	local numItemsSold = 0
+	local totalItemsSold = 0
 
 	for bagSlot = 0, 4 do
 		local totalSlots = GetContainerNumSlots( bagSlot )
@@ -210,9 +214,12 @@ local function sellItems()
 			local b = bg:getBag(bagSlot+1)
 			-- did the player select this bag?
 			if isBagChecked[bagSlot+1] then
-				numItemsSold, totalEarnings = b:sellAllItemsInBag()
-				print( string.format("items sold %d, total earnings %d", numItemsSold, totalEarnings ))
-			else -- the bag is not checked. So, check for grays and whites
+				local itemsSold, earnings
+				itemsSold, earnings = b:sellAllItemsInBag()
+				totalItemsSold = totalItemsSold + itemsSold
+				totalEarnings = totalEarnings + earnings
+			else
+				-- the bag is not checked. So, check for grays and whites
 				for slotId = 1, totalSlots do
 					local slot = Slot(b:getInstallationSlot(), slotId )	
 					local itemCount = slot:getItemCount()
@@ -222,23 +229,24 @@ local function sellItems()
 							local unitSalesPrice = item:getUnitSalesPrice()
 							UseContainerItem( bagSlot, slotId )
 							totalEarnings = totalEarnings + unitSalesPrice * itemCount
-							numItemsSold = numItemsSold + 1
+							totalItemsSold = totalItemsSold + itemCount
 						end -- if itemCanBeSold
 					end -- if count
 				end -- for slot = 1 ...
-			end -- if bagChecked/else
+			end -- else
 		end -- if totalSlots
 	end -- for bagSlot
 
 	local msg = nil
-	if numItemsSold > 1 then
-		msg = string.format("%d transactions earned %s\n", numItemsSold, GetCoinTextureString( totalEarnings ))
-	elseif numItemsSold == 1 then
-		msg = string.format("%d transaction earned %s\n", numItemsSold, GetCoinTextureString( totalEarnings ))
+	if totalItemsSold > 1 then
+		msg = string.format("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
+	elseif totalItemsSold == 1 then
+		msg = string.format("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
 	else
 		msg = string.format("No items sold")	
 	end
-	DEFAULT_CHAT_FRAME:AddMessage( msg )
+
+	displayMsg( msg )
 end
 
 -- Creates a button frame within the Merchant frame.
@@ -254,6 +262,7 @@ ButtonChaChing:SetScript("Onclick", sellItems )
 -----------------------------------------------------------------------------------------------------
 --					COMMAND LINE OPTIONS
 ----------------------------------------------------------------------------------------------------
+
 local helpStr = string.format("  /chaching help - This message.")
 local optionsStr = string.format("  /chaching options - Display the ChaChing Interface Options Menu.")
 local showStr = string.format("  /chaching showlist - List the items in the Exclusion Table.")
@@ -285,8 +294,11 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 		showExclusionTable()
 	elseif inputStr == "resetlist" then
 		resetExclusionTable()
-		DEFAULT_CHAT_FRAME:AddMessage("Exclusion Table Cleared.")
+		displayMsg("Exclusion Table Cleared.")
 	else
-		print( inputStr.." - Unknown or missing parameter.")
+		local errStr = string.format("[INVALID SLASH COMMAND OPTION]\n\n\'%s\'", msg )
+		UIErrorsFrame:AddMessage( errStr, RED, GREEN, BLUE, 1, DISPLAY_TIME )
+		errStr = string.format("[INVALID SLASH COMMAND OPTION] \'%s\'", msg )
+		DEFAULT_CHAT_FRAME:AddMessage( errStr, 1.0, 1.0, 0.0 )
 	end
 end
