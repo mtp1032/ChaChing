@@ -5,54 +5,22 @@
 --------------------------------------------------------------------------------------
 local ADDON_C_NAME, MTP = ...
 MTP.SellItems = {}
-cha = MTP.SellItems
+si = MTP.SellItems
 
 local L = MTP.L
 local E = errors
 
--- System message color - Yellow
 local RED = 1.00
 local GREEN = 1.00
 local BLUE = 0.00
-local DISPLAY_TIME = UIErrorsFrame:SetTimeVisible(10)	-- display for 10 seconds
 
+local DISPLAY_TIME = 10
 local function displayMsg( msg )
-	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, 1, DISPLAY_TIME ) 
+	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
+	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
 end
 
-local function insertIntoExclusionTable( itemLink )
-	if itemLink == nil or itemLink == "" then
-		return
-	end
-	table.insert( exclusionTable, itemLink )
-end
-
-local function isItemExcluded( itemLink )
-	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
-			return true
-		end
-	end 
-	return false
-end
-
-local function removeFromExclusionTable( itemLink )
-	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
-			table.remove(exclusionTable, key )
-		end
-	end 
-end
-
-local function resetExclusionTable()
-	exclusionTable = {}
-end
-
-local function showExclusionTable()
-	mf:printList( exclusionTable )
-end
-
-function cha:CHACHING_InitializeOptions()
+function si:CHACHING_InitializeOptions()
  
     local ConfigurationPanel = CreateFrame("FRAME","CHACHING_MainFrame")
     ConfigurationPanel.name = L["ADDON_NAME"]
@@ -100,7 +68,7 @@ function cha:CHACHING_InitializeOptions()
 	f:SetScript("OnMouseUp", 
 		function(self,button)
 			cursorInfo, _, itemLink = GetCursorInfo()
-			insertIntoExclusionTable( itemLink )
+			cc:insertIntoExclusionTable( itemLink )
 			f:SetText( itemLink )	-- prints the item link to the chat dialog box
 			ClearCursor()
 	end)
@@ -177,19 +145,19 @@ end
 --------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
-	if isItemExcluded( itemLink ) then
+	if cc:isItemExcluded( itemLink ) then
 		return istemIsSaleable
 	end
 
 	-- Setup the logic for selling/not selling POOR items
 	item = Item( itemLink )
-	local quality = item:getQuality()
+	local quality = item:getQualityName()
 
-	if quality == QUALITY_POOR and sellGrey then
+	if quality == "QUALITY_POOR" and sellGrey then
 		itemIsSaleable = true
 	end
 
-	if quality == QUALITY_COMMON and sellWhite then		
+	if quality == "QUALITY_COMMON" and sellWhite then		
 		-- At this point the item is white (COMMON) AND the user has set the sellAllWhiteItems flag to true.
 		-- Now, make sure that it is either an armor piece or a weapon.
 		local itemType = item:getType()
@@ -228,6 +196,7 @@ local function sellItems()
 						if itemCanBeSold( itemLink ) then
 							local unitSalesPrice = item:getUnitSalesPrice()
 							UseContainerItem( bagSlot, slotId )
+							b:updateSlots()
 							totalEarnings = totalEarnings + unitSalesPrice * itemCount
 							totalItemsSold = totalItemsSold + itemCount
 						end -- if itemCanBeSold
@@ -264,13 +233,13 @@ ButtonChaChing:SetScript("Onclick", sellItems )
 ----------------------------------------------------------------------------------------------------
 
 local helpStr = string.format("  /chaching help - This message.")
-local optionsStr = string.format("  /chaching options - Display the ChaChing Interface Options Menu.")
-local showStr = string.format("  /chaching showlist - List the items in the Exclusion Table.")
-local clearStr = string.format("  /chaching clearlist - Remove all entries from the Exclusion Table.")
+local configStr = string.format("  /chaching config - Display the ChaChing Interface Options Menu.")
+local showStr = string.format("  /chaching showtable - List the items in the Exclusion Table.")
 
 local CR = string.format("\n")
 SLASH_CHACHING_HELP1 = "/chaching"
 SLASH_CHACHING_HELP2 = "/cha"
+SLASH_CHACHING_HELP3 = "/cc"
 SlashCmdList["CHACHING_HELP"] = function( msg )
 
 	-- message("This is a message.")
@@ -280,25 +249,23 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 		DEFAULT_CHAT_FRAME:AddMessage(CR)
 		DEFAULT_CHAT_FRAME:AddMessage("COMMAND LINE OPTIONS:")
 		DEFAULT_CHAT_FRAME:AddMessage(helpStr)
-		DEFAULT_CHAT_FRAME:AddMessage(optionsStr)
+		DEFAULT_CHAT_FRAME:AddMessage(configStr)
 		DEFAULT_CHAT_FRAME:AddMessage(showStr)
-		DEFAULT_CHAT_FRAME:AddMessage(clearStr)
 		DEFAULT_CHAT_FRAME:AddMessage(CR)
 
-	elseif inputStr == "options" then
+	elseif inputStr == "config" then
 		InterfaceOptionsFrame_OpenToCategory("ChaChing")
 		InterfaceOptionsFrame_OpenToCategory("ChaChing")
 		InterfaceOptionsFrame_OpenToCategory("ChaChing")
 
-	elseif inputStr == "showlist" then
-		showExclusionTable()
-	elseif inputStr == "resetlist" then
-		resetExclusionTable()
-		displayMsg("Exclusion Table Cleared.")
+	elseif inputStr == "showtable" then
+		cc:showExclusionTable()
 	else
+		-- -- System message color - Yellow
+
 		local errStr = string.format("[INVALID SLASH COMMAND OPTION]\n\n\'%s\'", msg )
 		UIErrorsFrame:AddMessage( errStr, RED, GREEN, BLUE, 1, DISPLAY_TIME )
 		errStr = string.format("[INVALID SLASH COMMAND OPTION] \'%s\'", msg )
-		DEFAULT_CHAT_FRAME:AddMessage( errStr, 1.0, 1.0, 0.0 )
+		DEFAULT_CHAT_FRAME:AddMessage( errStr, RED,GREEN,BLUE )
 	end
 end
