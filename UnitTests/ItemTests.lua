@@ -60,54 +60,36 @@ else
 	return
 end
 ------------------------- TEST 5 VALID ITEM NAMES -----------------------------------------------
-mf:postMsg( string.format("\nTEST 5: valid item names:\n"))
-local itemNames = {
-	"Boarhide Leggings",
-	"Stormwind Guard Leggings",
-	"Bloodsoaked Skullforge Reaver",
-	"Small Pumpkin",
-	"Refreshing Spring Water",
-	"Rabbit's Foot",
-	"Rich Illusion Dust",
-	"Major Healing Potion"
-}
-for i = 1, 8 do
-	print( itemNames[i])
-	item = Item( itemNames[i] )
-	result = item:getResult()
-	if result[1] ~= STATUS_SUCCESS then
-		E:postResult( result )
-		return
-	else
-		local name, link = item:getNameAndLink()
-		itemCount = item:getStackCount()
-		msg = string.format("   Item Name and Link - %s %s: value %d\n", name, link )
-		mf:postMsg( msg )
-	end
-end
 ----------------------------- TEST 6 VALID NUMERIC IDS ------------------------------------------------
-mf:postMsg( string.format("\nTEST 6: valid numeric Ids:\n"))
+mf:postMsg( string.format("\nTEST 5: Item Queries:\n"))
 
-BagId = 0 -- change to Bag 1 (an uninstalled bag)
-local totalSlots = GetContainerNumSlots( BagId )
-if totalSlots > 0 then
-	for slot = 1, totalSlots do
-		local itemId = GetContainerItemID( BagId, slot )
-		if itemId ~= nil then
-			item = Item( itemId )
-			result = item:getResult()
-			if result[1] ~= STATUS_SUCCESS then
-				E:postResult( result )
-				return
-			end
-			local name, link = item:getNameAndLink()
-			msg = string.format("  Item Link - %s in slot %d of Bag %d\n", link, slot, BagId )
-			mf:postMsg( msg )
-		end
-	end
-else
-	mf:postMsg(string.format("  Bag %d is not installed\n", BagId ))
+--	Query all the items in the player's backpack
+local BACKPACK = 0
+local bagId = BACKPACK
+local bag = Bag(BACKPACK)
+
+totalSlots = bag:getTotalSlots()
+for slotId = 1, totalSlots do
+	local slot = Slot(bagId, slotId)
+	if slot:getItemCount() > 0  then
+		local itemLink = slot:getItemLink()
+		local item = Item(itemLink )
+		local itemName = item:getName()
+		local itemCount = item:getStackCount()
+		local unitPrice = item:getUnitSalesPrice()
+		local qualityName = item:getQualityName()
+		local itemType = item:getType() -- Recipe, Quest, Trade Goods, etc.,
+		local itemSubType = item:getSubType()
+		local isCraftingReagent = item:isCraftingReagent()
+		local itemDescr1 = string.format("%s costs %d per unit for a total price of %d\n", itemName, unitPrice, itemCount*unitPrice )
+		local itemDescr2 = string.format("%s is of %s.\n", itemName, qualityName )
+		local itemDescr3 = string.format("%s is a %s of type %s\n", itemName, itemSubType, itemType )
+		local separator = string.format(".......................\n")
+		mf:postMsg( itemDescr1..itemDescr2..itemDescr3..separator )
+	end	
 end
+
+
 
 local endTestMsg = string.format("\n%s\n", "**** END ITEM TESTS ****")
 mf:postMsg( endTestMsg )
