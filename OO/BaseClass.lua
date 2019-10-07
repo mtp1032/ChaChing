@@ -24,21 +24,21 @@ setmetatable(Base, {
   			end,
 })
 
--- sb:getGameVersion(), 
--- sb:getGameBuildNumber(), 
--- sb:getBuildDate(), 
--- sb:getAddonName(),
--- sb:getAddonTOC())
+-- cc:getGameVersion(), 
+-- cc:getGameBuildNumber(), 
+-- cc:getBuildDate(), 
+-- cc:getAddonName(),
+-- cc:getAddonTOC())
 
 function Base:_init(...)
 	self.is_a = "AbstractObject"
 	self.result = DEFAULT_RESULT
 	self.creationTimestamp = debugprofilestop()
-	self.gameVersion 		= sb:getGameVersion()
-	self.clientBuildNumber 	= sb:getGameBuildNumber()
-	self.clientBuildDate 	= sb:getBuildDate()
-	self.addonName 			= sb:getAddonName()
-	self.addonTOC	 		= sb:getAddonTOC()
+	self.gameVersion 		= cc:getGameVersion()
+	self.clientBuildNumber 	= cc:getGameBuildNumber()
+	self.clientBuildDate 	= cc:getBuildDate()
+	self.addonName 			= cc:getAddonName()
+	self.addonTOC	 		= cc:getAddonTOC()
 end
 
 --**********************************************************************
