@@ -8,6 +8,9 @@ local ADDON_C_NAME, MTP = ...
 MTP.UnitTestsBASE = {}
 base = MTP.UnitTestsBASE
 
+local L = MTP.L
+local E = errors
+
 local testName = string.format("%s\n\n", "**** BEGIN BASE CLASS TESTS ****")
 mf:postMsg( testName )
 
@@ -22,7 +25,7 @@ else
 																b:getClientBuildDate(),
 																b:getAddonName(),
 																b:getAddonTOC() ) 
-mf:postMsg( s )
+	mf:postMsg( s )
 end
 
 local endTestMsg = string.format("\n**** END BASE CLASS TESTS ***\n")
