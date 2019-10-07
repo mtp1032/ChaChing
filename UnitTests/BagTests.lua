@@ -21,16 +21,21 @@ local bag = nil
 
 ----for bagSlot = 1, 5 do
 for bagSlot = 0, 4 do
-	bag = bg:getBag(bagSlot)
-	if bag ~= nil then
-		bagName = bag:getName()
-		totalSlots = bag:getTotalSlots()
-		installedSlot = bag:getInstalledSlot()
-		freeSlots = bag:getNumFreeSlots()
-		local msg = string.format("%s Installed in bag slot %d: total capacity %d, free slots %d\n", bagName, installedSlot, totalSlots, freeSlots )
+	bag = Bag(bagSlot)
+	local totalSlots = bag:getTotalSlots()
+	if totalSlots() > 0 then
+		local msg = string.format("%s Installed in bag slot %d: total slots %d, free slots %d\n", 
+										bag:getName(),
+										bag:getInstallationSlot(),
+										bag:getTotalSlots(), 
+										bag:getNumFreeSlots())
+
+		for slot = 1, totalSlots do
+			
+		end
 		mf:postMsg( msg )
 	else
-		mf:postMsg("No bag installed in slot "..tostring(bagSlot - 1))
+		mf:postMsg(string.format("No bag installed in slot %d\n", bagSlot))
 	end
 end
 local endTestMsg = string.format("\n%s\n", "**** END BAG TESTS ****")
