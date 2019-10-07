@@ -4,6 +4,16 @@
 -- ORIGINAL DATE: 6 October, 2019`(Formerly, Sandbox.lua)
 --------------------------------------------------------------------------------------
 
+--[[
+********************************************************************************** 
+	DESCRIPTION:
+ChaChing is another AddOn that permits a player to sell items in bulk. Chaching, 
+by default, will sell all poor (grey) quality items. Chaching can be configured 
+to sell all common (white) quality armor and weapon items. This is particularly 
+useful at lower levels when many drops and quest rewards are of common quality.
+ *********************************************************************************
+ ]]
+
 local ADDON_C_NAME, MTP = ...
 MTP.ChaChing = {}
 cc = MTP.ChaChing
