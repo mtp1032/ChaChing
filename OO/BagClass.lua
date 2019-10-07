@@ -99,8 +99,7 @@ function Bag:_init( bagSlot )
 	self.is_a = "Bag"
 	self.bagSlot = bagSlot
 	self.totalSlots = GetContainerNumSlots( bagSlot )
-	if self.totalSlots == 0 then
-		self.bagSlot = -1
+	if( self.totalSlots == 0 ) then
 		return
 	end
 	
@@ -126,7 +125,6 @@ function Bag:_init( bagSlot )
     --      self.itemLink = GetInventoryItemLink("player",invID)
 	if self.bagSlot ~= BACKPACK_SLOT_NUMBER then
 		self.inventoryId = ContainerIDToInventoryID( self.bagSlot )
-		-- print( "Installed bagSlot is "..tostring(bagSlot)..". Inventory id is "..tostring(self.inventoryId))
 		self.itemLink = GetInventoryItemLink("Player", self.inventoryId )
 	else
 		self.bagName = GetBagName( bagSlot )
@@ -138,7 +136,6 @@ end
 --									GET / SET METHODS
 --***********************************************************************************************
 function Bag:updateSlots()
-	local slot
 	for slotId = 1, self.totalSlots do
 		self.slotTable[slotId] = Slot( self.bagSlot, slotId )
 	end
@@ -181,17 +178,8 @@ end
 --***********************************************************************************************
 --									Sell Methods
 --***********************************************************************************************
-local function isItemExcluded( itemLink )
-	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
-			return true
-		end
-	end 
-	return false
-end
-
 function Bag:sellAllItemsInBag()
-	local numItemsSold = 0
+	local totalItemsSold = 0
 	local totalEarnings = 0
 
 	totalSlots = self.totalSlots
@@ -199,7 +187,7 @@ function Bag:sellAllItemsInBag()
 		local slot = self.slotTable[slotId]
 		if slot ~= nil then
 			local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo( self.bagSlot, slotId )
-			if isItemExcluded( itemLink ) == false then
+			if cc:isItemExcluded( itemLink ) == false then
 				local item = Item( itemLink )
 
 				-- no need to check the filters. We're gonna sell everything
@@ -207,21 +195,22 @@ function Bag:sellAllItemsInBag()
 				local unitSalesPrice = item:getUnitSalesPrice()
 				if unitSalesPrice then
 					UseContainerItem( self.bagSlot, slotId )
+					self.slotTable[slotId] = Slot( self.bagSlot, slotId )
 					totalEarnings = totalEarnings + unitSalesPrice * itemCount
-					numItemsSold = numItemsSold + itemCount		
+					totalItemsSold = totalItemsSold + itemCount		
 
 					self.slotTable[slotId] = GetContainerItemID( self.bagSlot, slotId )
 				end -- end if slot ~= nil
 			end -- end for loop
 		end
 	end
-	return numItemsSold, totalEarnings
+	return totalItemsSold, totalEarnings
 end
 
 -- A table of Bag objects. This needs to be updated whenever any of the events in the file
 -- ContainerEventHandler
 local bagTable = {
-			nil, -- The Player's backpack
+			nil, -- Always the Player's backpack
 			nil, 
 			nil, 
 			nil, 
