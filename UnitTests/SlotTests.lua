@@ -66,42 +66,42 @@ mf:postMsg( testName )
 -- Check that the correct error message is returned when an invalide bag Id is supplied.
 
 local result = nil
-local Id = 1
+local slotId = 1
 local invalidSlotId = 52
 local invalidBagId = 5
 local slot = nil
 local msg = nil
 local bagId = 0
 
--- No bag is installed in slot 1
-slot = Slot( bagId, Id )
+-- Bag is always installed in slot 1
+slot = Slot( bagId, slotId )
 result = slot:getResult()
 if result[1] ~= STATUS_SUCCESS then	
-	mf:postMsg(string.format("TEST 1: Succeeded - %s\n", result[2]))
+	mf:postMsg(string.format("TEST 1: FAILED - %s\n", result[2]))
+	return
 end
-
 msg = string.format("TEST 1: SUCCESS - Single Slot object created\n")
 mf:postMsg( msg )
 
--- create all the slots of bag 4
-bagId = 4
-local numSlots = GetContainerNumSlots(bagId)
-for Id = 1, numSlots do
-	slot = Slot(bagId, Id )
+-- create all the slots of the player's backpack
+local bag = Bag(0)
+
+local totalSlots = bag:getTotalSlots()
+for slotId = 1, totalSlots do
+	slot = Slot(bagId, slotId )
 	result = slot:getResult()
 	if result[1] ~= STATUS_SUCCESS then
 		E:postResult( result )
 		return
 	end
 end
-
-msg = string.format("TEST 2: SUCCESS - Created %d slots\n", numSlots )
+msg = string.format("TEST 2: SUCCESS - Created %d slots\n", totalSlots )
 mf:postMsg(msg)
 
 slot = Slot(5, Id )
 result = slot:getResult()
 if result[1] ~= STATUS_SUCCESS then
-	msg = string.format("TEST 3: - SUCCESS - Slot creation failed - bagId out of range\n")
+	msg = string.format("TEST 3: SUCCESS - Slot creation failed - bagId out of range\n")
 	mf:postMsg(msg)
 else
 	E:postResult( result )
@@ -118,27 +118,26 @@ else
 	return
 end
 
-mf:postMsg( string.format("\n-- Testing slot query methods\n\n"))
+
+
 
 --------------------------------------------------------------------
 -- Test the slot query services
 --------------------------------------------------------------------
+mf:postMsg( string.format("\n-- Testing slot query methods\n\n"))
 
 --	Create the slot objects for bagId = 4
 bagId = 0
-local numSlots = GetContainerNumSlots(bagId)
-local slots = {}
-for Id = 1, numSlots do
-	slots[Id] = Slot(bagId, Id )
-	result = slots[Id]:getResult()
-	if result[1] ~= STATUS_SUCCESS then
-		E:postResult( result )
-		return
-	end
+local bag = Bag(0)
+totalSlots = bag:getTotalSlots()
+for slotId = 1, totalSlots do
+	local slot = Slot(bagId, slotId)
+	if slot:getItemCount() > 0  then
+		mf:postMsg(string.format("%s in slot %d\n", slot:getItemLink(), slotId ))
+	end	
 end
-msg = string.format("\nTotal Copper: %d\n", totalCopper )
-mf:postMsg( msg )
-
 
 local endTestMsg = string.format("\n%s\n", "**** END SLOT TESTS ****")
 mf:postMsg( endTestMsg )
+
+
