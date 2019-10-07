@@ -8,18 +8,6 @@ local _, MTP = ...
 MTP.MsgFrame = {}
 mf = MTP.MsgFrame
 
-
---[[
-                                        COMMENTS
-newFrame = CreateFrame("frameType", "frameName", parentFrame, "inheritsFrame")
-
-frameType               - required (e.g., "Button", "EditBox", etc.)
-frameName               - optional "MyFrame"
-parentFrame             - defaults to UIParent if not specified. The function will also set also
-                          a global variable of this name pointing to this frameName
-inheritsFrom            - (string) if nil, no frames will be inherited.                
-]]
-
 local FRAME_WIDTH_DEFAULT = 900
 local FRAME_HEIGHT_DEFAULT = 600
 -- local FRAME_MAX_LINES = 2000 
@@ -102,10 +90,10 @@ local function createSelectButton( f )
 end
 local function createResetButton( parentFrame )
     local resetButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    resetButton:SetPoint("BOTTOM", 190, 10)
+    resetButton:SetPoint("BOTTOM", 160, 10)
     resetButton:SetHeight(25)
-    resetButton:SetWidth(70)
-    resetButton:SetText("Reset")
+    resetButton:SetWidth(120)
+    resetButton:SetText("Remove Entries")
     resetButton:SetScript("OnClick", 
         function(self)
             self:GetParent().Text:EnableMouse( false )    
@@ -113,6 +101,7 @@ local function createResetButton( parentFrame )
             self:GetParent().Text:SetText("") 
 			self:GetParent().Text:ClearFocus()
 			exclusionTable = {}
+			cc:showExclusionTable()
            end)
     parentFrame.resetButton = resetButton
 end
@@ -120,14 +109,15 @@ local function createClearButton( parentFrame )
     local clearButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
     clearButton:SetPoint("BOTTOM", -190, 10)
     clearButton:SetHeight(25)
-    clearButton:SetWidth(70)
-    clearButton:SetText("Clear")
+    clearButton:SetWidth(75)
+    clearButton:SetText("Dismiss")
     clearButton:SetScript("OnClick", 
         function(self)
             self:GetParent().Text:EnableMouse( false )    
             self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
 			self:GetParent().Text:ClearFocus()
+			parentFrame:Hide()
         end)
     parentFrame.clearButton = clearButton
 end
@@ -177,8 +167,8 @@ local function createListFrame()
     return f
 end
 
-
 local msgFrame = createMsgFrame()
+local listFrame = createListFrame()
 
 function mf:postMsg( msg )
 	if msgFrame:IsVisible() == false then
@@ -186,8 +176,6 @@ function mf:postMsg( msg )
 	end
 	msgFrame.Text:Insert( msg )
 end
-
-local listFrame = createListFrame()
 
 function mf:printList( exclusionTable )
 	if listFrame:IsVisible() == true then
@@ -206,4 +194,5 @@ function mf:printList( exclusionTable )
 
 	listFrame:Show()
 end
+
 
