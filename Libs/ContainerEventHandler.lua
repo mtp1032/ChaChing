@@ -3,47 +3,25 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 8 June, 2019
 --------------------------------------------------------------------------------------
-
-local _, MTP = ...
+local ADDON_C_NAME, MTP = ...
+MTP.ContainerEventHandler = {}
+cev = MTP.ContainerEventHandler
 
 local L = MTP.L
 local E = errors
 
---[[ 1. Saved variables are loaded after the addon code is executed 
-	They cannot be accessed immediately, and will overwrite any "defaults" the addon may 
-	place in the global environment during its loading process.
-2. Only some variable types may be saved 
-	Strings, booleans, numbers and tables are the only variable types that will be saved 
-	(functions, userdata and coroutines will not). Circular references in tables may not 
-	be preserved.
-3. Saving tables 
-	Tables are a great way to avoid having to use a large number of names in the global 
-	namespace. However, they may be more difficult to initialize to default values when 
-	your addon is updated and you add or remove a key. Multiple saved variables that 
-	reference the same table will each create a separate (but identical) instance of the 
-	table, and as such will no longer point to the same table when they are loaded again.
-4. Variables are saved and loaded in the global environment 
-	If you want to save a local value, you have to first read it from the global environment 
-	(_G table) on ADDON_LOADED, then return it into the global environment before the 
-		player logs out.
-
-		_G[globalKey] = newValue
-		value = _G[globalKey]
-
-
- ]]--********************************************************************************
---						CREATES THE EVENT HANDLING FRAME AND CALLS
---						THE HANDLER FOR THE BAG_UPDATE EVENT
 -- ********************************************************************************
-
--- these variables are saved across UI Reloads and Player Leaving the world	
-
-sellGrey = true
-sellWhite = false
-isBagChecked = { false, false, false, false, false }
-exclusionTable = {}		
-
-CHACHING_INITIALIZED = false
+--						CREATES THE EVENT HANDLING FRAME AND CALLS
+--						THE HANDLER FOR VARIOUS BAG-RELATED EVENTS
+-- ********************************************************************************
+local CHACHING_INITIALIZED = false
+local function initChaChing()
+	if CHACHING_INITIALIZED == false then
+		CHACHING_INITIALIZE = true
+		si:CHACHING_InitializeOptions()
+		CHACHING_INITIALIZED = true
+	end
+end
 
 local eventFrame = CreateFrame("Frame" )
 	-- if arg2 ~= nil, arg1 is bagSlot, arg2 is slotId
@@ -78,7 +56,6 @@ local eventFrame = CreateFrame("Frame" )
 			sellGrey = true
 			sellWhite = false
 			isBagChecked = { false, false, false, false, false }
-			-- exclusionTable = {}			
 		end
 		
 		if event == "PLAYER_LOGIN" then
@@ -87,10 +64,7 @@ local eventFrame = CreateFrame("Frame" )
 		-- This event is called when the player first logs in, enters or leaves an instance, respawns at a graveyard,
 		-- and when the player's screen is reloaded.
 		if event == "PLAYER_ENTERING_WORLD" then
-			if CHACHING_INITIALIZED == false then
-				cha:CHACHING_InitializeOptions()
-				CHACHING_INITIALIZED = true
-			end
+			initChaChing()
 		end
 
 		-- Restore the saved variables (see ChaChing.toc) to their default states
