@@ -40,25 +40,25 @@ local ITEMINFO_EXPAC_ID               = 15 -- ?
 local ITEMINFO_SET_ID                 = 16 -- ?
 local ITEMINFO_IS_CRAFTING_REAGENT    = 17 -- boolean (?)
 
-QUALITY_POOR 		= 0
-QUALITY_COMMON 		= 1
-QUALITY_UNCOMMON 	= 2
-QUALITY__RARE 		= 3
-QUALITY__EPIC 		= 4
-QUALITY_LEGENDARY 	= 5
-QUALITY_ARTIFACT 	= 6
-QUALITY_HEIRLOOM 	= 7
+QUALITY_POOR 		= 1
+QUALITY_COMMON 		= 2
+QUALITY_UNCOMMON 	= 3
+QUALITY__RARE 		= 4
+QUALITY__EPIC 		= 5
+QUALITY_LEGENDARY 	= 6
+QUALITY_ARTIFACT 	= 7
+QUALITY_HEIRLOOM 	= 8
 
 local qualityNames = {
-	"POOR", 
-	"COMMON", 
-	"UNCOMMON", 
-	"RARE", 
-	"EPIC", 
-	"LEGENDARY", 
-	"ARTIFACT", 
-	"HEIRLOOM", 
-	"WOW TOKEN"
+	"QUALITY_POOR", 
+	"QUALITY_COMMON", 
+	"QUALITY_UNCOMMON", 
+	"QUALITY_RARE", 
+	"QUALITY_EPIC", 
+	-- "QUALITY_LEGENDARY", 
+	-- "QUALITY_ARTIFACT", 
+	-- "QUALITY_HEIRLOOM", 
+	-- "QUALITY_WOW TOKEN"
 }
 
 --***************************************************************************************************
@@ -128,7 +128,11 @@ end
 function Item:getUnitSalesPrice()
     return self.itemInfo[ITEMINFO_SELL_PRICE]
 end
-function Item:getQuality()
+function Item:getQualityName()
+	local id = self.itemInfo[ITEMINFO_QUALITY]
+	return qualityNames[id+1]
+end
+function Item:getQualityNameId()
 	return self.itemInfo[ITEMINFO_QUALITY]
 end
 function Item:getItemLevel()
