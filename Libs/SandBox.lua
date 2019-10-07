@@ -21,27 +21,27 @@ local infoTable = { GetBuildInfo() }
 ------------------------------------------------------------------------------------------------------------
 --                      Game/Build/AddOn Info (from Blizzard's GetBuildInfo()) - see above
 ------------------------------------------------------------------------------------------------------------
-function sb:getAddonName()
+function cc:getAddonName()
     return ADDON_C_NAME
 end
-function sb:getGameVersion()           -- e.g., 8.1.0
+function cc:getGameVersion()           -- e.g., 8.1.0
     return infoTable[VERSION]
 end
-function sb:getGameBuildNumber()       -- eg., 28833
+function cc:getGameBuildNumber()       -- eg., 28833
     return infoTable[BUILD_NUMBER]
 end
-function sb:getBuildDate()             -- e.g., Dec 19 2018
+function cc:getBuildDate()             -- e.g., Dec 19 2018
     return infoTable[BUILD_DATE]
 end
-function sb:getAddonTOC()          -- e.g., 80100
+function cc:getAddonTOC()          -- e.g., 80100
     return infoTable[TOC_VERSION]
 end
 
-function sb:isFileLoaded()
+function cc:isFileLoaded()
     return true
 end
 
-function sb:isClassic()
+function cc:isClassic()
 	local isClassic = false
     if infoTable[TOC_VERSION] ~= 80200 then
         isClassic = true
@@ -65,7 +65,7 @@ local playerClass = nil
 local playerGuid = nil
 local playerPetGuid = nil
 
-function sb:getPlayerInfo( unit )
+function cc:getPlayerInfo( unit )
 
     if unit == nil then
         unit = "Player"
@@ -75,10 +75,10 @@ function sb:getPlayerInfo( unit )
 
     return  playerName, playerClass, playerGuid, playerPetGuid
 end
-function sb:setPlayerPetGuid( guid )
+function cc:setPlayerPetGuid( guid )
     playerPetGuid = guid
 end
-function sb:getPlayerPetGuid()
+function cc:getPlayerPetGuid()
     return playerPetGuid
 end
 
@@ -86,10 +86,10 @@ end
 --                      Tests
 ------------------------------------------------------------------------------------------
 -- local s = string.format("Game Version = %s, Build Number = %s, Date = %s,\n AddOn Name and Version = %s, TOC = %d", 
---                         sb:getGameVersion(), 
---                         sb:getGameBuildNumber(), 
--- 						sb:getBuildDate(), 
--- 						sb:getAddonName(),
---                         sb:getAddonTOC())
+--                         cc:getGameVersion(), 
+--                         cc:getGameBuildNumber(), 
+-- 						cc:getBuildDate(), 
+-- 						cc:getAddonName(),
+--                         cc:getAddonTOC())
 -- DEFAULT_CHAT_FRAME:AddMessage( s )
 -- DEFAULT_CHAT_FRAME:AddMessage( "Sandbox.lua loaded" )
