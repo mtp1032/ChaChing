@@ -3,11 +3,10 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 28 December, 2018
 ----------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.SlotClass = {}
 
-local ADDON_C_NAME, MTP = ...
-MTP.SlotClass = {}	
-
-local L = MTP.L
+local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
 
@@ -65,7 +64,7 @@ end
 --***************************************************************************************************
 --                                SLOT CONSTRUCTOR
 --***************************************************************************************************
-Slot = MTP.SlotClass
+Slot = ChaChing.SlotClass
 Slot.__index = Slot
 
 setmetatable(Slot, {

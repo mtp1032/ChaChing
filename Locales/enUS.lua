@@ -4,11 +4,12 @@
 -- ORIGINAL DATE: 28 December, 2018
 ----------------------------------------------------------------------------------------
 
-local _, MTP = ...
-MTP.enUS = {}
-local sprintf = _G.string.format
-
-loc = MTP.enus
+-- local _, MTP = ...
+-- MTP.enUS = {}
+-- local sprintf = _G.string.format
+local _, ChaChing = ...
+ChaChing.enUS = {}
+us = ChaChing.enUS
 
 local L = setmetatable({}, { __index = function(t, k)
 	local v = tostring(k)
@@ -16,7 +17,7 @@ local L = setmetatable({}, { __index = function(t, k)
 	return v
 end })
 
-MTP.L = L
+ChaChing.L = L
 
 -- English translations
 local LOCALE = GetLocale()      -- BLIZZ

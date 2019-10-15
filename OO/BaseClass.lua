@@ -3,15 +3,13 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 5 January, 2019
 ----------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.BaseClass = {}
+Base = ChaChing.BaseClass	
 
-local ADDON_C_NAME, MTP = ...
-MTP.BaseClass = {}	
-Base = MTP.BaseClass
-
-local L = MTP.L
+local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
-
 
 -- ************************************************************************************
 --                      BASE CLASS
@@ -36,11 +34,11 @@ function Base:_init(...)
 	self.is_a = "AbstractObject"
 	self.result = DEFAULT_RESULT
 	self.creationTimestamp = debugprofilestop()
-	self.gameVersion 		= cc:getGameVersion()
 	self.clientBuildNumber 	= cc:getGameBuildNumber()
 	self.clientBuildDate 	= cc:getBuildDate()
 	self.addonName 			= cc:getAddonName()
 	self.addonTOC	 		= cc:getAddonTOC()
+	self.gameVersion 		= cc:getGameVersion()
 end
 
 --**********************************************************************

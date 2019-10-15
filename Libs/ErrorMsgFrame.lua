@@ -3,14 +3,13 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 12 January, 2019
 --------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.ErrorMsgFrame = {}
+emf = ChaChing.ErrorMsgFrame
 
-local _, MTP = ...
-MTP.ErrorMsgFrame = {}
-
+local L = ChaChing.L
+local E = errors
 local sprintf = _G.string.format
-
-emf = MTP.ErrorMsgFrame
-
 
 --[[
                                         COMMENTS
@@ -22,13 +21,6 @@ parentFrame             - defaults to UIParent if not specified. The function wi
                           a global variable of this name pointing to this frameName
 inheritsFrom            - (string) if nil, no frames will be inherited.                
 ]]
-
-local FRAME_WIDTH_DEFAULT = 600
-local FRAME_HEIGHT_DEFAULT = 400
--- local FRAME_MAX_LINES = 2000 
-
--- local TRUE = 1
--- local FALSE = 0
 
 local backdrop = {
 	bgFile      = "Interface/BUTTONS/WHITE8X8",
@@ -47,7 +39,10 @@ local backdrop = {
  ---------------------------------------------------------------------------------------------------
  --                     Create the MAIN FRAME
  ---------------------------------------------------------------------------------------------------
- local function createTopFrame()
+ local FRAME_WIDTH_DEFAULT = 600
+ local FRAME_HEIGHT_DEFAULT = 400
+ 
+  local function createTopFrame()
     local topFrame = CreateFrame("Frame", "ErrorMsgFrame", UIParent, "BasicFrameTemplateWithInset")
     topFrame:SetSize(FRAME_WIDTH_DEFAULT, FRAME_HEIGHT_DEFAULT)
     -- topFrame:SetPoint("CENTER")     -- ORIGINAL

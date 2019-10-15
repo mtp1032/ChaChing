@@ -3,10 +3,12 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 12 January, 2019
 ----------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.MsgFrame = {}
+mf = ChaChing.MsgFrame
 
-local _, MTP = ...
-MTP.MsgFrame = {}
-mf = MTP.MsgFrame
+local L = ChaChing.L
+local E = errors
 local sprintf = _G.string.format
 
 
@@ -196,5 +198,3 @@ function mf:printList( exclusionTable )
 
 	listFrame:Show()
 end
-
-

@@ -3,15 +3,12 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 28 December, 2018
 ----------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.BagClass = {}
 
-local ADDON_C_NAME, MTP = ...
-MTP.BagClass = {}
-bg = MTP.BagClass	
-
-local L = MTP.L
+local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
-
 
 --------------------------------------------------------------------------------------------------
 --              - The bagSlot is the location of the bag. For example, 0 represents the player's
@@ -80,10 +77,29 @@ local function getBagType( typeBitField )
   return bagType
 end
 
+-- Item = ChaChing.ItemClass
+-- Item.__index = Item
+
+-- setmetatable(Item, {
+--     __index = Base,        -- makes the inheritance work
+--     __call = function (cls, ...)   --NOTE to me: 'cls' refers to the current table
+--     local self = setmetatable({}, cls)
+--     self:_init(...)
+--     return self
+--   end,
+-- })
+
+-- variable can be an item link or a numeric identity (e.g., 30234 for Nordrassil Wrath-Kilt)
+-- function Item:_init( itemLink )
+
+-- 	Base._init(self) 
+-- 	self.result = SUCCESSFUL_RESULT
+
+
 --***************************************************************************************************
 --                                BAG CONSTRUCTOR
 --***************************************************************************************************
-Bag = MTP.BagClass
+Bag = ChaChing.BagClass
 Bag.__index = Bag
 
 setmetatable(Bag, {
@@ -207,52 +223,4 @@ function Bag:sellAllItemsInBag()
 		end
 	end
 	return totalItemsSold, totalEarnings
-end
-
--- A table of Bag objects. This needs to be updated whenever any of the events in the file
--- ContainerEventHandler
-local bagTable = {
-			nil, -- Always the Player's backpack
-			nil, 
-			nil, 
-			nil, 
-			nil
-		}
-
-function bg:getBagNameFromTable( tableIndex )
-	local bag = bagTable[tableIndex]
-	return( bag:getName() )
-end
-
-function bg:getBag( tableIndex )
-	return bagTable[tableIndex]
-end
-
-function bg:initializeBagTable()
-
-	for installationSlot = 0, NUM_BAG_SLOTS do
-		local containerNumSlots = GetContainerNumSlots( installationSlot )
-		if containerNumSlots > 0 then
-			bagTable[installationSlot + 1] = Bag(installationSlot )
-		else
-			bagTable[installationSlot + 1] = nil
-		end
-	end
-end
-
-function bg:dumpBagTable( msg )
-	mf:postMsg( msg )
-	
-	for bagSlot = 1, 5 do
-		numBagSlots = GetContainerNumSlots(bagSlot - 1)
-		if numBagSlots > 0 then
-			local bag = bagTable[bagSlot]
-			if bag ~= nil then
-				mf:postMsg(sprintf("    %s installed at %d has %d slots\n", bag:getName(), bag:getInstallationSlot(), bag:getTotalSlots() ))
-			else
-				mf:postMsg(sprintf("    No bag installed at %d\n", bagSlot ))
-			end
-		end
-	end
-	mf:postMsg( sprintf("\n"))
 end

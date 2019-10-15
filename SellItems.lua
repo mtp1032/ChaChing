@@ -3,12 +3,13 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 14 June, 2019
 --------------------------------------------------------------------------------------
-local ADDON_C_NAME, MTP = ...
-MTP.SellItems = {}
-si = MTP.SellItems
+local ADDON_C_NAME, ChaChing = ...
+ChaChing.SellItems = {}
+si = ChaChing.SellItems
 
-local L = MTP.L
+local L = ChaChing.L
 local E = errors
+local sprintf = _G.string.format
 
 local RED = 1.00
 local GREEN = 1.00
@@ -103,7 +104,7 @@ function si:CHACHING_InitializeOptions()
 			local button = bagSelectButtons[id + 1]
 			local numBagSlots = GetContainerNumSlots( id )
 			if numBagSlots > 0 then
-				local b = bg:getBag(id + 1)
+				-- local bag = bmgr:getBag(id + 1)
 				labelStr = string.format("Bag[%d] - %d free slots", id+1, GetContainerNumFreeSlots(id) )
 				button.label:SetText(labelStr)
 				button:SetEnabled(true)
@@ -179,17 +180,17 @@ local function sellItems()
 			-- Bet the total number of slots for this bag, but also 
 			-- check that there is a valid bag installed at this slot. If
 			-- the bag slot is empty then GetContainerNumSlots() returns 0
-			local b = bg:getBag(bagSlot+1)
+			local bag = bmgr:getBag(bagSlot+1)
 			-- did the player select this bag?
 			if isBagChecked[bagSlot+1] then
 				local itemsSold, earnings
-				itemsSold, earnings = b:sellAllItemsInBag()
+				itemsSold, earnings = bag:sellAllItemsInBag()
 				totalItemsSold = totalItemsSold + itemsSold
 				totalEarnings = totalEarnings + earnings
 			else
 				-- the bag is not checked. So, check for grays and whites
 				for slotId = 1, totalSlots do
-					local slot = Slot(b:getInstallationSlot(), slotId )	
+					local slot = Slot(bag:getInstallationSlot(), slotId )	
 					local itemCount = slot:getItemCount()
 					if itemCount > 0 then				
 						local itemLink = slot:getItemLink()
@@ -232,9 +233,9 @@ ButtonChaChing:SetScript("Onclick", sellItems )
 --					COMMAND LINE OPTIONS
 ----------------------------------------------------------------------------------------------------
 
-local helpStr = string.format("  /chaching help - This message.")
-local configStr = string.format("  /chaching config - Display the ChaChing Interface Options Menu.")
-local showStr = string.format("  /chaching showtable - List the items in the Exclusion Table.")
+local helpStr =   string.format("/cc help - This message.")
+local configStr = string.format("  /cc config - Display the ChaChing Interface Options Menu.")
+local showStr =   string.format("  /cc showtable - List the items in the Exclusion Table.")
 
 local CR = string.format("\n")
 SLASH_CHACHING_HELP1 = "/chaching"

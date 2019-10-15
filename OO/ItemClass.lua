@@ -12,13 +12,13 @@
 --									to the item's location. The only exception to this might
 --									the item's stack count.
 ---------------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.ItemClass = {}
 
-local ADDON_C_NAME, MTP = ...
-MTP.ItemClass = {}
-item = MTP.ItemClass
-
-local L = MTP.L
+local L = ChaChing.L
+local E = errors
 local sprintf = _G.string.format
+
 
 
 ------------------------------------- LOCAL CONSTANTS -----------------------------------------------------
@@ -65,7 +65,7 @@ local qualityNames = {
 --***************************************************************************************************
 --                                ITEM CONSTRUCTOR
 --***************************************************************************************************
-Item = MTP.ItemClass
+Item = ChaChing.ItemClass
 Item.__index = Item
 
 setmetatable(Item, {

@@ -3,14 +3,14 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 11 November, 2018	(Formerly DbgInfo.lua prior to this date)
 --------------------------------------------------------------------------------------
+local _, ChaChing = ...
+ChaChing.Errors = {}	
+errors = ChaChing.Errors	
 
-local _, MTP = ...
-MTP.Errors = {}	
-errors = MTP.Errors	
+local L = ChaChing.L
+local E = errors
 local sprintf = _G.string.format
 
-
-local L = MTP.L
 --                      Error messages associated with function parameters
 STATUS_SUCCESS 	=  1
 STATUS_FAILURE	= -1
@@ -149,7 +149,3 @@ function errors.where( msg )
 	local stackTrace = debugstack(2)
 	DEFAULT_CHAT_FRAME:AddMessage( getFileAndLineNo( stackTrace ))
 end
-
---***************************** TESTS ***********************************
--- See UnitTestsErrors.lua
---***********************************************************************
