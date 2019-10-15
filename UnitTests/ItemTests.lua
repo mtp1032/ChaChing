@@ -4,14 +4,13 @@
 -- ORIGINAL DATE: 7 June 2019
 --------------------------------------------------------------------------------------
 
-local ADDON_C_NAME, MTP = ...
+local _, MTP = ...
 MTP.ItemTests = {}
-slotTests = MTP.ItemTests
+itemTests = MTP.ItemTests
 
 local L = MTP.L
 local E = errors
 local sprintf = _G.string.format
-
 
 local testName = sprintf("%s\n\n", "**** BEGIN ITEM TESTS ****")
 mf:postMsg( testName )

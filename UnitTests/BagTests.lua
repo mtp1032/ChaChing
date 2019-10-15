@@ -4,7 +4,7 @@
 -- ORIGINAL DATE: 29 December, 2018
 --------------------------------------------------------------------------------------
 
-local ADDON_C_NAME, MTP = ...
+local _, MTP = ...
 MTP.BagTests = {}
 bagTests = MTP.BagTests
 
@@ -25,7 +25,7 @@ local bag = nil
 for bagSlot = 0, 4 do
 	bag = Bag(bagSlot)
 	local totalSlots = bag:getTotalSlots()
-	if totalSlots() > 0 then
+	if totalSlots > 0 then
 		local msg = sprintf("%s Installed in bag slot %d: total slots %d, free slots %d\n", 
 										bag:getName(),
 										bag:getInstallationSlot(),

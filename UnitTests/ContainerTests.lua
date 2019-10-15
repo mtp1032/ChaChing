@@ -4,10 +4,12 @@
 -- ORIGINAL DATE: 29 June 2018
 --------------------------------------------------------------------------------------
 
-local ADDON_C_NAME, MTP = ...
-MTP.UnitTestsCONTAINER = {}
-unit = MTP.UnitTestsCONTAINER
+local _, MTP = ...
+MTP.ContainerTests = {}
+unit = MTP.ContainerTests
 
+local L = MTP.L
+local E = errors
 local sprintf = _G.string.format
 
 

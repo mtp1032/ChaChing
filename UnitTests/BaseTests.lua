@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------
 
 local ADDON_C_NAME, MTP = ...
-MTP.UnitTestsBASE = {}
+MTP.BaseTests = {}
 base = MTP.UnitTestsBASE
 
 local L = MTP.L

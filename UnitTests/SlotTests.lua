@@ -6,7 +6,7 @@
 
 local ADDON_C_NAME, MTP = ...
 MTP.SlotTests = {}
-slotTests = MTP.SlotTests
+st = MTP.SlotTests
 
 local L = MTP.L
 local E = errors
