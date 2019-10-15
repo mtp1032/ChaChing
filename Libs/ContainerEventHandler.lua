@@ -3,14 +3,13 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 8 June, 2019
 --------------------------------------------------------------------------------------
-local ADDON_C_NAME, MTP = ...
-MTP.ContainerEventHandler = {}
-cev = MTP.ContainerEventHandler
+local _, ChaChing = ...
+ChaChing.ContainerEventHandler = {}
+cev = ChaChing.ContainerEventHandler
 
-local L = MTP.L
+local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
-
 
 -- ********************************************************************************
 --						CREATES THE EVENT HANDLING FRAME AND CALLS
@@ -48,7 +47,7 @@ local eventFrame = CreateFrame("Frame" )
 	function( self, event, ... )
 		local arg1 = ...
 
-		bg:initializeBagTable()
+		bmgr:initializeBagTable()
 
 		-- The saved variables, see above, are read from the disk and initialized
 		--     just before the ADDON_LOADED event is fired.
