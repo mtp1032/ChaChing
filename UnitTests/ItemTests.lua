@@ -10,8 +10,10 @@ slotTests = MTP.ItemTests
 
 local L = MTP.L
 local E = errors
+local sprintf = _G.string.format
 
-local testName = string.format("%s\n\n", "**** BEGIN ITEM TESTS ****")
+
+local testName = sprintf("%s\n\n", "**** BEGIN ITEM TESTS ****")
 mf:postMsg( testName )
 
 local result = SUCCESSFUL_RESULT
@@ -21,9 +23,9 @@ mf:postMsg("TEST 1: Missing input parameter - ")
 local item = Item()
 result = item:getResult()
 if result[1] == STATUS_FAILURE then
-	mf:postMsg( string.format("Succeeded!\n"))
+	mf:postMsg( sprintf("Succeeded!\n"))
 else
-	mf:postMsg( string.format("Failed!\n"))
+	mf:postMsg( sprintf("Failed!\n"))
 	return
 end
 ---------------------- ARG INVALID TYPE -------------------------------
@@ -32,9 +34,9 @@ local emptyTable = {}
 item = Item( emptyTable )
 result = item:getResult()
 if result[1] == STATUS_FAILURE then
-	mf:postMsg( string.format("   Succeeded\n"))
+	mf:postMsg( sprintf("   Succeeded\n"))
 else
-	mf:postMsg( string.format("   Failed\n"))
+	mf:postMsg( sprintf("   Failed\n"))
 	return
 end
 ----------------------------- INVALID ITEM NAME -------------------------
@@ -43,9 +45,9 @@ local itemName = "foobar"
 item = Item( itemName )
 result = item:getResult()
 if result[1] == STATUS_FAILURE then
-	mf:postMsg( string.format("   Succeeded\n"))
+	mf:postMsg( sprintf("   Succeeded\n"))
 else
-	mf:postMsg( string.format("   Failed\n"))
+	mf:postMsg( sprintf("   Failed\n"))
 	return
 end
 --------------------------- INVALID NUMERIC ID -------------------------------
@@ -54,14 +56,14 @@ local badNumber = 1988389393
 item = Item( badNumber )
 result = item:getResult()
 if result[1] == STATUS_FAILURE then
-	mf:postMsg( string.format("   Succeeded!\n"))
+	mf:postMsg( sprintf("   Succeeded!\n"))
 else
-	mf:postMsg( string.format("   Failed!"))
+	mf:postMsg( sprintf("   Failed!"))
 	return
 end
 ------------------------- TEST 5 VALID ITEM NAMES -----------------------------------------------
 ----------------------------- TEST 6 VALID NUMERIC IDS ------------------------------------------------
-mf:postMsg( string.format("\nTEST 5: Item Queries:\n"))
+mf:postMsg( sprintf("\nTEST 5: Item Queries:\n"))
 
 --	Query all the items in the player's backpack
 local BACKPACK = 0
@@ -81,15 +83,15 @@ for slotId = 1, totalSlots do
 		local itemType = item:getType() -- Recipe, Quest, Trade Goods, etc.,
 		local itemSubType = item:getSubType()
 		local isCraftingReagent = item:isCraftingReagent()
-		local itemDescr1 = string.format("%s costs %d per unit for a total price of %d\n", itemName, unitPrice, itemCount*unitPrice )
-		local itemDescr2 = string.format("%s is of %s.\n", itemName, qualityName )
-		local itemDescr3 = string.format("%s is a %s of type %s\n", itemName, itemSubType, itemType )
-		local separator = string.format(".......................\n")
+		local itemDescr1 = sprintf("%s costs %d per unit for a total price of %d\n", itemName, unitPrice, itemCount*unitPrice )
+		local itemDescr2 = sprintf("%s is of %s.\n", itemName, qualityName )
+		local itemDescr3 = sprintf("%s is a %s of type %s\n", itemName, itemSubType, itemType )
+		local separator = sprintf(".......................\n")
 		mf:postMsg( itemDescr1..itemDescr2..itemDescr3..separator )
 	end	
 end
 
 
 
-local endTestMsg = string.format("\n%s\n", "**** END ITEM TESTS ****")
+local endTestMsg = sprintf("\n%s\n", "**** END ITEM TESTS ****")
 mf:postMsg( endTestMsg )

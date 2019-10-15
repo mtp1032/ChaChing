@@ -7,6 +7,8 @@
 local _, MTP = ...
 MTP.Errors = {}	
 errors = MTP.Errors	
+local sprintf = _G.string.format
+
 
 local L = MTP.L
 --                      Error messages associated with function parameters
@@ -41,7 +43,7 @@ local function simplifyStackTrace( stackTrace )
     local numFrames = #(stackFrames)
     for i = 1, numFrames do
         stackFrames[i] = strtrim( stackFrames[i] )
-        -- postEntry( string.format( "Frame[%d] = %s\n", i, stackFrames[i] ))
+        -- postEntry( sprintf( "Frame[%d] = %s\n", i, stackFrames[i] ))
     end
 
     -- Now, to get the correct stackFrame, we must delete the part of the
@@ -49,7 +51,7 @@ local function simplifyStackTrace( stackTrace )
     for i = 1, numFrames do
         startPos = strfind( stackFrames[i], "<")
         stackFrames[i] = string.sub( stackFrames[i], 1, startPos-1)
-        -- postEntry(string.format("Frame[%d] %s\n", i, stackFrames[i]))
+        -- postEntry(sprintf("Frame[%d] %s\n", i, stackFrames[i]))
         -- simplifiedStackTrace = strjoin("-", simplifiedStackTrace, stackFrames[i])
     end
 
@@ -105,9 +107,9 @@ function errors:postResult( result )
         showMeter()
     end
 
-	topLine = string.format("%s\n", result[2])
-    local secondLine = string.format("STACK TRACE:\n")
-    local thirdLine = string.format("%s\n", result[3])
+	topLine = sprintf("%s\n", result[2])
+    local secondLine = sprintf("STACK TRACE:\n")
+    local thirdLine = sprintf("%s\n", result[3])
     
     errorMsgFrame.Text:Insert( topLine )
     errorMsgFrame.Text:Insert( secondLine )
@@ -138,7 +140,7 @@ local function getFileAndLineNo( stackTrace )
 
     local lineNumber = tonumber(pieces[2])
     lineNumber = lineNumber
-    FileAndLine = string.format("[%s:%d]", fileName, lineNumber )
+    FileAndLine = sprintf("[%s:%d]", fileName, lineNumber )
     return FileAndLine
 end
 

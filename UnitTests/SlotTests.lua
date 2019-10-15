@@ -10,6 +10,7 @@ slotTests = MTP.SlotTests
 
 local L = MTP.L
 local E = errors
+local sprintf = _G.string.format
 
 local RARITY_GREY 		= 0
 local RARITY_COMMON 	= 1
@@ -53,7 +54,7 @@ local function getRarityColor( rarityIndex )
 	return rarity
 end
 
-local testName = string.format("%s\n\n", "**** BEGIN SLOT TESTS ****")
+local testName = sprintf("%s\n\n", "**** BEGIN SLOT TESTS ****")
 mf:postMsg( testName )
 
 -----------------------------------------------------------------------------------------
@@ -77,10 +78,10 @@ local bagId = 0
 slot = Slot( bagId, slotId )
 result = slot:getResult()
 if result[1] ~= STATUS_SUCCESS then	
-	mf:postMsg(string.format("TEST 1: FAILED - %s\n", result[2]))
+	mf:postMsg(sprintf("TEST 1: FAILED - %s\n", result[2]))
 	return
 end
-msg = string.format("TEST 1: SUCCESS - Single Slot object created\n")
+msg = sprintf("TEST 1: SUCCESS - Single Slot object created\n")
 mf:postMsg( msg )
 
 -- create all the slots of the player's backpack
@@ -95,13 +96,13 @@ for slotId = 1, totalSlots do
 		return
 	end
 end
-msg = string.format("TEST 2: SUCCESS - Created %d slots\n", totalSlots )
+msg = sprintf("TEST 2: SUCCESS - Created %d slots\n", totalSlots )
 mf:postMsg(msg)
 
 slot = Slot(5, Id )
 result = slot:getResult()
 if result[1] ~= STATUS_SUCCESS then
-	msg = string.format("TEST 3: SUCCESS - Slot creation failed - bagId out of range\n")
+	msg = sprintf("TEST 3: SUCCESS - Slot creation failed - bagId out of range\n")
 	mf:postMsg(msg)
 else
 	E:postResult( result )
@@ -111,7 +112,7 @@ end
 slot = Slot(bagId, 57 )
 result = slot:getResult()
 if result[1] ~= STATUS_SUCCESS then
-	msg = string.format("TEST 4: SUCCESS - Slot creation failed - slotId out of range\n")
+	msg = sprintf("TEST 4: SUCCESS - Slot creation failed - slotId out of range\n")
 	mf:postMsg(msg)
 else
 	E:postResult( result )
@@ -124,7 +125,7 @@ end
 --------------------------------------------------------------------
 -- Test the slot query services
 --------------------------------------------------------------------
-mf:postMsg( string.format("\n-- Testing slot query methods\n\n"))
+mf:postMsg( sprintf("\n-- Testing slot query methods\n\n"))
 
 --	Create the slot objects for bagId = 4
 bagId = 0
@@ -133,11 +134,11 @@ totalSlots = bag:getTotalSlots()
 for slotId = 1, totalSlots do
 	local slot = Slot(bagId, slotId)
 	if slot:getItemCount() > 0  then
-		mf:postMsg(string.format("%s in slot %d\n", slot:getItemLink(), slotId ))
+		mf:postMsg(sprintf("%s in slot %d\n", slot:getItemLink(), slotId ))
 	end	
 end
 
-local endTestMsg = string.format("\n%s\n", "**** END SLOT TESTS ****")
+local endTestMsg = sprintf("\n%s\n", "**** END SLOT TESTS ****")
 mf:postMsg( endTestMsg )
 
 

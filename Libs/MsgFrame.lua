@@ -7,6 +7,8 @@
 local _, MTP = ...
 MTP.MsgFrame = {}
 mf = MTP.MsgFrame
+local sprintf = _G.string.format
+
 
 local FRAME_WIDTH_DEFAULT = 900
 local FRAME_HEIGHT_DEFAULT = 600

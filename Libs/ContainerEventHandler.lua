@@ -9,6 +9,8 @@ cev = MTP.ContainerEventHandler
 
 local L = MTP.L
 local E = errors
+local sprintf = _G.string.format
+
 
 -- ********************************************************************************
 --						CREATES THE EVENT HANDLING FRAME AND CALLS

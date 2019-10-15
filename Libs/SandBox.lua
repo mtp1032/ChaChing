@@ -7,6 +7,8 @@
 local ADDON_C_NAME, MTP = ...
 MTP.SandBox = {}
 sb = MTP.SandBox
+local sprintf = _G.string.format
+
 
 -----------------------------------------------------------------------------------------------------------
 --                      The infoTable

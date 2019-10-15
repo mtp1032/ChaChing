@@ -10,6 +10,8 @@ Base = MTP.BaseClass
 
 local L = MTP.L
 local E = errors
+local sprintf = _G.string.format
+
 
 -- ************************************************************************************
 --                      BASE CLASS
@@ -61,7 +63,7 @@ function Base:getResult()
     return self.result
 end
 function Base:getDescr()
-    return string.format("Instance of a %s class, created: %d", self.is_a, self.creationTimestamp )
+    return sprintf("Instance of a %s class, created: %d", self.is_a, self.creationTimestamp )
 end
 function Base:getGameVersion()
 	return self.gameVersion

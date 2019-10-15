@@ -17,6 +17,7 @@ useful at lower levels when many drops and quest rewards are of common quality.
 local ADDON_C_NAME, MTP = ...
 MTP.ChaChing = {}
 cc = MTP.ChaChing
+local sprintf = _G.string.format
 
 -----------------------------------------------------------------------------------------------------------
 --                      ADDON INFO AND METHODS

@@ -9,7 +9,7 @@ MTP.SlotClass = {}
 
 local L = MTP.L
 local E = errors
-
+local sprintf = _G.string.format
 
 -- indices into the itemInfo table - the table returned by GetContainerItemInfo()
 SLOTINFO_TEXTURE		= 1  -- number

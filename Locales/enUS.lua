@@ -6,6 +6,8 @@
 
 local _, MTP = ...
 MTP.enUS = {}
+local sprintf = _G.string.format
+
 loc = MTP.enus
 
 local L = setmetatable({}, { __index = function(t, k)
@@ -23,7 +25,7 @@ if LOCALE == "enUS" then
 --      EXAMPLE USAGE:
 
     -- local errMsg = L["STRING_EMPTY"]
-    -- local errMsg = string.format(L["ERROR_MESSAGE"], errMsg )
+    -- local errMsg = sprintf(L["ERROR_MESSAGE"], errMsg )
     -- local result = errors.setErrorResult( errMsg, debugstack() )
     -- emf.postErrorMsg( result )
 

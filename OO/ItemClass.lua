@@ -18,7 +18,8 @@ MTP.ItemClass = {}
 item = MTP.ItemClass
 
 local L = MTP.L
-local E = errors
+local sprintf = _G.string.format
+
 
 ------------------------------------- LOCAL CONSTANTS -----------------------------------------------------
 -- indices into the itemDescr[iptor] table - the table returned by Blizzard's GetItemInfo()

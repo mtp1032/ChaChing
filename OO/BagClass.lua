@@ -10,6 +10,8 @@ bg = MTP.BagClass
 
 local L = MTP.L
 local E = errors
+local sprintf = _G.string.format
+
 
 --------------------------------------------------------------------------------------------------
 --              - The bagSlot is the location of the bag. For example, 0 represents the player's
@@ -246,11 +248,11 @@ function bg:dumpBagTable( msg )
 		if numBagSlots > 0 then
 			local bag = bagTable[bagSlot]
 			if bag ~= nil then
-				mf:postMsg(string.format("    %s installed at %d has %d slots\n", bag:getName(), bag:getInstallationSlot(), bag:getTotalSlots() ))
+				mf:postMsg(sprintf("    %s installed at %d has %d slots\n", bag:getName(), bag:getInstallationSlot(), bag:getTotalSlots() ))
 			else
-				mf:postMsg(string.format("    No bag installed at %d\n", bagSlot ))
+				mf:postMsg(sprintf("    No bag installed at %d\n", bagSlot ))
 			end
 		end
 	end
-	mf:postMsg( string.format("\n"))
+	mf:postMsg( sprintf("\n"))
 end

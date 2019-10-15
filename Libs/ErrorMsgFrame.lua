@@ -6,6 +6,9 @@
 
 local _, MTP = ...
 MTP.ErrorMsgFrame = {}
+
+local sprintf = _G.string.format
+
 emf = MTP.ErrorMsgFrame
 
 
