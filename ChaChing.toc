@@ -37,6 +37,7 @@ OO\BagClass.lua
 ##---------------------------------------------
 ## Application file
 ##---------------------------------------------
+libs\BagManager.lua
 libs\ContainerEventHandler.lua
 SellItems.lua
 
