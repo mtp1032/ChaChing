@@ -3,7 +3,7 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 14 June, 2019
 --------------------------------------------------------------------------------------
-local ADDON_C_NAME, ChaChing = ...
+local _, ChaChing = ...
 ChaChing.SellItems = {}
 si = ChaChing.SellItems
 
@@ -16,9 +16,83 @@ local GREEN = 1.00
 local BLUE = 0.00
 
 local DISPLAY_TIME = 10
+
+------------------------------------------------------------
+--						SAVED GLOBALS
+------------------------------------------------------------
+sellGrey = true
+sellWhite = false
+isBagChecked = { false, false, false, false, false }
+exclusionTable = {}
+
+----------------------------------------------------------
+--						EXCLUSION TABLE OPERATIONS
+----------------------------------------------------------
+local listFrame = mf:getListFrame()
+
 local function displayMsg( msg )
 	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
 	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
+end
+local function insertIntoExclusionTable( itemLink )
+	if itemLink == nil or itemLink == "" then
+		return
+	end
+	table.insert( exclusionTable, itemLink )
+end
+local function removeFromExclusionTable( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			table.remove(exclusionTable, key )
+		end
+	end 
+end
+local function isItemOnExclusionTable( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			return true
+		end
+	end 
+	return false
+end
+local function showExclusionTable()
+	if listFrame:IsVisible() == true then
+		listFrame:Hide()
+	end
+
+	if exclusionTable[1] == nil then
+		E.where()
+		listFrame.Text:EnableMouse( false )    
+		listFrame.Text:EnableKeyboard( false )   
+		listFrame.Text:SetText("") 
+		listFrame.Text:ClearFocus()
+		local str = sprintf("The Excluded Item Table is Empty.\n")
+		listFrame.Text:Insert(str )
+	else
+		listFrame.Text:EnableMouse( false )    
+		listFrame.Text:EnableKeyboard( false )   
+		listFrame.Text:SetText("") 
+		listFrame.Text:ClearFocus()
+
+		E.where()
+		for key, value in pairs( exclusionTable ) do
+			local s = sprintf("%d : %s\n", key, value )
+			listFrame.Text:Insert( s )
+		end
+		listFrame.Text:Insert( sprintf("\n"))
+	end
+
+	listFrame:Show()
+end
+local function resetExclusionTable()
+	exclusionTable = {}
+	showExclusionTable()
+end
+local function postMsg( msg )
+	if msgFrame:IsVisible() == false then
+		msgFrame:Show()
+	end
+	msgFrame.Text:Insert( msg )
 end
 
 function si:CHACHING_InitializeOptions()
@@ -69,7 +143,7 @@ function si:CHACHING_InitializeOptions()
 	f:SetScript("OnMouseUp", 
 		function(self,button)
 			cursorInfo, _, itemLink = GetCursorInfo()
-			cc:insertIntoExclusionTable( itemLink )
+			insertIntoExclusionTable( itemLink )
 			f:SetText( itemLink )	-- prints the item link to the chat dialog box
 			ClearCursor()
 	end)
@@ -105,11 +179,11 @@ function si:CHACHING_InitializeOptions()
 			local numBagSlots = GetContainerNumSlots( id )
 			if numBagSlots > 0 then
 				-- local bag = bmgr:getBag(id + 1)
-				labelStr = string.format("Bag[%d] - %d free slots", id+1, GetContainerNumFreeSlots(id) )
+				labelStr = sprintf("Bag[%d] - %d free slots", id+1, GetContainerNumFreeSlots(id) )
 				button.label:SetText(labelStr)
 				button:SetEnabled(true)
 			else
-				local labelStr = string.format("Bag[%d] - Slot empty", id+1)
+				local labelStr = sprintf("Bag[%d] - Slot empty", id+1)
 				button.label:SetText(labelStr)
 				button:SetEnabled(false)
 			end
@@ -128,16 +202,16 @@ function si:CHACHING_InitializeOptions()
         UpdateBagSelectButtons()
 	end)
 	
-	local str1 = string.format("\n%s","                                 *** WARNING ***")
-	local str2 = string.format("%s", "  The merchant buyback window only has 12 slots. However, the merchant")
-	local str3 = string.format("%s", "  will buy as many items as Cha-Ching is configured to sell. Thus, if")
-	local str4 = string.format("%s", "  more than 12 items were sold, you will only be able to buyback the")
-	local str5 = string.format("%s", "  last 12.")
+	local str1 = sprintf("\n%s","                                 *** WARNING ***")
+	local str2 = sprintf("%s", "  The merchant buyback window only has 12 slots. However, the merchant")
+	local str3 = sprintf("%s", "  will buy as many items as Cha-Ching is configured to sell. Thus, if")
+	local str4 = sprintf("%s", "  more than 12 items were sold, you will only be able to buyback the")
+	local str5 = sprintf("%s", "  last 12.")
 
 	local messageText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
 	messageText:SetJustifyH("LEFT")
     messageText:SetPoint("TOPLEFT", 10, -320)
-	messageText:SetText(string.format("%s\n%s\n%s\n%s\n%s",
+	messageText:SetText(sprintf("%s\n%s\n%s\n%s\n%s",
 											str1, str2, str3, str4, str5 ))
 end
 --------------------------------------------------------------------------------------
@@ -146,7 +220,7 @@ end
 --------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
-	if cc:isItemExcluded( itemLink ) then
+	if isItemOnExclusionTable( itemLink ) then
 		return istemIsSaleable
 	end
 
@@ -197,7 +271,7 @@ local function sellItems()
 						if itemCanBeSold( itemLink ) then
 							local unitSalesPrice = item:getUnitSalesPrice()
 							UseContainerItem( bagSlot, slotId )
-							b:updateSlots()
+							bag:updateSlots()
 							totalEarnings = totalEarnings + unitSalesPrice * itemCount
 							totalItemsSold = totalItemsSold + itemCount
 						end -- if itemCanBeSold
@@ -209,11 +283,11 @@ local function sellItems()
 
 	local msg = nil
 	if totalItemsSold > 1 then
-		msg = string.format("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
+		msg = sprintf("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
 	elseif totalItemsSold == 1 then
-		msg = string.format("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
+		msg = sprintf("Sold %d items earning %s\n", totalItemsSold, GetCoinTextureString( totalEarnings ))
 	else
-		msg = string.format("No items sold")	
+		msg = sprintf("No items sold")	
 	end
 
 	displayMsg( msg )
@@ -233,11 +307,11 @@ ButtonChaChing:SetScript("Onclick", sellItems )
 --					COMMAND LINE OPTIONS
 ----------------------------------------------------------------------------------------------------
 
-local helpStr =   string.format("/cc help - This message.")
-local configStr = string.format("  /cc config - Display the ChaChing Interface Options Menu.")
-local showStr =   string.format("  /cc showtable - List the items in the Exclusion Table.")
+local helpStr =   sprintf("/cc help - This message.")
+local configStr = sprintf("  /cc config - Display the ChaChing Interface Options Menu.")
+local showStr =   sprintf("  /cc showtable - List the items in the Exclusion Table.")
 
-local CR = string.format("\n")
+local CR = sprintf("\n")
 SLASH_CHACHING_HELP1 = "/chaching"
 SLASH_CHACHING_HELP2 = "/cha"
 SLASH_CHACHING_HELP3 = "/cc"
@@ -260,13 +334,13 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 		InterfaceOptionsFrame_OpenToCategory("ChaChing")
 
 	elseif inputStr == "showtable" then
-		cc:showExclusionTable()
+		showExclusionTable()
 	else
-		-- -- System message color - Yellow
+		-- System message color - Yellow
 
-		local errStr = string.format("[INVALID SLASH COMMAND OPTION]\n\n\'%s\'", msg )
+		local errStr = sprintf("[INVALID SLASH COMMAND OPTION]\n\n\'%s\'", msg )
 		UIErrorsFrame:AddMessage( errStr, RED, GREEN, BLUE, 1, DISPLAY_TIME )
-		errStr = string.format("[INVALID SLASH COMMAND OPTION] \'%s\'", msg )
+		errStr = sprintf("[INVALID SLASH COMMAND OPTION] \'%s\'", msg )
 		DEFAULT_CHAT_FRAME:AddMessage( errStr, RED,GREEN,BLUE )
 	end
 end
