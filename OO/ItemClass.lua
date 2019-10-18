@@ -3,15 +3,6 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 5 June, 2019
 --------------------------------------------------------------------------------------------
---	
---	The Item class gets its attributes from two Blizzard services:
---			GetContainerItemInfo()	This service provides information relevant to items
---									that exist in a player's bags, including his inventory
---									bags and his bank bags.
---			GetItemInfo()			This service provides information largely irrelevant
---									to the item's location. The only exception to this might
---									the item's stack count.
----------------------------------------------------------------------------------------------
 local _, ChaChing = ...
 ChaChing.ItemClass = {}
 
