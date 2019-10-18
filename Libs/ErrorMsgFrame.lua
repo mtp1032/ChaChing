@@ -11,17 +11,6 @@ local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
 
---[[
-                                        COMMENTS
-newFrame = CreateFrame("frameType", "frameName", parentFrame, "inheritsFrame")
-
-frameType               - required (e.g., "Button", "EditBox", etc.)
-frameName               - optional "MyFrame"
-parentFrame             - defaults to UIParent if not specified. The function will also set also
-                          a global variable of this name pointing to this frameName
-inheritsFrom            - (string) if nil, no frames will be inherited.                
-]]
-
 local backdrop = {
 	bgFile      = "Interface/BUTTONS/WHITE8X8",
 	edgeFile    = "Interface/GLUES/Common/Glue-Tooltip-Border",
