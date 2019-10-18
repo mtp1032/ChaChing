@@ -105,7 +105,6 @@ local function createResetButton( parentFrame )
             self:GetParent().Text:SetText("") 
 			self:GetParent().Text:ClearFocus()
 			exclusionTable = {}
-			cc:showExclusionTable()
            end)
     parentFrame.resetButton = resetButton
 end
@@ -174,27 +173,10 @@ end
 local msgFrame = createMsgFrame()
 local listFrame = createListFrame()
 
-function mf:postMsg( msg )
-	if msgFrame:IsVisible() == false then
-		msgFrame:Show()
-	end
-	msgFrame.Text:Insert( msg )
-end
-
-function mf:printList( exclusionTable )
-	if listFrame:IsVisible() == true then
-		listFrame:Hide()
-	end
-
-	if exclusionTable[1] == nil then
-		listFrame.Text:Insert("The Excluded Item Table is Empty." )
-	else
-		for key, value in pairs( exclusionTable ) do
-			local s = string.format("%d : %s\n", key, value )
-			listFrame.Text:Insert( s )
-		end
-		listFrame.Text:Insert( string.format("\n"))
-	end
-
-	listFrame:Show()
+function mf:getListFrame()
+    if msgFrame == nil then
+        msgFrame = createMsgFrame()
+        listFrame = createListFrame
+    end
+    return listFrame
 end
