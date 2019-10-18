@@ -193,6 +193,15 @@ end
 function Bag:isBagChecked()
 	return self.isChecked
 end
+
+local function isItemExcluded( itemLink )
+	for key, value in pairs( exclusionTable ) do
+		if value == itemLink then
+			return true
+		end
+	end 
+	return false
+end
 --***********************************************************************************************
 --									Sell Methods
 --***********************************************************************************************
@@ -205,7 +214,7 @@ function Bag:sellAllItemsInBag()
 		local slot = self.slotTable[slotId]
 		if slot ~= nil then
 			local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo( self.bagSlot, slotId )
-			if cc:isItemExcluded( itemLink ) == false then
+			if isItemExcluded( itemLink ) == false then
 				local item = Item( itemLink )
 
 				-- no need to check the filters. We're gonna sell everything
