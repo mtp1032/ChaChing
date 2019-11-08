@@ -61,12 +61,11 @@ local function showExclusionTable()
 	end
 
 	if exclusionTable[1] == nil then
-		E.where()
 		listFrame.Text:EnableMouse( false )    
 		listFrame.Text:EnableKeyboard( false )   
 		listFrame.Text:SetText("") 
 		listFrame.Text:ClearFocus()
-		local str = sprintf("The Excluded Item Table is Empty.\n")
+		local str = sprintf("The Exclusion Item Table Is Empty.\n")
 		listFrame.Text:Insert(str )
 	else
 		listFrame.Text:EnableMouse( false )    
@@ -74,7 +73,6 @@ local function showExclusionTable()
 		listFrame.Text:SetText("") 
 		listFrame.Text:ClearFocus()
 
-		E.where()
 		for key, value in pairs( exclusionTable ) do
 			local s = sprintf("%d : %s\n", key, value )
 			listFrame.Text:Insert( s )
@@ -143,8 +141,13 @@ function si:CHACHING_InitializeOptions()
 	f:SetScript("OnMouseUp", 
 		function(self,button)
 			cursorInfo, _, itemLink = GetCursorInfo()
-			insertIntoExclusionTable( itemLink )
-			f:SetText( itemLink )	-- prints the item link to the chat dialog box
+			if cursorInfo == "item" then
+				insertIntoExclusionTable( itemLink )
+				local s = sprintf("%s excluded", itemLink )
+				f:SetText( s )	-- prints the item link to the chat dialog box
+			else
+				f:SetText("")
+			end
 			ClearCursor()
 	end)
 
@@ -221,6 +224,8 @@ end
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
 	if isItemOnExclusionTable( itemLink ) then
+		local s = sprintf("%s is on Exclusion Table and may not be sold", itemLink)
+		print("[228] "..s )
 		return istemIsSaleable
 	end
 
