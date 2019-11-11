@@ -1,13 +1,13 @@
 ChaChing
 
-CURRENT VERSION 2.0.0
+CURRENT VERSION 2.5.1
 
 NEW FEATURES:
 New Command Line Options
     /chaching (or cc) <parameter> where parameter is one of...
         help - prints this help message
         config - brings up ChaChing's interface options dialog
-        showtable    enumerates all items in the Excluded Table
+        showtable - enumerates all items in the table of excluded items
 
 Examples: 
  - display the exclusion table: cc showtable
@@ -40,7 +40,7 @@ The following options are available:
 
 (a) Two checkboxes, [Sell Gray] and [Sell White] item. The latter only sells common quality Armor and Weapons.
 (b) Five inventory bag checkboxes, one for each bag slot. Checking any checkbox instructs ChaChing to sell all items in that bag.
-(c) Excluding selected items: if a player wants to prevent ChaChing from ever selling an item, drag the item to, and click on, the Entry Box. This will place the tiem in a table of items that can not be sold. For example, most of us have a common (white) quality fishing pole. The game considers a fishing pole to be weapon. Similarly, many (most?) skinners have a common quality (white) skinning knive. These are items you should put on the table of items not to be sold.
+(c) Excluding selected items: if a player wants to prevent ChaChing from ever selling an item, drag the item to, and click on, the Entry Box. This will place the item in a table of items that can not be sold. For example, most of us have a common (white) quality fishing pole. Similarly, blacksmiths have a blacksmith hammer, and miners have a mining pick. The game considers these items to be weapons and should put on the table of items not to be sold.
 
 PLAYER RELOGING AND UI RELOAD:
 1. All items residing on the exclusion table are retained across UI Reload and player logout/login events. At present, individual items cannot be removed from the exclusion list. Rather, the exclusion list must be cleared of all items. To do this, click the [Remove Entries] button on the Excluded Items dialog ("cc showtable").
