@@ -25,6 +25,9 @@ sellWhite = false
 isBagChecked = { false, false, false, false, false }
 exclusionTable = {}
 
+local function getItemLinkName( itemLink )
+	return string.match(itemLink, "item[%-?%d:]+")
+end
 ----------------------------------------------------------
 --						EXCLUSION TABLE OPERATIONS
 ----------------------------------------------------------
@@ -86,12 +89,12 @@ local function resetExclusionTable()
 	exclusionTable = {}
 	showExclusionTable()
 end
-local function postMsg( msg )
-	if msgFrame:IsVisible() == false then
-		msgFrame:Show()
-	end
-	msgFrame.Text:Insert( msg )
-end
+-- function mf:postMsg( msg )
+-- 	if msgFrame:IsVisible() == false then
+-- 		msgFrame:Show()
+-- 	end
+-- 	msgFrame.Text:Insert( msg )
+-- end
 
 function si:CHACHING_InitializeOptions()
  
@@ -142,6 +145,7 @@ function si:CHACHING_InitializeOptions()
 		function(self,button)
 			cursorInfo, _, itemLink = GetCursorInfo()
 			if cursorInfo == "item" then
+				-- inset the name of the item, not the item link
 				insertIntoExclusionTable( itemLink )
 				local s = sprintf("%s excluded", itemLink )
 				f:SetText( s )	-- prints the item link to the chat dialog box
@@ -224,9 +228,7 @@ end
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
 	if isItemOnExclusionTable( itemLink ) then
-		local s = sprintf("%s is on Exclusion Table and may not be sold", itemLink)
-		print("[228] "..s )
-		return istemIsSaleable
+		return itemIsSaleable
 	end
 
 	-- Setup the logic for selling/not selling POOR items
