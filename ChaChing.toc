@@ -3,7 +3,7 @@
 ## Notes: Supports the bulk sales of classes of items
 ## SavedVariablesPerCharacter: isBagChecked, exclusionTable, sellGrey, sellWhite
 ## Author: mtpeterson1948 dot gmail dot com
-## Version: 2.0 (Release)
+## Version: 2.5.1 (Release)
 ## X-Expansion: Classic
 ## 9 November, 2018
 
