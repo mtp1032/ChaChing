@@ -74,6 +74,7 @@ for slotId = 1, totalSlots do
 	local slot = Slot(bagId, slotId)
 	if slot:getItemCount() > 0  then
 		local itemLink = slot:getItemLink()
+		print(string.match(itemLink, "item[%-?%d:]+"))
 		local item = Item(itemLink )
 		local itemName = item:getName()
 		local itemCount = item:getStackCount()
