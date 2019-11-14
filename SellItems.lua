@@ -24,38 +24,24 @@ sellGrey = true
 sellWhite = false
 isBagChecked = { false, false, false, false, false }
 exclusionTable = {}
-
-local function getItemLinkName( itemLink )
-	return string.match(itemLink, "item[%-?%d:]+")
-end
+local listFrame = mf:getListFrame()
 ----------------------------------------------------------
 --						EXCLUSION TABLE OPERATIONS
 ----------------------------------------------------------
-local listFrame = mf:getListFrame()
-
-local function displayMsg( msg )
-	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
-	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
-end
 local function insertIntoExclusionTable( itemLink )
 	if itemLink == nil or itemLink == "" then
 		return
 	end
-	table.insert( exclusionTable, itemLink )
+	local itemName = GetItemInfo( itemLink )
+	table.insert( exclusionTable, itemName )
 end
-local function removeFromExclusionTable( itemLink )
+local function itemIsOnExclusionTable( itemLink )
+	local itemName = GetItemInfo( itemLink )
 	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
-			table.remove(exclusionTable, key )
-		end
-	end 
-end
-local function isItemOnExclusionTable( itemLink )
-	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
+		if value == itemName then
 			return true
 		end
-	end 
+	end
 	return false
 end
 local function showExclusionTable()
@@ -85,16 +71,11 @@ local function showExclusionTable()
 
 	listFrame:Show()
 end
-local function resetExclusionTable()
-	exclusionTable = {}
-	showExclusionTable()
+
+local function displayMsg( msg )
+	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
+	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
 end
--- function mf:postMsg( msg )
--- 	if msgFrame:IsVisible() == false then
--- 		msgFrame:Show()
--- 	end
--- 	msgFrame.Text:Insert( msg )
--- end
 
 function si:CHACHING_InitializeOptions()
  
@@ -218,8 +199,7 @@ function si:CHACHING_InitializeOptions()
 	local messageText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
 	messageText:SetJustifyH("LEFT")
     messageText:SetPoint("TOPLEFT", 10, -320)
-	messageText:SetText(sprintf("%s\n%s\n%s\n%s\n%s",
-											str1, str2, str3, str4, str5 ))
+	messageText:SetText(sprintf("%s\n%s\n%s\n%s\n%s", str1, str2, str3, str4, str5 ))
 end
 --------------------------------------------------------------------------------------
 --						QUALITY (i.e., RARITY) values
@@ -227,10 +207,9 @@ end
 --------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
 	local itemIsSaleable = false
-	if isItemOnExclusionTable( itemLink ) then
+	if itemIsOnExclusionTable( itemLink ) then
 		return itemIsSaleable
 	end
-
 	-- Setup the logic for selling/not selling POOR items
 	item = Item( itemLink )
 	local quality = item:getQualityName()
@@ -351,3 +330,39 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 		DEFAULT_CHAT_FRAME:AddMessage( errStr, RED,GREEN,BLUE )
 	end
 end
+--------------------------------------------------------------------------------------------
+--						UNUSED OR DEPRECATED FUNCTIONS
+--------------------------------------------------------------------------------------------
+-- local function removeFromExclusionTable( itemLink )
+-- 	local itemString = sprintf("%s", itemLink)
+-- 	for key, value in pairs( exclusionTable ) do
+-- 		local itemString = sprintf("%s", itemLink )
+-- 		if value == itemString then
+-- 			table.remove(exclusionTable, key )
+-- 			print( "removed "..itemString )
+-- 		else
+-- 			print(itemString.." not removed")
+-- 		end
+-- 	end 
+-- end
+-- local function resetExclusionTable()
+-- 	exclusionTable = {}
+-- 	showExclusionTable()
+-- end
+-- function mf:postMsg( msg )
+-- 	if msgFrame:IsVisible() == false then
+-- 		msgFrame:Show()
+-- 	end
+-- 	msgFrame.Text:Insert( msg )
+-- end
+
+	-- local items = #exclusionTable
+	-- for i = 1, items do
+	-- 	if exclusionTable[i] == itemName then
+	-- 		itemIsOnTable = true
+	-- 		core:where( sprintf( "%s == %s", exclusionTable[i], itemName ))
+	-- 	end
+	-- 	core:where( sprintf( "%s NOT EQUAL %s", exclusionTable[i], itemName ))
+	-- end
+
+
