@@ -15,10 +15,11 @@ local sprintf = _G.string.format
 --						CREATES THE EVENT HANDLING FRAME AND CALLS
 --						THE HANDLER FOR VARIOUS BAG-RELATED EVENTS
 -- ********************************************************************************
+
+-- This ensures that the ChaChing menu option is only initialized once.
 local CHACHING_INITIALIZED = false
 local function initChaChing()
 	if CHACHING_INITIALIZED == false then
-		CHACHING_INITIALIZE = true
 		si:CHACHING_InitializeOptions()
 		CHACHING_INITIALIZED = true
 	end
@@ -49,13 +50,12 @@ local eventFrame = CreateFrame("Frame" )
 
 		bmgr:initializeBagTable()
 
-		-- The saved variables, see above, are read from the disk and initialized
+		-- The saved variables are read from the disk and initialized
 		--     just before the ADDON_LOADED event is fired.
 		if event == "ADDON_LOADED" and arg1 == "ChaChing" then
 			
 			-- initialize the saved variables to their default values.
 			sellGrey = true
-			sellWhite = false
 			isBagChecked = { false, false, false, false, false }
 		end
 		
