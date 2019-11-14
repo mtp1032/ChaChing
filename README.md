@@ -4,7 +4,7 @@ CURRENT VERSION 2.5.1
 
 NEW FEATURES:
 New Command Line Options
-    /chaching (or cc) <parameter> where parameter is one of...
+    /ChaChing (or cc) <parameter> where parameter is one of...
         help - prints this help message
         config - brings up ChaChing's interface options dialog
         showtable - enumerates all items in the table of excluded items
@@ -17,13 +17,13 @@ Examples:
 DESCRIPTION:
 ChaChing is another AddOn that permits a player to sell items in bulk.
 
-- Chaching, by default, will sell all poor (grey) quality items.
+- ChaChing, by default, will sell all poor (grey) quality items.
 
-- Chaching can be configured to sell all common (white) quality armor and weapon items. This is particularly useful at lower levels when many drops and quest rewards are of common quality.
+- ChaChing can be configured to sell all common (white) quality armor and weapon items. This is particularly useful at lower levels when many drops and quest rewards are of common quality.
 
 CAVEAT: if you configure ChaChing to sell all common items, be sure to place items such as fishing poles, mining picks, blacksmith hammers, skinning knives, etc., on the exclusion list.
 
-- Chaching allows allows a player to configure one or more bags from which all items in the selected bag(s) will be sold -- regardless of quality (poor, common, uncommon, rare, or epic. This capability is particularly useful for non-Enchanters as well as higher level characters when drops and quest rewards are soulbound and cannot be equipped or otherwise used by the player's character.
+- ChaChing allows allows a player to configure one or more bags from which all items in the selected bag(s) will be sold -- regardless of quality (poor, common, uncommon, rare, or epic. This capability is particularly useful for non-Enchanters as well as higher level characters when drops and quest rewards are soulbound and cannot be equipped or otherwise used by the player's character.
 
 USAGE:
 When a player opens a merchant window, ChaChing places a button at the top left of the window,[ChaChing]. When/if this button is clicked, ChaChing will vendor all of the items in the player's inventory as configured by the player. If, for example, bag[2] was configured as a "sell all" bag, ChaChing will sell all items in bag[2] in addition to all grey items. 
