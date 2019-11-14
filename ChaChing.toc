@@ -1,7 +1,7 @@
 ## Interface: 11302
 ## Title: ChaChing
 ## Notes: Supports the bulk sales of classes of items
-## SavedVariablesPerCharacter: isBagChecked, exclusionTable, sellGrey, sellWhite
+## SavedVariablesPerCharacter: exclusionTable, sellGrey, isBagChecked, sellWhite
 ## Author: mtpeterson1948 dot gmail dot com
 ## Version: 2.5.1 (Release)
 ## X-Expansion: Classic
@@ -38,6 +38,7 @@ OO\BagClass.lua
 ## Application file
 ##---------------------------------------------
 libs\BagManager.lua
-libs\ContainerEventHandler.lua
 SellItems.lua
+libs\ContainerEventHandler.lua
+
 
