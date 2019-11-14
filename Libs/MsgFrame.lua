@@ -104,9 +104,28 @@ local function createResetButton( parentFrame )
             self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
 			self:GetParent().Text:ClearFocus()
-			exclusionTable = {}
+				local items = #exclusionTable
+				for i = 1, items do
+					exclusionTable[i] = nil
+				end
            end)
     parentFrame.resetButton = resetButton
+end
+local function createDismissButton( parentFrame )
+    local dismissButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    dismissButton:SetPoint("BOTTOM", -190, 10)
+    dismissButton:SetHeight(25)
+    dismissButton:SetWidth(75)
+    dismissButton:SetText("Dismiss")
+    dismissButton:SetScript("OnClick", 
+        function(self)
+            self:GetParent().Text:EnableMouse( false )    
+            self:GetParent().Text:EnableKeyboard( false )   
+            self:GetParent().Text:SetText("") 
+			self:GetParent().Text:ClearFocus()
+			parentFrame:Hide()
+        end)
+    parentFrame.dismissButton = dismissButton
 end
 local function createClearButton( parentFrame )
     local clearButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
@@ -124,6 +143,7 @@ local function createClearButton( parentFrame )
         end)
     parentFrame.clearButton = clearButton
 end
+
 
 ----------------------------------------------------------------------------------------------------
 --                      Create the Scrollbar and the EditBox frames
@@ -163,9 +183,8 @@ end
 
 local function createListFrame()
     local f = createTopFrame("ChaChing Excluded Items", 500, 300 )
-    -- createReloadButton(f)
     createResetButton(f)
-    createClearButton(f)
+    createDismissButton(f)
     createTextDisplay(f)
     return f
 end
