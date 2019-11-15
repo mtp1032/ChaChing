@@ -32,12 +32,16 @@ if LOCALE == "enUS" then
 
     -- ChaChing Strings
     L["ADDON_NAME"] = "ChaChing"
-    L["ADDON_NAME_AND_VERSION"] = "ChaChing (Version 1.0.0)"
+	L["ADDON_NAME_AND_VERSION"] = "ChaChing (Version 2.5.1)"
+	L["DESCR_SUBHEADER"] = "Enables the bulk selling of selected items in player's inventory."
 
-    L["TOOLTIP_CHECK_WHITE_BTN"] = "Sell All Common (White) Weapons and Armor Items."
-    L["LABEL_WHITE_CHECKBTN"] = "Sell All Common (White) Weapons and Armor Items."
-    L["TOOLTIP_CHECK_REAGENT_BTN"] = "Danger: checking this box will vendor *all* white crafting reagents."
-    L["LABEL_CHECK_REAGENT_BTN"] = "Sell All Common (White) Crafting Reagents?"
+    L["TOOLTIP_CHECK_WHITE_BTN"] = "Sell only common (white) quality weapon and armor items in your inventory."
+	L["LABEL_WHITE_CHECKBTN"] = "Sell White."
+	
+	L["TOOLTIP_CHECK_GREY_BTN"] = "Sell all poor (grey) quality items in your inventory."
+    L["LABEL_GREY_CHECKBTN"] = "Sell Gray."
+	L["LABEL_EXCLUDED_ITEM_LIST"] = "Drag and drop the items to be excluded into input box."
+	L["SELECT_BAG_PROMPT"] = "Select one or more bags. All items in the selected bags will be sold!"
 
     L["PREFIX_ERROR"]            = "ERROR:"
     L["PREFIX_W_TEXT"]           = "ERROR: %s!"
@@ -78,7 +82,7 @@ if LOCALE == "enUS" then
     L["RESULT_BLIZZ_API"]      = "Return value: unexpected!"
 
 --              User Messages
-    L["SUMMARY_ALL_SPELLS"]     = "SUMMARY (All Spells):"
+--[[     L["SUMMARY_ALL_SPELLS"]     = "SUMMARY (All Spells):"
     L["SUMMARY"]                = "\nSUMMARY (%s):\n"
     L["TOTAL_DAMAGE"]           = "Total Damage: %d\n"
     L["TOTAL_CRIT_DAMAGE"]      = "Total Crit Damage: %d\n"
@@ -136,7 +140,7 @@ if LOCALE == "enUS" then
     L["VOID_ERUPTION"] = "Void Eruption"
     L["VOID_FORM"] = "Voidform"
     L["VOID_TORRENT"] = "Void Torrent"
-
+ ]]
     return 
 end
 
