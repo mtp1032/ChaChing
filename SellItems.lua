@@ -76,11 +76,29 @@ local function displayMsg( msg )
 	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
 	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
 end
+local LINE_SEGMENT_LENGTH = 615
+local X_START_POINT = 10
+local Y_START_POINT = 10
 
+local function drawLine( yPos, f)
+	local lineFrame = CreateFrame("FRAME", nil, f )
+	lineFrame:SetPoint("CENTER", -10, yPos )
+	lineFrame:SetSize(LINE_SEGMENT_LENGTH, LINE_SEGMENT_LENGTH)
+	
+	local line = lineFrame:CreateLine(1)
+	line:SetColorTexture(.5, .5, .5, 1) -- Grey per https://wow.gamepedia.com/Power_colors
+	line:SetThickness(1)
+	line:SetStartPoint("LEFT",X_START_POINT, Y_START_POINT)
+	line:SetEndPoint("RIGHT", X_START_POINT, Y_START_POINT)
+	lineFrame:Show() 
+end
 function si:CHACHING_InitializeOptions()
  
     local ConfigurationPanel = CreateFrame("FRAME","CHACHING_MainFrame")
-    ConfigurationPanel.name = L["ADDON_NAME"]
+	ConfigurationPanel.name = L["ADDON_NAME"]
+
+	-- drawLine( 130, ConfigurationPanel )
+
     InterfaceOptions_AddCategory(ConfigurationPanel)    -- Register the Configuration panel with LibUIDropDownMenu
 
     -- Print a header at the top of the panel
@@ -90,24 +108,24 @@ function si:CHACHING_InitializeOptions()
  
     local DescrSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
     DescrSubHeader:SetPoint("TOPLEFT", 20, -50)
-	DescrSubHeader:SetText("Enables the bulk selling of selected items in player's inventory.")
+	DescrSubHeader:SetText(L["DESCR_SUBHEADER"])
 
     -- Create check button to sell grey items
     local GreyQualityButton = CreateFrame("CheckButton", "CHACHING_GreyQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     GreyQualityButton:SetPoint("TOPLEFT", 20, -80)
-    GreyQualityButton.tooltip = "Sell all poor quality (i.e., grey) items in your bags."
-	_G[GreyQualityButton:GetName().."Text"]:SetText("Sell Grey Items?")
+    GreyQualityButton.tooltip = L["TOOLTIP_CHECK_GREY_BTN"]
+	_G[GreyQualityButton:GetName().."Text"]:SetText(L["LABEL_GREY_CHECKBTN"])
 	GreyQualityButton:SetChecked( sellGrey )
 	GreyQualityButton:SetScript("OnClick", 
 		function(self)
 			sellGrey = self:GetChecked() and true or false
     	end)
- 
+		
     -- Create check button to sell white items
     local WhiteQualityButton = CreateFrame("CheckButton", "CHACHING_WhiteQualityButton", ConfigurationPanel, "ChatConfigCheckButtonTemplate")
     WhiteQualityButton:SetPoint("TOPLEFT", 200, -80)
-    WhiteQualityButton.tooltip = "Sell all common quality (i.e., white) armor and weapon items in your bags."
-	_G[WhiteQualityButton:GetName().."Text"]:SetText("Sell White Items?")
+    WhiteQualityButton.tooltip = L["TOOLTIP_CHECK_WHITE_BTN"] 
+	_G[WhiteQualityButton:GetName().."Text"]:SetText(L["LABEL_WHITE_CHECKBTN"])
 	WhiteQualityButton:SetChecked( sellWhite )
 	WhiteQualityButton:SetScript("OnClick", function(self)
 		sellWhite = self:GetChecked() and true or false
@@ -116,7 +134,7 @@ function si:CHACHING_InitializeOptions()
 	-- Create the Exclusion List Input Edit Box
 	local DescrSubHeader = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormal")
     DescrSubHeader:SetPoint("LEFT", 20, -150)
-	DescrSubHeader:SetText("Exclusion List: Drag item from inventory and drop into input box.")
+	DescrSubHeader:SetText(L["LABEL_EXCLUDED_ITEM_LIST"])
 	local f = CreateFrame("EditBox", "InputEditBox", ConfigurationPanel, "InputBoxTemplate")
 	f:SetFrameStrata("DIALOG")
 	f:SetSize(200,50)
@@ -138,8 +156,8 @@ function si:CHACHING_InitializeOptions()
 
     -- Create bag select buttons
     local bagsText = ConfigurationPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-    bagsText:SetPoint("TOPLEFT", 20, -200)
-    bagsText:SetText("Select a bag. All items in the selected bag will be sold!")
+    bagsText:SetPoint("TOPLEFT", 20, -180)
+    bagsText:SetText(L["SELECT_BAG_PROMPT"])
 
     local xpos = 20
     local ypos = -215
@@ -190,6 +208,8 @@ function si:CHACHING_InitializeOptions()
         UpdateBagSelectButtons()
 	end)
 	
+	-- drawLine( -130, ConfigurationPanel )
+
 	local str1 = sprintf("\n%s","                                 *** WARNING ***")
 	local str2 = sprintf("%s", "  The merchant buyback window only has 12 slots. However, the merchant")
 	local str3 = sprintf("%s", "  will buy as many items as Cha-Ching is configured to sell. Thus, if")
