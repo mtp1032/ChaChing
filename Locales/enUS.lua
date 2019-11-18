@@ -32,7 +32,7 @@ if LOCALE == "enUS" then
 
     -- ChaChing Strings
     L["ADDON_NAME"] = "ChaChing"
-	L["ADDON_NAME_AND_VERSION"] = "ChaChing (Version 2.5.1)"
+	L["ADDON_NAME_AND_VERSION"] = "ChaChing Version 3.0"
 	L["DESCR_SUBHEADER"] = "Enables the bulk selling of selected items in player's inventory."
 
     L["TOOLTIP_CHECK_WHITE_BTN"] = "Sell only common (white) quality weapon and armor items in your inventory."
