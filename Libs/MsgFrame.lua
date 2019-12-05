@@ -10,7 +10,7 @@ mf = ChaChing.MsgFrame
 local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
-
+local exclusionTable = CHACHING_SAVED_VARS[3]
 
 local FRAME_WIDTH_DEFAULT = 900
 local FRAME_HEIGHT_DEFAULT = 600
@@ -143,7 +143,6 @@ local function createClearButton( parentFrame )
         end)
     parentFrame.clearButton = clearButton
 end
-
 
 ----------------------------------------------------------------------------------------------------
 --                      Create the Scrollbar and the EditBox frames

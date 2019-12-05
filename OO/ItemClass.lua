@@ -32,14 +32,14 @@ local ITEMINFO_EXPAC_ID               = 15 -- ?
 local ITEMINFO_SET_ID                 = 16 -- ?
 local ITEMINFO_IS_CRAFTING_REAGENT    = 17 -- boolean (?)
 
-QUALITY_POOR 		= 1
-QUALITY_COMMON 		= 2
-QUALITY_UNCOMMON 	= 3
-QUALITY__RARE 		= 4
-QUALITY__EPIC 		= 5
-QUALITY_LEGENDARY 	= 6
-QUALITY_ARTIFACT 	= 7
-QUALITY_HEIRLOOM 	= 8
+local QUALITY_POOR 		= 1
+local QUALITY_COMMON 		= 2
+local QUALITY_UNCOMMON 	= 3
+local QUALITY__RARE 		= 4
+local QUALITY__EPIC 		= 5
+local QUALITY_LEGENDARY 	= 6
+local QUALITY_ARTIFACT 	= 7
+local QUALITY_HEIRLOOM 	= 8
 
 local qualityNames = {
 	"QUALITY_POOR", 
@@ -72,7 +72,7 @@ setmetatable(Item, {
 function Item:_init( itemLink )
 
 	Base._init(self) 
-	self.result = SUCCESSFUL_RESULT
+	self.result = CHACHING_SUCCESSFUL_RESULT
 	self.itemInfo = {}
 	self.is_a = "GAME_ITEM"
 

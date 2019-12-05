@@ -16,15 +16,6 @@ local sprintf = _G.string.format
 --						THE HANDLER FOR VARIOUS BAG-RELATED EVENTS
 -- ********************************************************************************
 
--- This ensures that the ChaChing menu option is only initialized once.
-local CHACHING_INITIALIZED = false
-local function initChaChing()
-	if CHACHING_INITIALIZED == false then
-		si:CHACHING_InitializeOptions()
-		CHACHING_INITIALIZED = true
-	end
-end
-
 local eventFrame = CreateFrame("Frame" )
 	-- if arg2 ~= nil, arg1 is bagSlot, arg2 is slotId
 	-- if arg2 is nil, arg1 is equipment slot of item
@@ -50,26 +41,24 @@ local eventFrame = CreateFrame("Frame" )
 
 		bmgr:initializeBagTable()
 
-		-- The saved variables are read from the disk and initialized
-		--     just before the ADDON_LOADED event is fired.
 		if event == "ADDON_LOADED" and arg1 == "ChaChing" then
-			
-			-- initialize the saved variables to their default values.
-			sellGrey = true
-			isBagChecked = { false, false, false, false, false }
+			-- If this is the first time the addon is loaded then
+			-- initialize the table's values to their defaults.
+			-- if CHACHING_SAVED_VARS[5] == false then
+			-- 	CHACHING_SAVED_VARS[5] = true
+			-- end
+			if CHACHING_SAVED_VARS[4] == false then
+				CHACHING_SAVED_VARS[4] = true
+			end
 		end
 		
 		if event == "PLAYER_LOGIN" then
+			si:CHACHING_InitializeOptions()
 		end
 
-		-- This event is called when the player first logs in, enters or leaves an instance, respawns at a graveyard,
-		-- and when the player's screen is reloaded.
 		if event == "PLAYER_ENTERING_WORLD" then
-			initChaChing()
 		end
 
-		-- Restore the saved variables (see ChaChing.toc) to their default states
 		if event == "PLAYER_LOGOUT" then
-			sellGrey = true
 		end
 	end)

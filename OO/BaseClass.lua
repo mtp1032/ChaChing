@@ -32,7 +32,7 @@ setmetatable(Base, {
 
 function Base:_init(...)
 	self.is_a = "AbstractObject"
-	self.result = DEFAULT_RESULT
+	self.result = CHACHING_DEFAULT_RESULT
 	self.creationTimestamp = debugprofilestop()
 	self.clientBuildNumber 	= cc:getGameBuildNumber()
 	self.clientBuildDate 	= cc:getBuildDate()

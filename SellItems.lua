@@ -20,10 +20,13 @@ local DISPLAY_TIME = 10
 ------------------------------------------------------------
 --						SAVED GLOBALS
 ------------------------------------------------------------
-sellGrey = true
-sellWhite = false
-isBagChecked = { false, false, false, false, false }
-exclusionTable = {}
+local sellGrey 			= CHACHING_SAVED_VARS[1]
+local sellWhite 		= CHACHING_SAVED_VARS[2]
+local exclusionTable 	= CHACHING_SAVED_VARS[3]
+
+
+local isBagChecked = {false, false, false, false, false}
+
 local listFrame = mf:getListFrame()
 ----------------------------------------------------------
 --						EXCLUSION TABLE OPERATIONS
@@ -33,11 +36,13 @@ local function insertIntoExclusionTable( itemLink )
 		return
 	end
 	local itemName = GetItemInfo( itemLink )
-	table.insert( exclusionTable, itemName )
+	errors:where( itemName.." inserted into exclusion table")
+	--table.insert( exclusionTable, itemName )
+	table.insert( CHACHING_SAVED_VARS[3], itemName )
 end
 local function itemIsOnExclusionTable( itemLink )
 	local itemName = GetItemInfo( itemLink )
-	for key, value in pairs( exclusionTable ) do
+	for key, value in pairs( CACHING_SAVED_VARS[3] ) do
 		if value == itemName then
 			return true
 		end
@@ -49,7 +54,7 @@ local function showExclusionTable()
 		listFrame:Hide()
 	end
 
-	if exclusionTable[1] == nil then
+	if CHACHING_SAVED_VARS[1] == nil then
 		listFrame.Text:EnableMouse( false )    
 		listFrame.Text:EnableKeyboard( false )   
 		listFrame.Text:SetText("") 
@@ -62,7 +67,7 @@ local function showExclusionTable()
 		listFrame.Text:SetText("") 
 		listFrame.Text:ClearFocus()
 
-		for key, value in pairs( exclusionTable ) do
+		for key, value in pairs( CHACHING_SAVED_VARS[3] ) do
 			local s = sprintf("%d : %s\n", key, value )
 			listFrame.Text:Insert( s )
 		end
@@ -71,7 +76,6 @@ local function showExclusionTable()
 
 	listFrame:Show()
 end
-
 local function displayMsg( msg )
 	UIErrorsFrame:SetTimeVisible(DISPLAY_TIME)
 	UIErrorsFrame:AddMessage( msg, RED, GREEN, BLUE, DISPLAY_TIME ) 
@@ -119,6 +123,7 @@ function si:CHACHING_InitializeOptions()
 	GreyQualityButton:SetScript("OnClick", 
 		function(self)
 			sellGrey = self:GetChecked() and true or false
+			CHACHING_SAVED_VARS[1] = sellGrey
     	end)
 		
     -- Create check button to sell white items
@@ -126,9 +131,9 @@ function si:CHACHING_InitializeOptions()
     WhiteQualityButton:SetPoint("TOPLEFT", 200, -80)
     WhiteQualityButton.tooltip = L["TOOLTIP_CHECK_WHITE_BTN"] 
 	_G[WhiteQualityButton:GetName().."Text"]:SetText(L["LABEL_WHITE_CHECKBTN"])
-	WhiteQualityButton:SetChecked( sellWhite )
+	WhiteQualityButton:SetChecked( CHACHING_SAVED_VARS[2] )
 	WhiteQualityButton:SetScript("OnClick", function(self)
-		sellWhite = self:GetChecked() and true or false
+		CHACHING_SAVED_VARS[2] = self:GetChecked() and true or false
     end)
  
 	-- Create the Exclusion List Input Edit Box
@@ -146,7 +151,7 @@ function si:CHACHING_InitializeOptions()
 			if cursorInfo == "item" then
 				-- inset the name of the item, not the item link
 				insertIntoExclusionTable( itemLink )
-				local s = sprintf("%s excluded", itemLink )
+				local s = sprintf("   %s will be excluded", itemLink )
 				f:SetText( s )	-- prints the item link to the chat dialog box
 			else
 				f:SetText("")
@@ -163,8 +168,9 @@ function si:CHACHING_InitializeOptions()
     local ypos = -215
     local delta_y = -20
 
-    local function BagSelectButtonOnClick(self)
-        isBagChecked[self.bagIndex] = self:GetChecked() and true or false
+	local function BagSelectButtonOnClick(self)
+		isBagChecked[self.bagIndex] = self:GetChecked() and true or false
+	
     end
 
     local bagSelectButtons = { } 
@@ -221,32 +227,32 @@ function si:CHACHING_InitializeOptions()
     messageText:SetPoint("TOPLEFT", 10, -320)
 	messageText:SetText(sprintf("%s\n%s\n%s\n%s\n%s", str1, str2, str3, str4, str5 ))
 end
---------------------------------------------------------------------------------------
---						QUALITY (i.e., RARITY) values
---						are defined in SlotClass.lua
---------------------------------------------------------------------------------------
 local function itemCanBeSold( itemLink )
-	local itemIsSaleable = false
+	local canBeSold = false
 	if itemIsOnExclusionTable( itemLink ) then
-		return itemIsSaleable
+		return canBeSold
 	end
+
 	-- Setup the logic for selling/not selling POOR items
 	item = Item( itemLink )
 	local quality = item:getQualityName()
 
-	if quality == "QUALITY_POOR" and sellGrey then
-		itemIsSaleable = true
+	-- the item is grey and sellGrey is true
+	if quality == "QUALITY_POOR" and CHACHING_SAVED_VARS[1] then
+		canBeSold = true
+		return canBeSold
 	end
 
-	if quality == "QUALITY_COMMON" and sellWhite then		
-		-- At this point the item is white (COMMON) AND the user has set the sellAllWhiteItems flag to true.
+	-- the item is whithe and sellWhite is true
+	if quality == "QUALITY_COMMON" and CHACHING_SAVED_VARS[2] then		
+		-- At this point the item is white (COMMON) AND the user has set the sellWhite flag to true.
 		-- Now, make sure that it is either an armor piece or a weapon.
 		local itemType = item:getType()
 		if itemType == "Armor" or itemType == "Weapon" then
-			itemIsSaleable = true
+			canBeSold = true
 		end
 	end
-	return itemIsSaleable
+	return canBeSold
 end
 
 -- called when the player clicks on the [Sell Items] button
@@ -263,6 +269,7 @@ local function sellItems()
 			local bag = bmgr:getBag(bagSlot+1)
 			-- did the player select this bag?
 			if isBagChecked[bagSlot+1] then
+			-- if CHACHING_IS_BAG_CHECKED[bagSlot+1] then
 				local itemsSold, earnings
 				itemsSold, earnings = bag:sellAllItemsInBag()
 				totalItemsSold = totalItemsSold + itemsSold
@@ -272,7 +279,7 @@ local function sellItems()
 				for slotId = 1, totalSlots do
 					local slot = Slot(bag:getInstallationSlot(), slotId )	
 					local itemCount = slot:getItemCount()
-					if itemCount > 0 then				
+					if itemCount > 0 then		
 						local itemLink = slot:getItemLink()
 						if itemCanBeSold( itemLink ) then
 							local unitSalesPrice = item:getUnitSalesPrice()
@@ -350,39 +357,3 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 		DEFAULT_CHAT_FRAME:AddMessage( errStr, RED,GREEN,BLUE )
 	end
 end
---------------------------------------------------------------------------------------------
---						UNUSED OR DEPRECATED FUNCTIONS
---------------------------------------------------------------------------------------------
--- local function removeFromExclusionTable( itemLink )
--- 	local itemString = sprintf("%s", itemLink)
--- 	for key, value in pairs( exclusionTable ) do
--- 		local itemString = sprintf("%s", itemLink )
--- 		if value == itemString then
--- 			table.remove(exclusionTable, key )
--- 			print( "removed "..itemString )
--- 		else
--- 			print(itemString.." not removed")
--- 		end
--- 	end 
--- end
--- local function resetExclusionTable()
--- 	exclusionTable = {}
--- 	showExclusionTable()
--- end
--- function mf:postMsg( msg )
--- 	if msgFrame:IsVisible() == false then
--- 		msgFrame:Show()
--- 	end
--- 	msgFrame.Text:Insert( msg )
--- end
-
-	-- local items = #exclusionTable
-	-- for i = 1, items do
-	-- 	if exclusionTable[i] == itemName then
-	-- 		itemIsOnTable = true
-	-- 		core:where( sprintf( "%s == %s", exclusionTable[i], itemName ))
-	-- 	end
-	-- 	core:where( sprintf( "%s NOT EQUAL %s", exclusionTable[i], itemName ))
-	-- end
-
-

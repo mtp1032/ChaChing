@@ -10,6 +10,7 @@ local L = ChaChing.L
 local E = errors
 local sprintf = _G.string.format
 
+local exclusionTable = CHACHING_SAVED_VARS[3]
 --------------------------------------------------------------------------------------------------
 --              - The bagSlot is the location of the bag. For example, 0 represents the player's
 --                  backpack
@@ -93,7 +94,7 @@ end
 -- function Item:_init( itemLink )
 
 -- 	Base._init(self) 
--- 	self.result = SUCCESSFUL_RESULT
+-- 	self.result = CHACHING_SUCCESSFUL_RESULT
 
 
 --***************************************************************************************************
@@ -113,7 +114,7 @@ setmetatable(Bag, {
 function Bag:_init( bagSlot )   
 		--          Inherited from the BaseClass parent
 	Base._init(self)	
-	self.result = SUCCESSFUL_RESULT
+	self.result = CHACHING_SUCCESSFUL_RESULT
 	self.is_a = "Bag"
 	self.bagSlot = bagSlot
 	self.totalSlots = GetContainerNumSlots( bagSlot )
@@ -194,9 +195,10 @@ function Bag:isBagChecked()
 	return self.isChecked
 end
 
-local function isItemExcluded( itemLink )
-	for key, value in pairs( exclusionTable ) do
-		if value == itemLink then
+local function itemIsOnExcludedList( itemLink )
+	local itemName = GetItemInfo( itemLink )
+	for key, value in pairs( CHACHING_SAVED_VARS[3] ) do
+		if value == itemName then
 			return true
 		end
 	end 
@@ -214,20 +216,22 @@ function Bag:sellAllItemsInBag()
 		local slot = self.slotTable[slotId]
 		if slot ~= nil then
 			local _, itemCount, _, _, _, _, itemLink = GetContainerItemInfo( self.bagSlot, slotId )
-			if isItemExcluded( itemLink ) == false then
-				local item = Item( itemLink )
+			if itemCount then
+				if itemIsOnExcludedList( itemLink ) == false then -- it's not on the excluded list so sell it
+					local item = Item( itemLink )
 
-				-- no need to check the filters. We're gonna sell everything
-				-- in this bag that can be sold (has a unit sales price)
-				local unitSalesPrice = item:getUnitSalesPrice()
-				if unitSalesPrice then
-					UseContainerItem( self.bagSlot, slotId )
-					self.slotTable[slotId] = Slot( self.bagSlot, slotId )
-					totalEarnings = totalEarnings + unitSalesPrice * itemCount
-					totalItemsSold = totalItemsSold + itemCount		
+					-- no need to check the filters. We're gonna sell everything
+					-- in this bag that can be sold (has a unit sales price)
+					local unitSalesPrice = item:getUnitSalesPrice()
+					if unitSalesPrice then
+						UseContainerItem( self.bagSlot, slotId )
+						self.slotTable[slotId] = Slot( self.bagSlot, slotId )
+						totalEarnings = totalEarnings + unitSalesPrice * itemCount
+						totalItemsSold = totalItemsSold + itemCount		
 
-					self.slotTable[slotId] = GetContainerItemID( self.bagSlot, slotId )
-				end -- end if slot ~= nil
+						self.slotTable[slotId] = GetContainerItemID( self.bagSlot, slotId )
+					end
+				end
 			end -- end for loop
 		end
 	end

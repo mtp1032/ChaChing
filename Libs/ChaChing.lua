@@ -20,6 +20,12 @@ local sprintf = _G.string.format
 -----------------------------------------------------------------------------------------------------------
 --                      ADDON INFO AND METHODS
 -----------------------------------------------------------------------------------------------------------
+CHACHING_SAVED_VARS = { 
+	true,									-- [1] sellGrey
+	false,									-- [2] sellWhite
+	{},										-- [3] exclusionTable
+	false									-- [4] isInitialized
+}
 
 --						The infoTable and its indices
 local infoTable 	= { GetBuildInfo() }

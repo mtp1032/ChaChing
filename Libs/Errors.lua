@@ -12,13 +12,13 @@ local E = errors
 local sprintf = _G.string.format
 
 --                      Error messages associated with function parameters
-STATUS_SUCCESS 	=  1
-STATUS_FAILURE	= -1
+CHACHING_STATUS_SUCCESS		=  1
+CHACHING_STATUS_FAILURE		= -1
 
 --                      The Result Table
-SUCCESSFUL_RESULT   = { STATUS_SUCCESS, nil, nil }
-DEFAULT_RESULT      = { STATUS_SUCCESS, nil, nil }
-FAILED_RESULT       = { STATUS_FAILURE, nil, nil }
+CHACHING_SUCCESSFUL_RESULT	= { CHACHING_STATUS_SUCCESS, nil, nil }
+CHACHING_DEFAULT_RESULT		= { CHACHING_STATUS_SUCCESS, nil, nil }
+CHACHING_FAILED_RESULT		= { CHACHING_STATUS_FAILURE, nil, nil }
 
 local errorMsgFrame = nil
 
@@ -91,14 +91,14 @@ local function showMeter()
 end
 -- **********************************************************************************************
 --                      SET A RESULT TABLE WHEN A CHECK FAILES
--- result[1] : STATUS_FAILURE
+-- result[1] : CHACHING_STATUS_FAILURE
 -- result[2] : error message with concatenated filename and line number 
 --             (e.g., ARG_C_NIL: at [File.lua:9])
 -- result[3] : stack trace from debugstack()
 -- **********************************************************************************************
 function errors:setErrorResult( errorMsg, stackTrace )
     local stackTrace = simplifyStackTrace( stackTrace )
-    local result = { STATUS_FAILURE, errorMsg, stackTrace }
+    local result = { CHACHING_STATUS_FAILURE, errorMsg, stackTrace }
 	return result
 end
 function errors:postResult( result )
@@ -145,7 +145,13 @@ local function getFileAndLineNo( stackTrace )
 end
 
 -- This method prints the FileAndLine result to the default message frame
-function errors.where( msg )
-	local stackTrace = debugstack(2)
-	DEFAULT_CHAT_FRAME:AddMessage( getFileAndLineNo( stackTrace ))
+function errors:where( msg )
+	local prefix = getFileAndLineNo(debugstack(2))
+	local s
+	if msg ~= nil then
+		s = sprintf("%s %s\n", prefix, msg )
+	else
+		s= sprintf("%s\n", prefix )
+	end
+	DEFAULT_CHAT_FRAME:AddMessage( s )
 end

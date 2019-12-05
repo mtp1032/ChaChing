@@ -11,22 +11,22 @@ local E = errors
 local sprintf = _G.string.format
 
 -- indices into the itemInfo table - the table returned by GetContainerItemInfo()
-SLOTINFO_TEXTURE		= 1  -- number
-SLOTINFO_ITEM_COUNT		= 2  -- number
-SLOTINFO_IS_LOCKED		= 3  -- boolean
-SLOTINFO_QUALITY		= 4  -- number
-SLOTINFO_READABLE		= 5  -- boolean
-SLOTINFO_LOOTABLE		= 6  -- boolean
-SLOTINFO_ITEM_LINK		= 7  -- string
-SLOTINFO_IS_FILTERED	= 8  -- boolean
-SLOTINFO_OF_NOVALUE		= 9  -- boolean
-SLOTINFO_ITEMID			= 10 -- number
+local SLOTINFO_TEXTURE		= 1  -- number
+local SLOTINFO_ITEM_COUNT		= 2  -- number
+local SLOTINFO_IS_LOCKED		= 3  -- boolean
+local SLOTINFO_QUALITY		= 4  -- number
+local SLOTINFO_READABLE		= 5  -- boolean
+local SLOTINFO_LOOTABLE		= 6  -- boolean
+local SLOTINFO_ITEM_LINK		= 7  -- string
+local SLOTINFO_IS_FILTERED	= 8  -- boolean
+local SLOTINFO_OF_NOVALUE		= 9  -- boolean
+local SLOTINFO_ITEMID			= 10 -- number
 
 --------------------------------------------------------------------------------------------------
 --                      Internal validation methods
 --------------------------------------------------------------------------------------------------
 local function validateSlotId (slotId, totalSlots )
-    local result = DEFAULT_RESULT
+    local result = CHACHING_DEFAULT_RESULT
 
 	if slotId == nil then
         return E:setErrorResult(L["ARG_NIL"], debugstack() )
@@ -43,7 +43,7 @@ local function validateSlotId (slotId, totalSlots )
     return result
 end
 local function validateBagSlot( bagSlot )
-    local result = DEFAULT_RESULT
+    local result = CHACHING_DEFAULT_RESULT
 
     if bagSlot == nil then 
         return E:setErrorResult(L["ARG_NIL"], debugstack() )
@@ -84,12 +84,12 @@ function Slot:_init(bagSlot, slotId )
 	self.is_a 		= "IS_INVENTORY_SLOT"
 	self.slotId		= slotId
     self.bagSlot 	= bagSlot
-	self.result 	= SUCCESSFUL_RESULT
+	self.result 	= CHACHING_SUCCESSFUL_RESULT
 
 	local totalSlots = GetContainerNumSlots( bagSlot )			-- BLIZZ
 	local numFreeSlots = GetContainerNumFreeSlots( bagSlot )		-- BLIZZ
 	self.result  = validateSlotId( slotId, totalSlots )
-	if self.result[1] ~= STATUS_SUCCESS then
+	if self.result[1] ~= CHACHING_STATUS_SUCCESS then
         return
     end
 	self.slotInfo 	=  { GetContainerItemInfo( self.bagSlot, self.slotId ) } -- BLIZZ 
@@ -100,7 +100,6 @@ function Slot:_init(bagSlot, slotId )
 
 	self.item = Item(self.slotInfo[SLOTINFO_ITEM_LINK])
 end
-
 
 -----------------------------------------------------------------------------------------------------
 --                                          CLASS METHODS
