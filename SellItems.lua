@@ -42,7 +42,7 @@ local function insertIntoExclusionTable( itemLink )
 end
 local function itemIsOnExclusionTable( itemLink )
 	local itemName = GetItemInfo( itemLink )
-	for key, value in pairs( CACHING_SAVED_VARS[3] ) do
+	for key, value in pairs( CHACHING_SAVED_VARS[3] ) do
 		if value == itemName then
 			return true
 		end
