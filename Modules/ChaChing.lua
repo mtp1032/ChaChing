@@ -35,10 +35,6 @@ local BUILD_NUMBER 	= 2
 local BUILD_DATE 	= 3
 local TOC_VERSION 	= 4
 
-local ADDON_NAME = "ChaChing V 2.0"
-function cc:getAddonName()
-    return ADDON_NAME
-end
 function cc:getGameVersion()           -- e.g., 8.1.0
     return infoTable[VERSION]
 end

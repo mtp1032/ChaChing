@@ -32,6 +32,7 @@ if LOCALE == "enUS" then
 	L["LEFT_CLICK_FOR_OPTIONS_MENU"] 				= "Left click to display options menu." 
 	L["RIGHT_CLICK_SHOW_EXCLUSION_TABLE"]			= "Right click to display list of excluded items."
 	L["SHIFT_RIGHT_CLICK_DELETE_EXCLUSION_TABLE"]	= "Shift-Right click to remove all excluded items."
+	L["ADDON_LOADED_MESSAGE"]						= L["ADDON_NAME_AND_VERSION"].." loaded (/cc for help)."
 
     L["TOOLTIP_CHECK_WHITE_BTN"] = "Sell only common (white) quality weapon and armor items in your inventory."
 	L["LABEL_WHITE_CHECKBTN"] = "Sell White."

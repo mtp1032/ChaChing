@@ -36,7 +36,7 @@ function Base:_init(...)
 	self.creationTimestamp = debugprofilestop()
 	self.clientBuildNumber 	= cc:getGameBuildNumber()
 	self.clientBuildDate 	= cc:getBuildDate()
-	self.addonName 			= cc:getAddonName()
+	self.addonName 			= L["ADDON_NAME"]
 	self.addonTOC	 		= cc:getAddonTOC()
 	self.gameVersion 		= cc:getGameVersion()
 end

@@ -62,3 +62,4 @@ local eventFrame = CreateFrame("Frame" )
 		if event == "PLAYER_LOGOUT" then
 		end
 	end)
+DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_LOADED_MESSAGE"], 1.0, 1.0, 0)
