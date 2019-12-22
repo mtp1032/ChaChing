@@ -24,9 +24,7 @@ local sellGrey 			= CHACHING_SAVED_VARS[1]
 local sellWhite 		= CHACHING_SAVED_VARS[2]
 local exclusionTable 	= CHACHING_SAVED_VARS[3]
 
-
 local isBagChecked = {false, false, false, false, false}
-
 local listFrame = mf:getListFrame()
 ----------------------------------------------------------
 --						EXCLUSION TABLE OPERATIONS
@@ -36,8 +34,6 @@ local function insertIntoExclusionTable( itemLink )
 		return
 	end
 	local itemName = GetItemInfo( itemLink )
-	errors:where( itemName.." inserted into exclusion table")
-	--table.insert( exclusionTable, itemName )
 	table.insert( CHACHING_SAVED_VARS[3], itemName )
 end
 local function itemIsOnExclusionTable( itemLink )
@@ -49,12 +45,38 @@ local function itemIsOnExclusionTable( itemLink )
 	end
 	return false
 end
-local function showExclusionTable()
+function si:clearExclusionTable()
 	if listFrame:IsVisible() == true then
 		listFrame:Hide()
 	end
 
-	if CHACHING_SAVED_VARS[1] == nil then
+	if CHACHING_SAVED_VARS[3][1] == nil then
+		listFrame.Text:EnableMouse( false )    
+		listFrame.Text:EnableKeyboard( false )   
+		listFrame.Text:SetText("") 
+		listFrame.Text:ClearFocus()
+	else
+			-- Clear all items from the table
+		local items = #CHACHING_SAVED_VARS[3]
+		for i = 1, items do
+			CHACHING_SAVED_VARS[3][i] = nil
+		end
+
+		listFrame.Text:EnableMouse( false )    
+		listFrame.Text:EnableKeyboard( false )   
+		listFrame.Text:SetText("") 
+		listFrame.Text:ClearFocus()
+	end
+	local str = sprintf("The Exclusion Item Table Is Empty.\n")
+	listFrame.Text:Insert( str )
+	listFrame:Show()
+end
+function si:showExclusionTable()
+	if listFrame:IsVisible() == true then
+		listFrame:Hide()
+	end
+
+	if CHACHING_SAVED_VARS[3][1] == nil then
 		listFrame.Text:EnableMouse( false )    
 		listFrame.Text:EnableKeyboard( false )   
 		listFrame.Text:SetText("") 
@@ -306,7 +328,7 @@ local function sellItems()
 	displayMsg( msg )
 end
 
--- Creates a button frame within the Merchant frame.
+-- Creates a button  and places it within the Merchant frame.
 
 local ButtonChaChing = CreateFrame( "Button" , "ChaChingBtn" , MerchantFrame, "UIPanelButtonTemplate" )
 ButtonChaChing:SetText("ChaChing")
@@ -316,18 +338,30 @@ ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
 
+function si:showOptionsMenu()
+	if listFrame:IsVisible() == true then
+		listFrame:Hide()
+	end
+	InterfaceOptionsFrame_OpenToCategory("ChaChing")
+	InterfaceOptionsFrame_OpenToCategory("ChaChing")
+end
 -----------------------------------------------------------------------------------------------------
 --					COMMAND LINE OPTIONS
 ----------------------------------------------------------------------------------------------------
 
-local helpStr =   sprintf("/cc help - This message.")
+local helpStr 	= sprintf("/cc help - This message.")
 local configStr = sprintf("  /cc config - Display the ChaChing Interface Options Menu.")
-local showStr =   sprintf("  /cc showtable - List the items in the Exclusion Table.")
+local showStr 	= sprintf("  /cc showItems - List the items in the Exclusion Table.")
+local clearStr	= sprintf("  /cc clearItems - Clear all items from the Exclusion Table.")
+
+-- System color - Yellow
+local RED = 1.00
+local GREEN = 1.00
+local BLUE = 0.00
 
 local CR = sprintf("\n")
 SLASH_CHACHING_HELP1 = "/chaching"
-SLASH_CHACHING_HELP2 = "/cha"
-SLASH_CHACHING_HELP3 = "/cc"
+SLASH_CHACHING_HELP2 = "/cc"
 SlashCmdList["CHACHING_HELP"] = function( msg )
 
 	-- message("This is a message.")
@@ -336,21 +370,19 @@ SlashCmdList["CHACHING_HELP"] = function( msg )
 	if inputStr == nil or inputStr == "" or inputStr == "help" then
 		DEFAULT_CHAT_FRAME:AddMessage(CR)
 		DEFAULT_CHAT_FRAME:AddMessage("COMMAND LINE OPTIONS:")
-		DEFAULT_CHAT_FRAME:AddMessage(helpStr)
-		DEFAULT_CHAT_FRAME:AddMessage(configStr)
-		DEFAULT_CHAT_FRAME:AddMessage(showStr)
+		DEFAULT_CHAT_FRAME:AddMessage(helpStr, RED, GREEN, BLUE )
+		DEFAULT_CHAT_FRAME:AddMessage(configStr, RED, GREEN, BLUE)
+		DEFAULT_CHAT_FRAME:AddMessage(showStr, RED, GREEN, BLUE)
+		DEFAULT_CHAT_FRAME:AddMessage(clearStr, RED, GREEN, BLUE)
 		DEFAULT_CHAT_FRAME:AddMessage(CR)
 
 	elseif inputStr == "config" then
-		InterfaceOptionsFrame_OpenToCategory("ChaChing")
-		InterfaceOptionsFrame_OpenToCategory("ChaChing")
-		InterfaceOptionsFrame_OpenToCategory("ChaChing")
-
-	elseif inputStr == "showtable" then
-		showExclusionTable()
+		si:showOptionsMenu()
+	elseif inputStr == "showitems" then
+		si:showExclusionTable()
+	elseif inputStr == "clearitems" then
+		si:clearExclusionTable()
 	else
-		-- System message color - Yellow
-
 		local errStr = sprintf("[INVALID SLASH COMMAND OPTION]\n\n\'%s\'", msg )
 		UIErrorsFrame:AddMessage( errStr, RED, GREEN, BLUE, 1, DISPLAY_TIME )
 		errStr = sprintf("[INVALID SLASH COMMAND OPTION] \'%s\'", msg )
