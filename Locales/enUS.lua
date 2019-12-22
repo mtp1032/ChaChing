@@ -3,10 +3,6 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 28 December, 2018
 ----------------------------------------------------------------------------------------
-
--- local _, MTP = ...
--- MTP.enUS = {}
--- local sprintf = _G.string.format
 local _, ChaChing = ...
 ChaChing.enUS = {}
 us = ChaChing.enUS
@@ -18,6 +14,7 @@ local L = setmetatable({}, { __index = function(t, k)
 end })
 
 ChaChing.L = L
+local sprintf = _G.string.format
 
 -- English translations
 local LOCALE = GetLocale()      -- BLIZZ
@@ -26,8 +23,9 @@ if LOCALE == "enUS" then
 --      EXAMPLE USAGE:
 
     -- ChaChing Strings
-    L["ADDON_NAME"] = "ChaChing"
-	L["ADDON_NAME_AND_VERSION"] 					= "ChaChing Version 3.2"
+    L["ADDON_NAME"]                                 = "ChaChing"
+    L["VERSION"]                                    =  "V3.2"
+	L["ADDON_NAME_AND_VERSION"] 					= sprintf("%s %s", L["ADDON_NAME"], L["VERSION"])
 	L["DESCR_SUBHEADER"] 							= "Enables the bulk selling of selected items in player's inventory."
 	L["LEFT_CLICK_FOR_OPTIONS_MENU"] 				= "Left click to display options menu." 
 	L["RIGHT_CLICK_SHOW_EXCLUSION_TABLE"]			= "Right click to display list of excluded items."
