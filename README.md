@@ -1,6 +1,6 @@
 ChaChing
 
-CURRENT VERSION 3.0
+CURRENT VERSION 3.2
 
 DESCRIPTION:
 ChaChing is another AddOn that permits a player to sell items in bulk. To this end, ChaChing supports the following options
@@ -16,6 +16,7 @@ You may access ChaChing's interface options menu in two ways:
 
 (1) Press ESC to call up Blizzard's in-game menu, click on the [Interface Options] tab, click the [AddOns] tab, and then select ChaChing from the list of AddOn. 
 (2) Issue the "/cc config" command in the game's Chat box.
+(3) Via the MiniMap button (picture of Gold coins)
 
 The following options are available:
 
