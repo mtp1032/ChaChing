@@ -50,6 +50,7 @@ local eventFrame = CreateFrame("Frame" )
 			if CHACHING_SAVED_VARS[4] == false then
 				CHACHING_SAVED_VARS[4] = true
 			end
+			DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_LOADED_MESSAGE"], 1.0, 1.0, 0)
 		end
 		
 		if event == "PLAYER_LOGIN" then
@@ -62,4 +63,3 @@ local eventFrame = CreateFrame("Frame" )
 		if event == "PLAYER_LOGOUT" then
 		end
 	end)
-DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_LOADED_MESSAGE"], 1.0, 1.0, 0)
