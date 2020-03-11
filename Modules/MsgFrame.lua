@@ -91,24 +91,21 @@ local function createSelectButton( f )
     f.selectButton = selectButton
 end
 
-local function createResetButton( parentFrame )
-    local resetButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
-    resetButton:SetPoint("BOTTOM", 160, 10)
-    resetButton:SetHeight(25)
-    resetButton:SetWidth(120)
-    resetButton:SetText("Remove Entries")
-    resetButton:SetScript("OnClick", 
+local function createRemoveButton( parentFrame )
+    local removeButton = CreateFrame("Button", nil, parentFrame, "UIPanelButtonTemplate")
+    removeButton:SetPoint("BOTTOM", 160, 10)
+    removeButton:SetHeight(25)
+    removeButton:SetWidth(120)
+    removeButton:SetText("Remove Entries")
+    removeButton:SetScript("OnClick", 
         function(self)
             self:GetParent().Text:EnableMouse( false )    
             self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
 			self:GetParent().Text:ClearFocus()
-				local items = #exclusionTable
-				for i = 1, items do
-					exclusionTable[i] = nil
-				end
+			si:clearExclusionTable()
            end)
-    parentFrame.resetButton = resetButton
+    parentFrame.removeButton = removeButton
 end
 
 local function createDismissButton( parentFrame )
@@ -184,7 +181,7 @@ end
 
 local function createListFrame()
     local f = createTopFrame("ChaChing Excluded Items", 500, 300 )
-    createResetButton(f)
+    createRemoveButton(f)
     createDismissButton(f)
     createTextDisplay(f)
     return f
