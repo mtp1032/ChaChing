@@ -67,9 +67,7 @@ function si:clearExclusionTable()
 		listFrame.Text:SetText("") 
 		listFrame.Text:ClearFocus()
 	end
-	local str = sprintf("The Exclusion Item Table Is Empty.\n")
-	listFrame.Text:Insert( str )
-	listFrame:Show()
+	ReloadUI()
 end
 function si:showExclusionTable()
 	if listFrame:IsVisible() == true then
