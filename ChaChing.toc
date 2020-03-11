@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 11304
 ## Title: ChaChing
 ## Version: 3.2
 ## Notes: Supports the bulk sales of classes of items
