@@ -15,7 +15,7 @@ ChaChing is a yet another addOn permitting a player to sell items in bulk. To th
     (3) Sell all items, regardless of type or quality, by selecting a bag from which 
     ALL items within that bag will be sold. 
 
-NOTE 1: if an item is on the excluded list and in a checked bag, the item WILL NOT BE SOLD.
+NOTE 1: if an item is on the excluded list and in a checked bag, the item WILL NOT BE SOLD. 
 NOTE 2: The ChaChing filters DO NOT apply to items you sell manually (by right-clicking on
         an item in your bag). If you have a fishing pole configured to be excluded and you
         inadvertantly click the item in your bag, the merchant will still buy it.
