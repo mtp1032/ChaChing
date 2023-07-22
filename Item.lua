@@ -14,7 +14,7 @@ local SUCCESS 			= core.SUCCESS
 local FAILURE 			= core.FAILURE
 local EMPTY_STR 		= core.EMPTY_STR
 
-local GetBagName 				= _G.C_Container.GetBagName
+local GetBagName 				= _G.C_Container.GetBagName 
 local GetContainerItemID 		= _G.C_Container.GetContainerItemID
 local GetContainerItemInfo 		= _G.C_Container.GetContainerItemInfo
 local GetContainerItemLink 		= _G.C_Container.GetContainerItemLink
@@ -25,10 +25,6 @@ local ContainerIDToInventoryID	= _G.C_Container.ContainerIDToInventoryID
 
 local QUALITY_POOR 		= 0
 local QUALITY_COMMON 	= 1
-
-local ITEM_TYPE_WEAPON	= 2
-local ITEM_TYPE_ARMOR	= 4
-
 ------------------------------------------------------------
 --						SAVED VARS
 ------------------------------------------------------------
@@ -37,8 +33,32 @@ CHACHING_EXCLUSION_LIST = nil
 
 local chachingListFrame = mf:createListFrame("Excluded Items")
 local excludedItemsList = {}
-local bagTable = {}
+local freeSlots = {}
 
+function item:uncheckAllBags()
+	for i = 0, 4 do
+		local bagName = GetBagName( i )
+		if bagName ~= nil then
+			freeSlots[i+1] = false
+		end
+	end
+	DEFAULT_CHAT_FRAME:AddMessage( sprintf("All bags set to default."), 0, 1, 0)
+end
+function item:setBagChecked( bagName, bagSlot )
+	if core:debuggingIsEnabled() then
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been checked.", bagName), 0, 1, 0)
+	end
+end
+function item:setBagUnchecked( bagName, bagSlot )
+	if core:debuggingIsEnabled() then
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been unchecked", bagName), 0, 1, 0)
+	end
+end
+
+function item:bagIsChecked( bagSlot )
+	local index = bagSlot + 1
+	return freeSlots[index]
+end
 function item:setGreyChecked( isChecked )
 	CHACHING_SAVED_OPTIONS.sellGrey = isChecked
 	if core:debuggingIsEnabled() then
@@ -100,33 +120,6 @@ function item:itemIsExcluded( itemName )
 		end
 	end
 	return false
-end
-function item:initBagTable()
-	for i = 0, 4 do
-		local bagName = GetBagName( i )
-		if bagName == nil then 
-			bagTable[i] = nil
-		else
-			bagTable[i] = false
-		end
-	end
-	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("The %s's bags have been set to false.", L["ADDON_NAME"]), 0, 1, 0)
-	end
-end
-function item:setBagChecked( bagSlot )
-	local bagName = GetBagName( bagSlot )
-	if bagName == nil then return end
-
-	local index = bagSlot + 1
-	bagTable[index] = true
-	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s is checked. All items will be sold.", bagName), 0, 1, 0)
-	end
-end
-function item:bagIsChecked( bagSlot )
-	local index = bagSlot + 1
-	return bagTable[index]
 end
 local function getSalesAttributes( bagSlot, slot )
 
@@ -194,7 +187,9 @@ local function sellWhiteItems()
 	return totalEarnings, totalItemsSold
 end
 local function sellAllItemsInBag( bagSlot )
-	if not bagTable[bagSlot + 1] then return 0, 0 end
+	print( dbg:prefix(), freeSlots[bagSlot + 1])
+	if not freeSlots[bagSlot + 1] then return 0, 0 end
+	print( dbg:prefix(), freeSlots[bagSlot + 1])
 
     local totalEarnings = 0
     local totalItemsSold = 0
