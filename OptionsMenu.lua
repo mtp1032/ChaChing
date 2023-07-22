@@ -146,19 +146,15 @@ local function createBagIcon( f, bagName, caption, bagSlot )
 	iconFrame:SetScript("OnClick", 
 	function ( self, iconFrame )
 		if iconFrame == "LeftButton" and not IsShiftKeyDown() then
-			print( dbg:prefix(), bagSlot )
 			item:setBagChecked( bagSlot )
 		end
 		if iconFrame == "RightButton" and not IsShiftKeyDown() then
-			print( dbg:prefix(), bagSlot )
 			item:clearBagChecked( bagSlot )
 		end
 		if iconFrame == "LeftButton" and IsShiftKeyDown() then
-			print( dbg:prefix(), iconFrame.BagSlot )
 			item:uncheckAllBags( bagSlot )
 		end
 		if iconFrame == "RightButton" and IsShiftKeyDown() then
-			print( dbg:prefix(), bagSlot )
 			item:clearBagChecked( bagSlot )
 		end
 	end)
@@ -296,9 +292,6 @@ function options:showOptionsPanel()
 		optionsPanal = createOptionsPanel()
 	end
 
-	sellGrey = CHACHING_SAVED_OPTIONS.sellGrey
-	sellWhite = CHACHING_SAVED_OPTIONS.sellWhite
-
 	for i = 0, 4 do
 		local bagSlot = i
 		local bagName = C_Container.GetBagName( i )
@@ -310,7 +303,6 @@ function options:showOptionsPanel()
 			optionsPanel.BagIcons[i+1].message:Show()
 			local xPos = optionsPanel.BagIcons[i+1].xPos
 			local yPos = optionsPanel.BagIcons[i+1].yPos
-			print( dbg:prefix(), sprintf("%s: xPos %d, yPos %d", bagName, xPos, yPos ))
 		end
 	end
 	optionsPanel:Show()

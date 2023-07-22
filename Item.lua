@@ -187,9 +187,7 @@ local function sellWhiteItems()
 	return totalEarnings, totalItemsSold
 end
 local function sellAllItemsInBag( bagSlot )
-	print( dbg:prefix(), freeSlots[bagSlot + 1])
 	if not freeSlots[bagSlot + 1] then return 0, 0 end
-	print( dbg:prefix(), freeSlots[bagSlot + 1])
 
     local totalEarnings = 0
     local totalItemsSold = 0
@@ -270,13 +268,9 @@ function( self, event, ... )
 
 		if CHACHING_EXCLUSION_LIST == nil then
 			CHACHING_EXCLUSION_LIST = {}
-			print( dbg:prefix(), type(CHACHING_EXCLUSION_LIST) )
 		end
 
 		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
 		eventFrame:UnregisterEvent( "ADDON_LOADED")
 	end
 end)
-
--- 	btn.lable = sprintf("%s: %d free slots.", bagName, freeSlots )
-
