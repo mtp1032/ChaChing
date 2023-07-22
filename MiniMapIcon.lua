@@ -33,8 +33,8 @@ local ChaChingDB = LibStub("LibDataBroker-1.1"):NewDataObject(L["ADDON_NAME"],
 		OnClick = function(self, button ) 
 			-- LEFT CLICK - Displays the options menu
 			if button == "LeftButton" and not IsShiftKeyDown() then
-				options:showOptionsPanel()
 				OpenAllBags()
+				options:showOptionsPanel()
 			end
 			-- RIGHT CLICK - Displays a list of excluded items
 			if button == "RightButton" and not IsShiftKeyDown() then
