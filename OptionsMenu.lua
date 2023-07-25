@@ -19,6 +19,7 @@ local GreyQualityButton = nil
 local WhiteQualityButton = nil
 
 local optionsPanel = nil
+local InventoryBags = {}
 
 local LINE_SEGMENT_LENGTH = 575
 local X_START_POINT = 10
@@ -92,11 +93,11 @@ local function createBagCheckBox( frame, bagSlot, xPos, yPos )
 		end)
 end -- end of OnClick
 
-local function createBagIcon( f, bagName, caption, bagSlot )
+local function createBagIcon( f, bagSlot, caption )
 
 	local iconFrame = CreateFrame("Button","CHACHING_BagButton", f,"TooltipBackdropTemplate")
 
-	iconFrame.BagName 		= bagName
+	iconFrame.BagName 		= C_Container.GetBagName( bagSlot )
 	iconFrame.BagSlot 		= bagSlot
 	iconFrame.BagIndex 		= bagSlot + 1
 	iconFrame.NumFreeSlots	= C_Container.GetContainerNumFreeSlots(bagSlot)
@@ -107,7 +108,6 @@ local function createBagIcon( f, bagName, caption, bagSlot )
 	else
 		iconFrame.IconFileId = GetItemIcon( iconFrame.BagName )
 	end
-
 	iconFrame.tooltip = L["BAG_TOOLTIP"]
 	iconFrame:SetSize( BUTTON_WIDTH, BUTTON_HEIGHT )
 
@@ -140,23 +140,6 @@ local function createBagIcon( f, bagName, caption, bagSlot )
 	iconFrame.Mask:SetPoint("BOTTOMRIGHT",iconFrame.Texture,"BOTTOMRIGHT")
 	iconFrame.Mask:SetTexture("Interface\\Common\\common-iconmask.blp")
 	iconFrame.Texture:AddMaskTexture(iconFrame.Mask)
-
-	-- iconFrame:RegisterForClicks("LeftButtonDown", "RightButtonDown" )
-	iconFrame:SetScript("OnClick", 
-	function ( self, iconFrame )
-		if iconFrame == "LeftButton" and not IsShiftKeyDown() then
-			item:setBagChecked( bagSlot )
-		end
-		if iconFrame == "RightButton" and not IsShiftKeyDown() then
-			item:clearBagChecked( bagSlot )
-		end
-		if iconFrame == "LeftButton" and IsShiftKeyDown() then
-			item:uncheckAllBags( bagSlot )
-		end
-		if iconFrame == "RightButton" and IsShiftKeyDown() then
-			item:clearBagChecked( bagSlot )
-		end
-	end)
 	return iconFrame
 end
 local function createOptionsPanel()
@@ -221,17 +204,16 @@ local function createOptionsPanel()
 	showGreyWhiteCheckBoxes( frame, -80 )
 	-- drawLine( 150, frame )
 
-	frame.BagIcons = {}	
+	frame.IconFrames = {}	
 	for i = 0, 4 do
 		local bagName = C_Container.GetBagName( i )
 		if bagName ~= nil then
 			local freeSlots = C_Container.GetContainerNumFreeSlots( i )
 			local caption = sprintf("%s: %d available slots.", bagName, freeSlots )
-			local iconFrame = createBagIcon( frame, bagName, caption, i  )
-			frame.BagIcons[i + 1] = iconFrame
+			local iconFrame = createBagIcon( frame, i, caption  )
+			frame.IconFrames[i + 1] = iconFrame
 		end
 	end
-
 	-- Defaults buttom, bottom left
 	frame.hide = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.hide:SetText("Default")
@@ -299,11 +281,10 @@ function options:showOptionsPanel()
 		if bagName ~= nil then
 			local freeSlots = C_Container.GetContainerNumFreeSlots(i)
 			local caption = sprintf("%s: %d available slots.", bagName, freeSlots)
-			optionsPanel.BagIcons[i+1].message:Hide()
-			optionsPanel.BagIcons[i+1].message:SetText( caption )
-			optionsPanel.BagIcons[i+1].message:Show()
-			local xPos = optionsPanel.BagIcons[i+1].xPos
-			local yPos = optionsPanel.BagIcons[i+1].yPos
+			local iconFrame = optionsPanel.IconFrames[i+1]
+			iconFrame.message:Hide()
+			iconFrame.message:SetText( caption )
+			iconFrame.message:Show()
 		end
 	end
 	optionsPanel:Show()
@@ -313,7 +294,7 @@ function options:hideOptionsPanel()
 end
 
 local eventFrame = CreateFrame("Frame" )
-eventFrame:RegisterEvent("BAG_UPDATE")				-- bagID
+eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")				-- bagID
 eventFrame:RegisterEvent("MERCHANT_CLOSED")
 eventFrame:RegisterEvent("ADDON_LOADED")
 
@@ -322,12 +303,30 @@ function( self, event, ... )
 	local arg1 = ...
 	-- Fires once per bag. Moving an item causes it to fire twice. Once when picked up
 	-- and once when dropped.
-	if event == "BAG_UPDATE" then
-		local bagSlot = ...
-		for bagSlot = 0, 4 do
-			local bagName = C_Container.GetBagName( bagSlot )
+	if event == "BAG_UPDATE_DELAYED" then
+		if not optionsPanel then
+			optionsPanel = createOptionsPanel()
+			optionsPanel:Hide()
+		end
+	
+		for i = 0, 4 do
+			local bagName = C_Container.GetBagName( i )
 			if bagName ~= nil then
-				-- DEFAULT_CHAT_FRAME:AddMessage( sprintf("[%s] %s updated.", event, bagName ), 0, 1, 0)
+				local freeSlots = C_Container.GetContainerNumFreeSlots(i)
+				local caption = sprintf("%s: %d available slots.", bagName, freeSlots)
+				local iconFrame = optionsPanel.IconFrames[i+1]
+				iconFrame.message:Hide()
+				iconFrame.message:SetText( caption )
+				iconFrame.message:Show()
+			else
+				-- check for ghost bags: bags that have been physically
+				-- removed from their slots, but ChaChing thinks that the bag
+				-- is still there.
+				local iconFrame = optionsPanel.IconFrames[i+1]
+				if iconFrame then
+					print( dbg:prefix(), iconFrame.BagName, "ghost bag")
+					iconFrame:Hide() 
+				end
 			end
 		end
 	end
