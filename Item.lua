@@ -249,28 +249,28 @@ ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
 
-local eventFrame = CreateFrame("Frame" )
-eventFrame:RegisterEvent("ADDON_LOADED")
+-- local eventFrame = CreateFrame("Frame" )
+-- eventFrame:RegisterEvent("ADDON_LOADED")
 
-eventFrame:SetScript("OnEvent", 
-function( self, event, ... )
-	local arg1 = ...
+-- eventFrame:SetScript("OnEvent", 
+-- function( self, event, ... )
+-- 	local arg1 = ...
 
-	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
+-- 	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
 
-		if CHACHING_SAVED_OPTIONS == nil then
-			CHACHING_SAVED_OPTIONS = {}
+-- 		if CHACHING_SAVED_OPTIONS == nil then
+-- 			CHACHING_SAVED_OPTIONS = {}
 
-			-- default options
-			CHACHING_SAVED_OPTIONS.sellGrey = true
-			CHACHING_SAVED_OPTIONS.sellWhite = false
-		end
+-- 			-- default options
+-- 			CHACHING_SAVED_OPTIONS.sellGrey = true
+-- 			CHACHING_SAVED_OPTIONS.sellWhite = false
+-- 		end
 
-		if CHACHING_EXCLUSION_LIST == nil then
-			CHACHING_EXCLUSION_LIST = {}
-		end
+-- 		if CHACHING_EXCLUSION_LIST == nil then
+-- 			CHACHING_EXCLUSION_LIST = {}
+-- 		end
 
-		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
-		eventFrame:UnregisterEvent( "ADDON_LOADED")
-	end
-end)
+-- 		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
+-- 		eventFrame:UnregisterEvent( "ADDON_LOADED")
+-- 	end
+-- end)
