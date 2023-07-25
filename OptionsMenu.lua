@@ -21,6 +21,8 @@ local sellAll = false
 local GreyQualityButton = nil
 local WhiteQualityButton = nil
 
+local optionsPanel = nil
+
 local LINE_SEGMENT_LENGTH = 575
 local X_START_POINT = 10
 local Y_START_POINT = 10
@@ -285,11 +287,10 @@ local function createOptionsPanel()
 
 	return frame   
 end
-local optionsPanel = createOptionsPanel()
 
 function options:showOptionsPanel()
-	if optionsPanel == nil then
-		optionsPanal = createOptionsPanel()
+	if not optionsPanel then
+		optionsPanel = createOptionsPanel()
 	end
 
 	for i = 0, 4 do
@@ -314,6 +315,8 @@ end
 local eventFrame = CreateFrame("Frame" )
 eventFrame:RegisterEvent("BAG_UPDATE")				-- bagID
 eventFrame:RegisterEvent("MERCHANT_CLOSED")
+eventFrame:RegisterEvent("ADDON_LOADED")
+
 eventFrame:SetScript("OnEvent", 
 function( self, event, ... )
 	local arg1 = ...
@@ -331,6 +334,25 @@ function( self, event, ... )
 	if event == "MERCHANT_CLOSED" then
 		optionsPanel:Hide()
 	end
+	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
+
+		if not CHACHING_SAVED_OPTIONS then
+			CHACHING_SAVED_OPTIONS = {}
+
+			-- default options
+			CHACHING_SAVED_OPTIONS = {true, false }
+			-- CHACHING_SAVED_OPTIONS.sellGrey = true
+			-- CHACHING_SAVED_OPTIONS.sellWhite = false
+		end
+
+		if CHACHING_EXCLUSION_LIST == nil then
+			CHACHING_EXCLUSION_LIST = {}
+		end
+
+		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
+		eventFrame:UnregisterEvent( "ADDON_LOADED")
+	end
+
 end)
 
 local fileName = "OptionsMenu.lua"
