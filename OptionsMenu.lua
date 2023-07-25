@@ -13,9 +13,6 @@ local SUCCESS 			= core.SUCCESS
 local FAILURE 			= core.FAILURE
 local EMPTY_STR 		= core.EMPTY_STR
 
-local sellGrey 	= true
-local sellWhite = false
-
 local sellAll = false
 
 local GreyQualityButton = nil
@@ -55,7 +52,7 @@ local function showGreyWhiteCheckBoxes( frame, yPos )
 	GreyQualityButton:SetPoint("TOPLEFT", 20, yPos )
     GreyQualityButton.tooltip = L["GREY_TOOLTIP"]
 	_G[GreyQualityButton:GetName().."Text"]:SetText("Sell Grey Items?" )
-	GreyQualityButton:SetChecked( sellGrey )
+	GreyQualityButton:SetChecked( CHACHING_SAVED_OPTIONS.sellGrey )
 	GreyQualityButton:SetScript("OnClick", 
 		function(self)
 			-- GetChecked() returns true if button is checked, false other wise
@@ -68,7 +65,7 @@ local function showGreyWhiteCheckBoxes( frame, yPos )
     WhiteQualityButton:SetPoint("TOPLEFT", 200, yPos)
     WhiteQualityButton.tooltip = L["WHITE_TOOLTIP"]
 	_G[WhiteQualityButton:GetName().."Text"]:SetText("Sell White (Common Quality) armor and weapon items?" )
-	WhiteQualityButton:SetChecked( sellWhite )
+	WhiteQualityButton:SetChecked( CHACHING_SAVED_OPTIONS.sellWhite )
 	WhiteQualityButton:SetScript("OnClick", 
 		function(self)
 			-- GetChecked() returns true if button is checked, false other wise
@@ -88,9 +85,9 @@ local function createBagCheckBox( frame, bagSlot, xPos, yPos )
 			local bagName = C_Container.GetBagName( bagSlot )
 			local sellAll = self:GetChecked() and true or false
 			if sellAll then
-				item:setBagChecked( bagName, bagSlot )
+				item:setBagChecked( bagSlot )
 			else
-				item:setBagUnchecked( bagName, bagSlot )
+				item:setBagUnchecked( bagSlot )
 			end
 		end)
 end -- end of OnClick
@@ -243,10 +240,11 @@ local function createOptionsPanel()
 	frame.hide:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 8, 8)
 	frame.hide:SetScript("OnClick",         
 		function(self)
+			frame:Hide()
 			CHACHING_SAVED_OPTIONS.sellGrey = true
 			CHACHING_SAVED_OPTIONS.sellWhite = false
-			item:setBagDefaults()
-			frame:Hide()
+			item:setGreyChecked( CHACHING_SAVED_OPTIONS.sellGrey )
+			item:setWhiteChecked( CHACHING_SAVED_OPTIONS.sellWhite )
 	end)
 
 	-- Accept buttom, bottom right
@@ -258,6 +256,8 @@ local function createOptionsPanel()
 	frame.hide:SetScript("OnClick",
 		function( self )
 			frame:Hide()
+			item:setGreyChecked( CHACHING_SAVED_OPTIONS.sellGrey )
+			item:setWhiteChecked( CHACHING_SAVED_OPTIONS.sellWhite )
 		end)
 
 	-- Create the Exclusion List Input Edit Box
@@ -340,10 +340,11 @@ function( self, event, ... )
 			CHACHING_SAVED_OPTIONS = {}
 
 			-- default options
-			CHACHING_SAVED_OPTIONS = {true, false }
-			-- CHACHING_SAVED_OPTIONS.sellGrey = true
-			-- CHACHING_SAVED_OPTIONS.sellWhite = false
+			CHACHING_SAVED_OPTIONS.sellGrey = true
+			CHACHING_SAVED_OPTIONS.sellWhite = false
 		end
+		item:setGreyChecked( CHACHING_SAVED_OPTIONS.sellGrey )
+		item:setWhiteChecked( CHACHING_SAVED_OPTIONS.sellWhite )
 
 		if CHACHING_EXCLUSION_LIST == nil then
 			CHACHING_EXCLUSION_LIST = {}
@@ -359,7 +360,3 @@ local fileName = "OptionsMenu.lua"
 if core:debuggingIsEnabled() then
 	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end
-
-
-
-

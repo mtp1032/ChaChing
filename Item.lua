@@ -28,46 +28,56 @@ local QUALITY_COMMON 	= 1
 ------------------------------------------------------------
 --						SAVED VARS
 ------------------------------------------------------------
-CHACHING_SAVED_OPTIONS = nil
-CHACHING_EXCLUSION_LIST = nil
-
 local chachingListFrame = mf:createListFrame("Excluded Items")
 local excludedItemsList = {}
-local freeSlots = {}
+local bagIsChecked = {}
+local sellGrey = true
+local sellWhite = false
+
+-- default state for bagIsChecked
+for i = 0, 4 do
+	local bagName = GetBagName( i )
+	if bagName ~= nil then
+		bagIsChecked[i+1] = false
+	end
+end
 
 function item:uncheckAllBags()
 	for i = 0, 4 do
 		local bagName = GetBagName( i )
 		if bagName ~= nil then
-			freeSlots[i+1] = false
+			bagIsChecked[i+1] = false
 		end
 	end
 	DEFAULT_CHAT_FRAME:AddMessage( sprintf("All bags set to default."), 0, 1, 0)
 end
-function item:setBagChecked( bagName, bagSlot )
-	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been checked.", bagName), 0, 1, 0)
-	end
-end
-function item:setBagUnchecked( bagName, bagSlot )
-	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been unchecked", bagName), 0, 1, 0)
-	end
-end
+function item:setBagChecked( bagSlot )
+	bagIsChecked[bagSlot+1] = true
 
+	if core:debuggingIsEnabled() then
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been checked.", GetBagName( bagSlot ) ), 0, 1, 0)
+	end
+end
+function item:setBagUnchecked( bagSlot )
+	bagIsChecked[bagSlot+1] = false
+
+	if core:debuggingIsEnabled() then
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been unchecked", GetBagName( bagSlot ) ), 0, 1, 0)
+	end
+end
 function item:bagIsChecked( bagSlot )
 	local index = bagSlot + 1
-	return freeSlots[index]
+	return bagIsChecked[index]
 end
 function item:setGreyChecked( isChecked )
-	CHACHING_SAVED_OPTIONS.sellGrey = isChecked
+	sellGrey = isChecked
 	if core:debuggingIsEnabled() then
 		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell Grey Items is %s.", 
 				tostring( isChecked )), 0, 1, 0)
 	end
 end
 function item:setWhiteChecked( isChecked )
-	CHACHING_SAVED_OPTIONS.sellWhite = isChecked
+	sellWhite = isChecked
 	if core:debuggingIsEnabled() then
 		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell White Items is %s.", 
 				tostring( isChecked )), 0, 1, 0)
@@ -134,7 +144,7 @@ local function getSalesAttributes( bagSlot, slot )
 	return itemQuality, itemCount, itemType, unitSalesPrice
 end
 local function sellGreyItems()
-	if not CHACHING_SAVED_OPTIONS.sellGrey then return 0, 0 end
+	if not sellGrey then return 0, 0 end
 
     local totalEarnings = 0
     local totalItemsSold = 0
@@ -156,7 +166,7 @@ local function sellGreyItems()
 	return totalEarnings, totalItemsSold
 end
 local function sellWhiteItems()
-	if not CHACHING_SAVED_OPTIONS.sellWhite then return 0, 0 end
+	if not sellWhite then return 0, 0 end
 
 	local totalEarnings = 0
     local totalItemsSold = 0
@@ -187,7 +197,7 @@ local function sellWhiteItems()
 	return totalEarnings, totalItemsSold
 end
 local function sellAllItemsInBag( bagSlot )
-	if not freeSlots[bagSlot + 1] then return 0, 0 end
+	if not bagIsChecked[bagSlot + 1] then return 0, 0 end
 
     local totalEarnings = 0
     local totalItemsSold = 0
@@ -210,12 +220,12 @@ local function sellItems()
 	local totalEarnings = 0
 	local totalItemsSold = 0
 
-	if CHACHING_SAVED_OPTIONS.sellGrey then 
+	if sellGrey then 
 		local earnings, itemsSold = sellGreyItems() 
 		totalEarnings = totalEarnings + earnings
 		totalItemsSold = totalItemsSold + itemsSold
 	end
-	if CHACHING_SAVED_OPTIONS.sellWhite then 
+	if sellWhite then 
 		local earnings, itemsSold = sellWhiteItems() 
 		totalEarnings = totalEarnings + earnings
 		totalItemsSold = totalItemsSold + itemsSold
@@ -248,29 +258,3 @@ ButtonChaChing:SetHeight(21)
 ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
-
--- local eventFrame = CreateFrame("Frame" )
--- eventFrame:RegisterEvent("ADDON_LOADED")
-
--- eventFrame:SetScript("OnEvent", 
--- function( self, event, ... )
--- 	local arg1 = ...
-
--- 	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
-
--- 		if CHACHING_SAVED_OPTIONS == nil then
--- 			CHACHING_SAVED_OPTIONS = {}
-
--- 			-- default options
--- 			CHACHING_SAVED_OPTIONS.sellGrey = true
--- 			CHACHING_SAVED_OPTIONS.sellWhite = false
--- 		end
-
--- 		if CHACHING_EXCLUSION_LIST == nil then
--- 			CHACHING_EXCLUSION_LIST = {}
--- 		end
-
--- 		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
--- 		eventFrame:UnregisterEvent( "ADDON_LOADED")
--- 	end
--- end)
