@@ -27,7 +27,9 @@ if LOCALE == "enUS" then
 
 	L["LEFT_CLICK_FOR_OPTIONS_MENU"] 				= ""
 	L["RIGHT_CLICK_SHOW_EXCLUSION_TABLE"] 			= ""
-	L["SHIFT_RIGHT_CLICK_DELETE_EXCLUSION_TABLE"]	= ""		
+	L["SHIFT_RIGHT_CLICK_DELETE_EXCLUSION_TABLE"]	= ""
+	L["AVAILABLE_SLOTS"] 	= "available slots. "
+	L["EXCLUDED"]			= "will be excluded. "
 
 
 	L["DESCR_SUBHEADER"] 							= "Enables the bulk selling of selected items in player's inventory."
