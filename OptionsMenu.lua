@@ -128,12 +128,10 @@ local function createBagIcon( f, bagSlot )
 	bagFrame:SetPoint( "LEFT", bagFrame.xPos, bagFrame.yPos )
 	createBagCheckBox( bagFrame, bagFrame.BagSlot, bagFrame.xPos, bagFrame.yPos )
 
-	local msg = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	msg:SetJustifyH("LEFT")
-	-- This positions the icon text
-	msg:SetPoint("LEFT", bagFrame.xPos + (BUTTON_WIDTH + 30), bagFrame.yPos )
-	msg:SetText( bagFrame.Caption )
-	bagFrame.message = msg
+	bagFrame.Caption = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	bagFrame.Caption:SetJustifyH("LEFT")
+	bagFrame.Caption:SetPoint("LEFT", bagFrame.xPos + (BUTTON_WIDTH + 30), bagFrame.yPos )
+	bagFrame.Caption:SetFormattedText("%s: %d %s", bagFrame.BagName, bagFrame.NumFreeSlots, L["AVAILABLE_SLOTS"] )
 
 	bagFrame.Texture = bagFrame:CreateTexture(nil,"ARTWORK")
 	bagFrame.Texture:SetPoint("TOPLEFT",3,-3)
@@ -179,7 +177,7 @@ local function createOptionsPanel()
 
 	frame.title = frame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	frame.title:SetPoint("TOP", 0, 4)
-	frame.title:SetText("ChaChing Options Menu")
+	frame.title:SetFormattedText("%s", "ChaChing Options Menu")
 
 	-- Title text
 	frame.text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
@@ -191,22 +189,17 @@ local function createOptionsPanel()
 	frame:SetSize( FRAME_WIDTH, FRAME_HEIGHT )
 
 	-------------------- INTRO HEADER -----------------------------------------
-	local subTitle = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-	local msgText = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-	local displayString = sprintf("%s", L["ADDON_NAME_AND_VERSION"] )
-	msgText:SetPoint("TOP", 0, -20)
-	msgText:SetText(displayString)
+	frame.Subtitle = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
+	frame.Subtitle:SetPoint("TOP", 0, -20)
+	frame.Subtitle:SetFormattedText("%s", L["ADDON_NAME_AND_VERSION"] )
 
 	-------------------- WARNING ---------------------------------------
+	frame.messageText = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
+	frame.messageText:SetJustifyH("LEFT")
+	frame.messageText:SetPoint("CENTER", 0, 150)
 	local str1 = sprintf("Checking any of these bag icons will cause %s to sell \n", L["ADDON_NAME"]  )
 	local str2 = sprintf("ALL items in the selected bag the next time you visit a merchant.")
-	local msgText = sprintf("%s%s\n", str1, str2 )
-
-	local messageText = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-	messageText:SetJustifyH("LEFT")
-	messageText:SetPoint("CENTER", 0, 150)
-	messageText:SetText( msgText )
-	frame.messageText = messageText
+	frame.messageText:SetFormattedText("%s%s\n", str1, str2 )
 
 	showGreyWhiteCheckBoxes( frame, -80 )
 	-- drawLine( 150, frame )
@@ -216,7 +209,6 @@ local function createOptionsPanel()
 		local bagName = C_Container.GetBagName( i )
 		if bagName ~= nil then
 			local freeSlots = C_Container.GetContainerNumFreeSlots( i )
-			local caption = sprintf("%s: %d %s.", bagName, freeSlots, L["AVAILABLE_SLOTS"] )
 			local bagFrame = createBagIcon( frame, i )
 			frame.Bags[i + 1] = bagFrame
 		end
@@ -250,15 +242,15 @@ local function createOptionsPanel()
 		end)
 
 	-- Create the Exclusion List Input Edit Box
-	local DescrSubHeader = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
-	DescrSubHeader:SetPoint("LEFT", 60, -250 )
-	DescrSubHeader:SetText("Excluded Item List" )
-	local f = CreateFrame("EditBox", "InputEditBox", frame, "InputBoxTemplate")
-	f:SetFrameStrata("DIALOG")
-	f:SetSize(200,75)
-	f:SetAutoFocus(false)
-	f:SetPoint("CENTER", 25, -250) 
-	f:SetScript("OnMouseUp", 
+	frame.DescrSubHeader = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
+	frame.DescrSubHeader:SetPoint("LEFT", 60, -250 )
+	frame.DescrSubHeader:SetText("Excluded Item List" )
+	frame.EditBox = CreateFrame("EditBox", "InputEditBox", frame, "InputBoxTemplate")
+	frame.EditBox:SetFrameStrata("DIALOG")
+	frame.EditBox:SetSize(200,75)
+	frame.EditBox:SetAutoFocus(false)
+	frame.EditBox:SetPoint("CENTER", 25, -250) 
+	frame.EditBox:SetScript("OnMouseUp", 
 		function(self,button)
 			cursorInfo, itemId, itemLink = GetCursorInfo()
 			if cursorInfo == "item" then
@@ -266,47 +258,40 @@ local function createOptionsPanel()
 				-- insert the name of the item, not the item link
 				item:addExcludedItem( itemName )
 				local s = sprintf("   %s %s", itemName, L["EXCLUDED"] )
-				f:SetText( s )	-- prints the item's name into the chat dialog box
+				frame.EditBox:SetText( s )	-- prints the item's name into the chat dialog box
 			else
-				f:SetText(EMPTY_STR)
+				frame.EditBox:SetText(EMPTY_STR)
 			end
 			ClearCursor()
 	end)
 
 	return frame   
 end
-local function updateOptionsPanel( bagSlot )	
+
+local function updateOptionsPanel()	
 	if not optionsPanel then
 		optionsPanel = createOptionsPanel()
 		optionsPanel:Hide()
 	end
-
 	for i = 0, 4 do
 		local bagName = C_Container.GetBagName( i )
 		if bagName ~= nil then
-			-- a bag is installed in this slot (i)
-			local freeSlots = C_Container.GetContainerNumFreeSlots(i)
-
 			-- ChaChing has marked this slot EMPTY, but Blizz says the slot is OCCUPIED.
-			-- We assume Blizz is correct so we need to createa bag Icon for this slot
+			-- We assume Blizz is correct so we need to create a bag Icon for this slot
 			-- and mark it as occupied,
 			if inventorySlot[i+1] == EMPTY then
 				optionsPanel.Bags[i+1] = createBagIcon( optionsPanel, i )
 				inventorySlot[i+1] = OCCUPIED
 			end
-			-- just update the bag's text
+			-- if the number of free slots has changed, then update the caption
 			local bag = optionsPanel.Bags[i+1]
+			local freeSlots = C_Container.GetContainerNumFreeSlots(i)
 
-			-- if the number of free slots has changed, then update the
-			-- caption
 			if bag.NumFreeSlots ~= freeSlots then
-				bag.message:Hide()
-	
-				bag.Caption = sprintf("%s: %d available slots.", bagName, freeSlots)
-				bag.message:SetText( bag.Caption )
-				bag.message:Show()
 				bag.NumFreeSlots = freeSlots
-				dbg:print(sprintf("%s updated.", bagName ))
+				bag.Caption = optionsPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
+				bag.Caption:SetFormattedText( "%s: %d %s", bag.BagName, freeSlots, L["AVAILABLE_SLOTS"] )
+				dbg:print(sprintf("%s: %d %s", bag.BagName, freeSlots, L["AVAILABLE_SLOTS"] ))
 			end
 			inventorySlot[i+1] = OCCUPIED		-- probably redundant
 		else 
@@ -337,11 +322,7 @@ function( self, event, ... )
 
 	-- Moving an item causes it to fire twice. Once when picked up
 	-- and once when dropped.
-	if event == "BAG_UPDATE" then
-		local bagSlot = arg1
-		updateOptionsPanel( bagSlot )
-	end
-	if event == "BAG_UPDATE_DELAYED" then
+	if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
 		updateOptionsPanel()
 	end
 	
