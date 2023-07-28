@@ -28,6 +28,9 @@ local QUALITY_COMMON 	= 1
 ------------------------------------------------------------
 --						SAVED VARS
 ------------------------------------------------------------
+CHACHING_EXCLUSION_LIST = nil
+CHACHING_SAVED_OPTIONS	= nil
+
 local chachingListFrame = mf:createListFrame("Excluded Items")
 local excludedItemsList = {}
 local bagIsChecked = {}
@@ -49,38 +52,37 @@ function item:uncheckAllBags()
 			bagIsChecked[i+1] = false
 		end
 	end
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("All bags set to default."), 0, 1, 0)
+	DEFAULT_CHAT_FRAME:AddMessage( sprintf("All bags not checked."), 0, 1, 0)
 end
 function item:setBagChecked( bagSlot )
 	bagIsChecked[bagSlot+1] = true
-
+	local bagName = C_Container.GetBagName( bagSlot )
 	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been checked.", GetBagName( bagSlot ) ), 0, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been checked.", bagName, 0, 1, 0))
 	end
 end
 function item:setBagUnchecked( bagSlot )
 	bagIsChecked[bagSlot+1] = false
+	local bagName = C_Container.GetBagName( bagSlot )
 
 	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been unchecked", GetBagName( bagSlot ) ), 0, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s has been unchecked", bagName ), 0, 1, 0)
 	end
 end
-function item:bagIsChecked( bagSlot )
+local function isBagChecked( bagSlot )
 	local index = bagSlot + 1
 	return bagIsChecked[index]
 end
 function item:setGreyChecked( isChecked )
 	sellGrey = isChecked
 	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell Grey Items is %s.", 
-				tostring( isChecked )), 0, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell Grey Items is %s.", tostring( isChecked )), 0, 1, 0)
 	end
 end
 function item:setWhiteChecked( isChecked )
 	sellWhite = isChecked
 	if core:debuggingIsEnabled() then
-		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell White Items is %s.", 
-				tostring( isChecked )), 0, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage( sprintf("Sell White Items is %s.", tostring( isChecked )), 0, 1, 0)
 	end
 end
 function item:addExcludedItem( itemName )
@@ -231,7 +233,7 @@ local function sellItems()
 		totalItemsSold = totalItemsSold + itemsSold
 	end
 	for i = 0, 4 do
-		if item:bagIsChecked( i ) then
+		if isBagChecked( i ) then
 			local earnings, itemsSold = sellAllItemsInBag( i )
 			totalEarnings = totalEarnings + earnings
 			totalItemsSold = totalItemsSold + itemsSold	
