@@ -21,8 +21,10 @@ NOTE 2: The ChaChing filters DO NOT apply to items you sell manually (by right-c
         inadvertantly click the item in your bag, the merchant will still buy it.
 
 USAGE:
-When a player opens a merchant window, ChaChing places a button at the top left of the window,[ChaChing]. When/if this button is clicked, ChaChing will vendor all of the items in the player's inventory as configured by the player. If, for example, bag[2] was configured as a "sell
- all" bag, ChaChing will sell all items in bag[2] in addition to all other configured items. 
+When a player opens a merchant window, ChaChing places a button at the top left of the window,[ChaChing]. 
+When/if this button is clicked, ChaChing will vendor all of the items in the player's inventory as 
+configured by the player. If, for example, bag[2] was configured as a "sell all" bag, ChaChing will 
+sell all items in bag[2] in addition to all other configured items. 
 
 SETTING OPTIONS:
 You may access ChaChing's interface options menu via ChaChing's minimap icon (a yellow $$ sign).
@@ -31,8 +33,12 @@ The following options are available:
 
 (a) Two checkboxes, [Sell Gray] and [Sell White] item. The latter only sells common quality Armor and Weapons.
 
-(b) Up to five bag icons. Clicking on the icon tells ChaChing to sell ALL items in that bag (excluded items notwithstanding).
+(b) Up to five bag icons. Clicking on the bag's icon (immediately to the right of the bag) tells ChaChing to 
+sell ALL items in that bag (excluded items notwithstanding).
 
-(c) Excluding selected items: if a player wants to prevent ChaChing from ever selling an item, the player must drag the item from your inventory to the menu's edit box and double click. This will place the item in a table of items that will be excluded from sales. For example, most of us have a common (white) quality fishing pole. You should place all such needed items in this exclusion table of items not to be sold.
+(c) Excluding selected items: if a player wants to prevent ChaChing from ever selling an item, the player must 
+drag the item from your inventory to the menu's edit box and double click. This will place the item in a table 
+of items that will be excluded from sales. For example, most of us have a common (white) quality fishing pole.
+You should place all such needed items in this exclusion table of items not to be sold.
 
 NOTE: Unlike the grey and white item checkboxes, bag selections are not retained between sessions, UI Reloads, and so forth.
