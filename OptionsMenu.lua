@@ -108,7 +108,6 @@ local function createBagIcon( f, bagSlot )
 
 	bagFrame.BagIndex 		= bagSlot + 1
 	bagFrame.NumFreeSlots	= C_Container.GetContainerNumFreeSlots(bagSlot)
-	bagFrame.Caption		= sprintf("%s: %d available slots.", bagFrame.BagName, bagFrame.NumFreeSlots)
 	bagFrame.HasChanged	= false
 
 	-- NOTE: the iconFileId is unique to each bag, i.e., can be used as
@@ -209,8 +208,10 @@ local function createOptionsPanel()
 		local bagName = C_Container.GetBagName( i )
 		if bagName ~= nil then
 			local freeSlots = C_Container.GetContainerNumFreeSlots( i )
-			local bagFrame = createBagIcon( frame, i )
-			frame.Bags[i + 1] = bagFrame
+			frame.Bags[i + 1] = createBagIcon( frame, i )
+			inventorySlot[i+1] = OCCUPIED
+		else
+			inventorySlot[i+1] = EMPTY
 		end
 	end
 	-- [DEFAULTS] buttom, bottom left
@@ -273,12 +274,13 @@ local function updateOptionsPanel()
 		optionsPanel = createOptionsPanel()
 		optionsPanel:Hide()
 	end
+
 	for i = 0, 4 do
 		local bagName = C_Container.GetBagName( i )
 		if bagName ~= nil then
 			-- ChaChing has marked this slot EMPTY, but Blizz says the slot is OCCUPIED.
 			-- We assume Blizz is correct so we need to create a bag Icon for this slot
-			-- and mark it as occupied,
+			-- and then mark it as occupied,
 			if inventorySlot[i+1] == EMPTY then
 				optionsPanel.Bags[i+1] = createBagIcon( optionsPanel, i )
 				inventorySlot[i+1] = OCCUPIED
@@ -289,16 +291,13 @@ local function updateOptionsPanel()
 
 			if bag.NumFreeSlots ~= freeSlots then
 				bag.NumFreeSlots = freeSlots
-				bag.Caption = optionsPanel:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
 				bag.Caption:SetFormattedText( "%s: %d %s", bag.BagName, freeSlots, L["AVAILABLE_SLOTS"] )
-				dbg:print(sprintf("%s: %d %s", bag.BagName, freeSlots, L["AVAILABLE_SLOTS"] ))
 			end
 			inventorySlot[i+1] = OCCUPIED		-- probably redundant
 		else 
 			-- No bag is installed in this slot.
 			local bag = optionsPanel.Bags[i+1]
 			if bag then 
-				bag.message:Hide()
 				bag:Hide() 
 			end
 			inventorySlot[i+1] = EMPTY
@@ -306,7 +305,6 @@ local function updateOptionsPanel()
 	end
 end
 function options:showOptionsPanel()
-	updateOptionsPanel()
 	optionsPanel:Show()
 end
 
@@ -320,8 +318,6 @@ eventFrame:SetScript("OnEvent",
 function( self, event, ... )
 	local arg1 = ...
 
-	-- Moving an item causes it to fire twice. Once when picked up
-	-- and once when dropped.
 	if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
 		updateOptionsPanel()
 	end
