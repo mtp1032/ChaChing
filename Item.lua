@@ -131,11 +131,9 @@ local function itemIsExcluded( itemName )
 
 	for i = 1, n do
 			if itemName == ChaChing_ExcludedItemsList[i] then
-			dbg:print()
 			return true
 		end
 	end
-	dbg:print()
 	return false
 end
 local function getSalesAttributes( bagSlot, slot )
@@ -189,7 +187,6 @@ local function sellWhiteItems()
 				local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
 				if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and unitSalesPrice ~= nil then
 					if not itemIsExcluded( itemName ) then
-						dbg:print( itemName )
 						if unitSalesPrice > 0 then
 							if itemQuality == QUALITY_COMMON then
 								if itemType == "Weapon" then
@@ -223,7 +220,6 @@ local function sellAllItemsInBag( bagSlot )
 	local numSlots = GetContainerNumSlots( bagSlot )
 	for slot = 1, numSlots do
 		local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
-		dbg:print( itemName )
 		if unitSalesPrice > 0 then
 			UseContainerItem( bagSlot, slot )
 			totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
