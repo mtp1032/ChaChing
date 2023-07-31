@@ -3,7 +3,7 @@
 ## Title: ChaChing
 ## Version: 1.0.0
 ## Notes: Supports the bulk sales of items by quality or bag.
-## SavedVariablesPerCharacter: CHACHING_SAVED_OPTIONS, CHACHING_EXCLUSION_LIST, ChaChingDB
+## SavedVariablesPerCharacter: ChaChing_ExcludedItemsList, CHACHING_SAVED_OPTIONS, ChaChingDB
 ## 9 November, 2022
 ## OptionalDeps: LibSharedMedia-3.0, LibDBIcon-1.0, LibDataBroker-1.1
 ## IconTexture: 133785

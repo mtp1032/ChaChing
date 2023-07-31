@@ -28,11 +28,10 @@ local QUALITY_COMMON 	= 1
 ------------------------------------------------------------
 --						SAVED VARS
 ------------------------------------------------------------
-CHACHING_EXCLUSION_LIST = nil
-CHACHING_SAVED_OPTIONS	= nil
+CHACHING_SAVED_OPTIONS		= nil
+ChaChing_ExcludedItemsList 	= nil
 
 local chachingListFrame = mf:createListFrame("Excluded Items")
-local excludedItemsList = {}
 local bagIsChecked = {}
 local sellGrey = true
 local sellWhite = false
@@ -86,16 +85,19 @@ function item:setWhiteChecked( isChecked )
 	end
 end
 function item:addExcludedItem( itemName )
-	table.insert( CHACHING_EXCLUSION_LIST, itemName )
+	table.insert( ChaChing_ExcludedItemsList, itemName )
+
 	if core:debuggingIsEnabled() then
 		DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s is now excluded.", itemName), 0, 1, 0)
 	end
 end
 function item:clearExcludedItems()
-	wipe( CHACHING_EXCLUSION_LIST)
+	wipe( ChaChing_ExcludedItemsList )
+
 end
 function item:showExcludedItems()
-	if #CHACHING_EXCLUSION_LIST == 0 then
+		if #ChaChing_ExcludedItemsList == 0 then
+
 
 		chachingListFrame.Text:EnableMouse( false )    
 		chachingListFrame.Text:EnableKeyboard( false )   
@@ -104,7 +106,6 @@ function item:showExcludedItems()
 		local str = "No Items Have Been Excluded.\n"
 		chachingListFrame.Text:Insert(str ) 
 		chachingListFrame:Show()
-
 		return
 	end
 
@@ -113,24 +114,28 @@ function item:showExcludedItems()
 	chachingListFrame.Text:SetText(EMPTY_STR) 
 	chachingListFrame.Text:ClearFocus()
 
-	local n = #CHACHING_EXCLUSION_LIST
+	local n = #ChaChing_ExcludedItemsList
+
 	local str = sprintf("The Following items will not be sold.\n", n )
 	chachingListFrame.Text:Insert(str )
 	for i = 1, n do
-		local entry = sprintf("%d: %s\n", i, CHACHING_EXCLUSION_LIST[i])
+		local entry = sprintf("%d: %s\n", i, ChaChing_ExcludedItemsList[i])
+
 		chachingListFrame.Text:Insert( entry  )
 	end
 	chachingListFrame:Show()
 end
-function item:itemIsExcluded( itemName )
-	local n = #CHACHING_EXCLUSION_LIST
+local function itemIsExcluded( itemName )
+	local n = #ChaChing_ExcludedItemsList
 	if n == 0 then return false end
 
 	for i = 1, n do
-		if itemName == CHACHING_EXCLUSION_LIST[i] then
+			if itemName == ChaChing_ExcludedItemsList[i] then
+			dbg:print()
 			return true
 		end
 	end
+	dbg:print()
 	return false
 end
 local function getSalesAttributes( bagSlot, slot )
@@ -141,9 +146,10 @@ local function getSalesAttributes( bagSlot, slot )
 	local itemQuality, itemCount = itemInfo.quality, itemInfo.stackCount
 
 	local itemLink = GetContainerItemLink( bagSlot, slot )
-	local _, _, _, _, _, itemType, _, _, _, _, unitSalesPrice = GetItemInfo( itemLink )
+	local itemName, _, _, _, _, itemType, _, _, _, _, unitSalesPrice = GetItemInfo( itemLink )
+	assert( type(itemName ) == "string", "ASSERT_FAILURE: Unexpected data type")
 
-	return itemQuality, itemCount, itemType, unitSalesPrice
+	return itemName, itemQuality, itemCount, itemType, unitSalesPrice
 end
 local function sellGreyItems()
 	if not sellGrey then return 0, 0 end
@@ -156,11 +162,13 @@ local function sellGreyItems()
         if bagName ~= nil then 
             local numSlots = GetContainerNumSlots( bagSlot )
             for slot = 1, numSlots do
-				local itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
-				if itemQuality == QUALITY_POOR and unitSalesPrice > 0 then
-					UseContainerItem( bagSlot, slot )
-					totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
-					totalItemsSold = totalItemsSold + itemCount        
+				local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
+				if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and unitSalesPrice ~= nil then
+					if itemQuality == QUALITY_POOR and unitSalesPrice > 0 then
+						UseContainerItem( bagSlot, slot )
+						totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
+						totalItemsSold = totalItemsSold + itemCount        
+					end
 				end
             end
         end
@@ -178,21 +186,26 @@ local function sellWhiteItems()
         if bagName ~= nil then 
             local numSlots = GetContainerNumSlots( bagSlot )
             for slot = 1, numSlots do
-				local itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
-				if unitSalesPrice > 0 then
-					if itemQuality == QUALITY_COMMON then
-						if itemType == "Weapon" then
-							UseContainerItem( bagSlot, slot )
-							totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
-							totalItemsSold = totalItemsSold + itemCount  
+				local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
+				if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and unitSalesPrice ~= nil then
+					if not itemIsExcluded( itemName ) then
+						dbg:print( itemName )
+						if unitSalesPrice > 0 then
+							if itemQuality == QUALITY_COMMON then
+								if itemType == "Weapon" then
+									UseContainerItem( bagSlot, slot )
+									totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
+									totalItemsSold = totalItemsSold + itemCount  
+								end
+								if itemType == "Armor" then
+									UseContainerItem( bagSlot, slot )
+									totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
+									totalItemsSold = totalItemsSold + itemCount  
+								end
+							end
 						end
-						if itemType == "Armor" then
-							UseContainerItem( bagSlot, slot )
-							totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
-							totalItemsSold = totalItemsSold + itemCount  
-						end
-					end
-				end      
+					end 
+				end     
             end
         end
     end
@@ -209,7 +222,8 @@ local function sellAllItemsInBag( bagSlot )
 
 	local numSlots = GetContainerNumSlots( bagSlot )
 	for slot = 1, numSlots do
-		local itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
+		local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
+		dbg:print( itemName )
 		if unitSalesPrice > 0 then
 			UseContainerItem( bagSlot, slot )
 			totalEarnings = totalEarnings + (unitSalesPrice * itemCount)

@@ -15,13 +15,13 @@ local L = setmetatable({}, { __index = function(t, k)
 end })
 ChaChing.L = L
 
-local addonName, addonVersion, addonExpansion = core:getAddonInfo()
+local addonName, addonVersion, addonExpansionName = core:getAddonInfo()
 local LOCALE = GetLocale()      -- BLIZZ
 if LOCALE == "enUS" then
 
 	L["ADDON_NAME"]				= addonName
 	L["VERSION"]				= addonVersion
-	L["EXPANSION_NAME"]			= addonExpansion
+	L["EXPANSION_NAME"]			= addonExpansionName
 	L["ADDON_NAME_AND_VERSION"] = sprintf("%s V %s %s", L["ADDON_NAME"], L["VERSION"], L["EXPANSION_NAME"] )
 	L["OPTIONS_MENU_TITLE"]     = sprintf("%s (%s -Options", L["ADDON_NAME"], L["EXPANSION_NAME"])
 

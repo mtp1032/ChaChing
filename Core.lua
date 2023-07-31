@@ -14,27 +14,13 @@ core.EMPTY_STR 	        = ""
 
 local isDebuggingEnabled = true
 
-local addonName = nil
-local addonVersion  = nil
-local expansionName = nil
 local function getAddonName()
-	local stackTrace = debugstack(2)
-	local dirNames = nil
-	local addonName = nil
-
-	if 	EXPANSION_LEVEL == LE_EXPANSION_DRAGONFLIGHT then
-		dirNames = {strsplittable( "\/", stackTrace, 5 )}	end
-	if EXPANSION_LEVEL == LE_EXPANSION_WRATH_OF_THE_LICH_KING then
-		dirNames = {strsplittable( "\/", stackTrace, 5 )}
-	end
-	if EXPANSION_LEVEL == LE_EXPANSION_CLASSIC then
-		dirNames = {strsplittable( "\/", stackTrace, 5 )}
-	end
-
-	addonName = dirNames[1][3]
+	local stackTrace 	= debugstack(2)
+	local dirNames 		= {strsplittable( "\/", stackTrace, 5 )}
+	local addonName 	= dirNames[1][3]
 	return addonName
 end
-local function getExpansionName()
+function core:getExpansion()
 
 	local expansionLevel = max(GetAccountExpansionLevel(), GetServerExpansionLevel())
 	local expansionName = nil
@@ -48,14 +34,14 @@ local function getExpansionName()
 	if expansionLevel == LE_EXPANSION_DRAGONFLIGHT then
 		expansionName = "(Dragon Flight)"
 	end
-	return expansionName
+	return expansionName, expansionLevel
 end
 local addonName = getAddonName()
-local addonExpansion = getExpansionName()
+local addonExpansionName = core:getExpansion()
 local addonVersion = GetAddOnMetadata( addonName, "Version")
 
 function core:getAddonInfo()
-	return addonName, addonVersion, addonExpansion
+	return addonName, addonVersion, addonExpansionName
 end
 function core:debuggingIsEnabled()
     return isDebuggingEnabled

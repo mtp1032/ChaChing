@@ -96,32 +96,25 @@ local function createBagCheckBox( frame, bagSlot, xPos, yPos )
 end -- end of OnClick
 
 local function createBagIcon( f, bagSlot )
-
+	
 	local bagFrame = CreateFrame("Button","CHACHING_BagButton", f,"TooltipBackdropTemplate")
-
-	bagFrame.BagName 		= C_Container.GetBagName( bagSlot )
-	if bagSlot then
-		bagFrame.BagSlot 	= bagSlot
-	else
-		bagFrame.BagSlot	= nil
-	end
-
-	bagFrame.BagIndex 		= bagSlot + 1
+	bagFrame.BagName = C_Container.GetBagName( bagSlot )
+	bagFrame.BagSlot 	= bagSlot
 	bagFrame.NumFreeSlots	= C_Container.GetContainerNumFreeSlots(bagSlot)
-	bagFrame.HasChanged	= false
 
 	-- NOTE: the iconFileId is unique to each bag, i.e., can be used as
 	-- 		 a unique identifier
-	if bagSlot == 0 then
-		bagFrame.IconFileId = "bag-main"
+	if bagFrame.BagSlot == 0 then
+		bagFrame.IconFileId = 133633
 	else
 		bagFrame.IconFileId = GetItemIcon( bagFrame.BagName )
+		if bagFrame.IconFileId == nil then return nil end
 	end
 	bagFrame:SetSize( BUTTON_WIDTH, BUTTON_HEIGHT )
 
 		-- Position bag buttons icons vertically
 	bagFrame.xPos = 60
-	bagFrame.yPos = 120 - (BUTTON_HEIGHT + 10) * ( bagFrame.BagIndex )
+	bagFrame.yPos = 120 - (BUTTON_HEIGHT + 10) * ( bagSlot + 1 )
 
 	-- This positions the bag icon.
 	bagFrame:SetPoint( "LEFT", bagFrame.xPos, bagFrame.yPos )
@@ -281,12 +274,14 @@ local function updateOptionsPanel()
 			-- ChaChing has marked this slot EMPTY, but Blizz says the slot is OCCUPIED.
 			-- We assume Blizz is correct so we need to create a bag Icon for this slot
 			-- and then mark it as occupied,
-			if inventorySlot[i+1] == EMPTY then
+			if optionsPanel.Bags[i+1] == nil then
 				optionsPanel.Bags[i+1] = createBagIcon( optionsPanel, i )
 				inventorySlot[i+1] = OCCUPIED
 			end
-			-- if the number of free slots has changed, then update the caption
 			local bag = optionsPanel.Bags[i+1]
+			if bag == nil then return end
+			-- print( dbg:prefix(), "UpdateOptionsPanel: Bag slot", i, "contains bag ", bagName )
+
 			local freeSlots = C_Container.GetContainerNumFreeSlots(i)
 
 			if bag.NumFreeSlots ~= freeSlots then
@@ -321,7 +316,6 @@ function( self, event, ... )
 	if event == "BAG_UPDATE" or event == "BAG_UPDATE_DELAYED" then
 		updateOptionsPanel()
 	end
-	
 	if event == "MERCHANT_CLOSED" then
 		optionsPanel:Hide()
 	end
@@ -334,12 +328,13 @@ function( self, event, ... )
 			CHACHING_SAVED_OPTIONS.sellGrey = true
 			CHACHING_SAVED_OPTIONS.sellWhite = false
 		end
+
+		if not ChaChing_ExcludedItemsList then
+			ChaChing_ExcludedItemsList = {}
+		end
+
 		item:setGreyChecked( CHACHING_SAVED_OPTIONS.sellGrey )
 		item:setWhiteChecked( CHACHING_SAVED_OPTIONS.sellWhite )
-
-		if CHACHING_EXCLUSION_LIST == nil then
-			CHACHING_EXCLUSION_LIST = {}
-		end
 
 		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
 		eventFrame:UnregisterEvent( "ADDON_LOADED")
