@@ -220,11 +220,13 @@ local function sellAllItemsInBag( bagSlot )
 	local numSlots = GetContainerNumSlots( bagSlot )
 	for slot = 1, numSlots do
 		local itemName, itemQuality, itemCount, itemType, unitSalesPrice = getSalesAttributes( bagSlot, slot )
-		if unitSalesPrice > 0 then
-			UseContainerItem( bagSlot, slot )
-			totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
-			totalItemsSold = totalItemsSold + itemCount  
-		end      
+		if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and unitSalesPrice ~= nil then
+			if unitSalesPrice > 0 then
+				UseContainerItem( bagSlot, slot )
+				totalEarnings = totalEarnings + (unitSalesPrice * itemCount)
+				totalItemsSold = totalItemsSold + itemCount  
+			end   
+		end   
 	end
 	return totalEarnings, totalItemsSold
 end
