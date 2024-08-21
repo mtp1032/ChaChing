@@ -1,63 +1,60 @@
---------------------------------------------------------------------------------------
 -- CommandLine.lua 
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 14 June, 2019
 --------------------------------------------------------------------------------------
-local _, ChaChing = ...
+local ADDON_NAME, ChaChing = ...
+ChaChing = ChaChing or {}
 ChaChing.CommandLine = {}
-sell = ChaChing.CommandLine
+
+local core = ChaChing.Core
+local mf = ChaChing.MsgFrame
+local dbg = ChaChing.DebugTools
 
 local L = ChaChing.L
-local sprintf = _G.string.format
 
 ---------------------------------------------------------------------------------------------------
 					--COMMAND LINE OPTIONS
 --------------------------------------------------------------------------------------------------
 -- Command line parsing: https://wowpedia.fandom.com/wiki/Creating_a_slash_command
 
+local helpMsg = "Not Yet Implemented"
+
 local function postHelpMsg()
+    mf:postMsg(L["HELP_MESSAGE"] or helpMsg)
 end
 
--- https://wowwiki-archive.fandom.com/wiki/Creating_a_slash_command
-local function validateCmd( msg )
-    local isValid = true
+-- Command handler function
+local function ChaChingCommands(optionStr, editbox)
+    dbg:Print("Command received: " .. optionStr)
+
+    -- Pattern matching that skips leading whitespace and whitespace between option and argList
+    -- Any whitespace at end of the argList is retained
+    local _, _, option, argList = string.find(optionStr, "%s?(%w+)%s?(.*)")
+    dbg:Print("Option: " .. (option or "nil") .. ", Arguments: " .. (argList or "nil"))
+
+    if option == nil or option == "help" or option == "" or option == '?' then
+        postHelpMsg()
+        return
+    end
+
+    option = string.lower(option)
     
-    if msg == nil then
-        isValid = false
+    if option == "set" then
+        if argList == "debug" then
+            core:enableDebugging()
+            mf:postMsg("Debugging enabled.")
+            return
+        end
     end
-    if msg == EMPTY_STR then
-        isValid = false
-    end
-    return isValid
+
+    -- If not handled above, display some sort of help message
+    postHelpMsg()
 end
-local function ChaChingCommands(cmdStr, editbox)
-	local result = {SUCCESS, EMPTY_STR, EMPTY_STR}
-
-    -- pattern matching that skips leading whitespace and whitespace between cmd and args
-    -- any whitespace at end of args is retained
-    local _, _, cmd, args = string.find(cmdStr, "%s?(%w+)%s?(.*)")
-    cmd = string.lower( cmd )
-    if cmd == nil then
-        print("Help not implemented yet")
-        return
-    end
-
-    if cmd == "foo" then -- calls cleu:summarizeEncounter()
-        print( "<call a function to do foo>" )
-    end
-
-    if cmd == "help" or cmd == "" then
-        postHelpMsg( helpMsg )
-        return
-    end
-        -- If not handled above, display some sort of help message
-        postHelpMsg( helpMsg )
-  end
   
-  SLASH_CHACHING = "/cc"
-  SlashCmdList["CHACHING1"] = chaChingCommands  -- adds "/monitor" to the commands list
+SLASH_CHACHING1 = "/cc"
+SlashCmdList["CHACHING"] = ChaChingCommands 
 
 local fileName = "CommandLine.lua"
 if core:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+    DEFAULT_CHAT_FRAME:AddMessage(string.format("%s loaded", fileName), 1.0, 1.0, 0.0)
 end
