@@ -2,15 +2,17 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 11 January, 2023
 --------------------------------------------------------------------------------------
-local _, ChaChing = ...
+local ADDON_NAME, ChaChing = ...
+ChaChing = ChaChing or {}
 ChaChing.OptionsMenu = {}
-options = ChaChing.OptionsMenu
+local options = ChaChing.OptionsMenu
 
 local L = ChaChing.L
-local sprintf = _G.string.format
+local core = ChaChing.Core
+local item = ChaChing.Item
 
 local SUCCESS 	= core.SUCCESS
-local FAILURE 	= core.FAILURE
+local FAILURE 	= core.FAILURE 
 local EMPTY_STR	= core.EMPTY_STR
 local EMPTY		= "EMPTY"
 local OCCUPIED	= "OCCUPIED"
@@ -189,8 +191,8 @@ local function createOptionsPanel()
 	frame.messageText = frame:CreateFontString(nil, "ARTWORK","GameFontNormalLarge")
 	frame.messageText:SetJustifyH("LEFT")
 	frame.messageText:SetPoint("CENTER", 0, 150)
-	local str1 = sprintf("Checking any of these bag icons will cause %s to sell \n", L["ADDON_NAME"]  )
-	local str2 = sprintf("ALL items in the selected bag the next time you visit a merchant.")
+	local str1 = string.format("Checking any of these bag icons will cause %s to sell \n", L["ADDON_NAME"]  )
+	local str2 = string.format("ALL items in the selected bag the next time you visit a merchant.")
 	frame.messageText:SetFormattedText("%s%s\n", str1, str2 )
 
 	showGreyWhiteCheckBoxes( frame, -80 )
@@ -251,7 +253,7 @@ local function createOptionsPanel()
 				local itemName = GetItemInfo( itemId )
 				-- insert the name of the item, not the item link
 				item:addExcludedItem( itemName )
-				local s = sprintf("   %s %s", itemName, L["EXCLUDED"] )
+				local s = string.format("   %s %s", itemName, L["EXCLUDED"] )
 				frame.EditBox:SetText( s )	-- prints the item's name into the chat dialog box
 			else
 				frame.EditBox:SetText(EMPTY_STR)
@@ -261,7 +263,6 @@ local function createOptionsPanel()
 
 	return frame   
 end
-
 local function updateOptionsPanel()	
 	if not optionsPanel then
 		optionsPanel = createOptionsPanel()
@@ -319,7 +320,7 @@ function( self, event, ... )
 	if event == "MERCHANT_CLOSED" then
 		optionsPanel:Hide()
 	end
-	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
+	if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
 
 		if not CHACHING_SAVED_OPTIONS then
 			CHACHING_SAVED_OPTIONS = {}
@@ -336,12 +337,12 @@ function( self, event, ... )
 		item:setGreyChecked( CHACHING_SAVED_OPTIONS.sellGrey )
 		item:setWhiteChecked( CHACHING_SAVED_OPTIONS.sellWhite )
 
-		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_NAME_AND_VERSION"],  1.0, 1.0, 0.0 )
+		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_LOADED_MESSAGE"] )
 		eventFrame:UnregisterEvent( "ADDON_LOADED")
 	end
 end)
 
 local fileName = "OptionsMenu.lua"
 if core:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end

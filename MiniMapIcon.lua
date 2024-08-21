@@ -3,15 +3,15 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 17 July, 2023
 local _, ChaChing = ...
+ChaChing = ChaChing or {}
 ChaChing.MiniMap = {}
-minimap = ChaChing.MiniMap
+local minimap = ChaChing.MiniMap
+
+local core = ChaChing.Core
+local options = ChaChing.OptionsMenu
+local item = ChaChing.Item
 
 local L = ChaChing.L
-local sprintf = _G.string.format
-
-local SUCCESS 			= core.SUCCESS
-local FAILURE 			= core.FAILURE
-local EMPTY_STR 		= core.EMPTY_STR
 
 -- register the addon with ACE
 local addon = LibStub("AceAddon-3.0"):NewAddon(L["ADDON_NAME"], "AceConsole-3.0")
@@ -28,7 +28,6 @@ local ChaChingDB = LibStub("LibDataBroker-1.1"):NewDataObject(L["ADDON_NAME"],
 			tooltip:AddLine(L["ADDON_NAME_AND_VERSION"])
 			tooltip:AddLine(L["LEFT_CLICK_FOR_OPTIONS_MENU"])
 			tooltip:AddLine(L["RIGHT_CLICK_SHOW_EXCLUSION_TABLE"])
-			tooltip:AddLine(L["SHIFT_RIGHT_CLICK_DELETE_EXCLUSION_TABLE"])		
 		end,
 		OnClick = function(self, button ) 
 			-- LEFT CLICK - Displays the options menu
@@ -39,10 +38,6 @@ local ChaChingDB = LibStub("LibDataBroker-1.1"):NewDataObject(L["ADDON_NAME"],
 			-- RIGHT CLICK - Displays a list of excluded items
 			if button == "RightButton" and not IsShiftKeyDown() then
 				item:showExcludedItems()
-			end
-			-- SHIFT RIGHT CLICK - Deletes all items in the exclusion table
-			if button == "RightButton" and IsShiftKeyDown() then
-				item:clearExcludedItems()
 			end
 		end,
 	})
@@ -58,5 +53,5 @@ end
 
 local fileName = "MiniMapIcon.lua"
 if core:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end

@@ -3,58 +3,51 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 6 October, 2019`(Formerly, Sandbox.lua)
 
-local _, ChaChing = ...
+local ADDON_NAME, ChaChing = ...
+ChaChing = ChaChing or {}
 ChaChing.Core = {}
-core = ChaChing.Core
-local sprintf = _G.string.format
 
-core.SUCCESS 	        = true
-core.FAILURE 	        = false
-core.EMPTY_STR 	        = ""
+local core = ChaChing.Core
 
+local DEBUGGING_ENABLED = true
 local isDebuggingEnabled = true
 
-local function getAddonName()
-	local stackTrace 	= debugstack(2)
-	local dirNames 		= {strsplittable( "\/", stackTrace, 5 )}
-	local addonName 	= dirNames[1][3]
-	return addonName
-end
-function core:getExpansion()
+local function getExpansionName( )
+    local expansionLevel = GetExpansionLevel()
+    local expansionNames = { -- Use a table to map expansion levels to names
+        [LE_EXPANSION_DRAGONFLIGHT] = "Dragon Flight",
+        [LE_EXPANSION_SHADOWLANDS] = "Shadowlands",
+        [LE_EXPANSION_CATACLYSM] = "Classic (Cataclysm)",
+        [LE_EXPANSION_WRATH_OF_THE_LICH_KING] = "Classic (WotLK)",
+        [LE_EXPANSION_CLASSIC] = "Classic (Vanilla)",
 
-	local expansionLevel = max(GetAccountExpansionLevel(), GetServerExpansionLevel())
-	local expansionName = nil
-
-	if expansionLevel == LE_EXPANSION_CLASSIC then
-		expansionName = "Classic (Vanilla)"
-	end
-	if expansionLevel == LE_EXPANSION_WRATH_OF_THE_LICH_KING then
-		expansionName = "Classic (WotLK)"
-	end
-	if expansionLevel == LE_EXPANSION_DRAGONFLIGHT then
-		expansionName = "(Dragon Flight)"
-	end
-	return expansionName, expansionLevel
+        [LE_EXPANSION_MISTS_OF_PANDARIA] = "Classic (Mists of Pandaria",
+        [LE_EXPANSION_LEGION] = "Classic (Legion)",
+        [LE_EXPANSION_BATTLE_FOR_AZEROTH] = "Classic (Battle for Azeroth)"
+    }
+    return expansionNames[expansionLevel] -- Directly return the mapped name
 end
-local addonName = getAddonName()
-local addonExpansionName = core:getExpansion()
-local addonVersion = GetAddOnMetadata( addonName, "Version")
+
+local addonExpansionName = getExpansionName()
+local addonVersion = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
 
 function core:getAddonInfo()
-	return addonName, addonVersion, addonExpansionName
+    local version = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
+    local expansion = getExpansionName()
+
+	return version, expansion
 end
 function core:debuggingIsEnabled()
-    return isDebuggingEnabled
+    return DEBUGGING_ENABLED
 end
 function core:enableDebugging()
-   isDebuggingEnabled = true
-   DEFAULT_CHAT_FRAME:AddMessage( "OptionsFrame Debugging Is Now ENABLED.", 1.0, 1.0, 0.0 )
+    DEBUGGING_ENABLED = true
 end
-function disableDebugging() 
-   isDebuggingEnabled = false
-   DEFAULT_CHAT_FRAME:AddMessage( "OptionsFrame Debugging Is Now DISABLED.", 1.0, 1.0, 0.0 )
+function core:disableDebugging() 
+    DEBUGGING_ENABLED = false
 end
+
 local fileName = "Core.lua"
 if core:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s is loaded", fileName ), 0, 1, 0)
+	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s is loaded", fileName ), 0, 1, 0)
 end

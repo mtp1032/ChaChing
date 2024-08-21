@@ -3,13 +3,16 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 12 January, 2019
 ----------------------------------------------------------------------------------------
-local _, ChaChing = ...
+local AddonName, ChaChing = ...
+ChaChing = ChaChing or {}
 ChaChing.MsgFrame = {}
-mf = select(2, ... )
 
-L = ChaChing.L
-local sprintf = _G.string.format
-local EMPTY_STR = core.EMPTY_STR
+local mf    = ChaChing.MsgFrame
+local core  = ChaChing.Core
+local dbg   = ChaChing.DebugTools
+local item  = ChaChing.Item
+
+local L = ChaChing.L
 
 local FRAME_WIDTH_DEFAULT = 900
 local FRAME_HEIGHT_DEFAULT = 600
@@ -20,13 +23,14 @@ local DEFAULT_YPOS = 200
 local DEFAULT_FRAME_WIDTH = 600
 local DEFAULT_FRAME_HEIGHT = 500
 
+local messageFrame = nil
+
  ---------------------------------------------------------------------------------------------------
  --                     Create the MAIN FRAME
  ---------------------------------------------------------------------------------------------------
  local function createTopFrame( frameTitle, width, height )
     local topFrame = CreateFrame("Frame", "EXCLUDED_ITEMS", UIParent, BackdropTemplateMixin and "BackdropTemplate" )
     topFrame:SetSize(width, height)
-    -- topFrame:SetPoint("CENTER")     -- ORIGINAL
     topFrame:SetPoint("CENTER", 0, 200)
     topFrame:SetFrameStrata("BACKGROUND")
 	topFrame:SetBackdrop({
@@ -35,7 +39,7 @@ local DEFAULT_FRAME_HEIGHT = 500
         edgeSize = 26,
         insets = {left = 9, right = 9, top = 9, bottom = 9},
     })
-    topFrame:SetBackdropColor(0, 0, 0) -- https://www.sessions.edu/color-calculator-results/?colors=37630e,630e37
+    topFrame:SetBackdropColor(0, 0, 0)
     topFrame:EnableMouse(true)
     topFrame:EnableMouseWheel(true)
     topFrame:SetMovable(true)
@@ -44,18 +48,36 @@ local DEFAULT_FRAME_HEIGHT = 500
     topFrame:SetScript("OnDragStart", topFrame.StartMoving)
     topFrame:SetScript("OnDragStop", topFrame.StopMovingOrSizing)
     
-    topFrame.title = topFrame:CreateFontString(nil, "OVERLAY");
-    topFrame.title:SetFontObject("GameFontHighlight");
-    topFrame.title:SetPoint("CENTER", topFrame.TitleBg, "CENTER", 5, 0);
-    topFrame.title:SetText(frameTitle);
+    -- Create the title bar
+    local titleBar = CreateFrame("Frame", nil, topFrame, BackdropTemplateMixin and "BackdropTemplate")
+    titleBar:SetPoint("TOPLEFT", topFrame, "TOPLEFT", 10, -10)
+    titleBar:SetPoint("TOPRIGHT", topFrame, "TOPRIGHT", -30, -10)
+    titleBar:SetHeight(30)
+    titleBar:SetBackdrop({
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 14,
+    })
+    titleBar:SetBackdropColor(0.1, 0.1, 0.1, 1)
+    
+    -- Add the title to the title bar
+    local titleText = titleBar:CreateFontString(nil, "OVERLAY")
+    titleText:SetFontObject("GameFontHighlight")
+    titleText:SetPoint("CENTER", titleBar, "CENTER", 0, 0)
+    titleText:SetText(frameTitle)
+
+    topFrame.titleBar = titleBar
+    topFrame.titleText = titleText
 
     return topFrame
  end
+
 ----------------------------------------------------------------------------------------------------
 --                      Create the Buttons
 ----------------------------------------------------------------------------------------------------
+
 local function createResizeButton( f )
-    f:SetResizable( true )
+    f:SetResizable(true)
 	local resizeButton = CreateFrame("Button", nil, f)
 	resizeButton:SetSize(16, 16)
 	resizeButton:SetPoint("BOTTOMRIGHT")
@@ -72,9 +94,10 @@ local function createResizeButton( f )
         FRAME_WIDTH, FRAME_HEIGHT = f:GetSize()
 	end)
 end
+
 local function createReloadButton( f )
     local reloadButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    reloadButton:SetPoint("BOTTOM", -200, 10) -- was -175, 10
+    reloadButton:SetPoint("BOTTOM", -200, 10)
     reloadButton:SetHeight(25)
     reloadButton:SetWidth(70)
     reloadButton:SetText("Reload")
@@ -84,19 +107,22 @@ local function createReloadButton( f )
         end)
     f.reloadButton = reloadButton
 end
-local function createSelectButton( f )
+local function createSelectButton(f)
     local selectButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    selectButton:SetPoint("BOTTOM", 185, 10)
-
+    selectButton:SetPoint("BOTTOMRIGHT", -10, 10)
     selectButton:SetHeight(25)
     selectButton:SetWidth(70)
     selectButton:SetText("Select")
     selectButton:SetScript("OnClick", 
         function(self)
-            self:GetParent().Text:EnableMouse( false )    
-            self:GetParent().Text:EnableKeyboard( false )   
-            self:GetParent().Text:SetText("") 
-            self:GetParent().Text:ClearFocus()
+            local editBox = self:GetParent().Text
+            editBox:SetFocus() -- Set focus to the edit box
+            editBox:HighlightText() -- Highlight all the text
+            editBox:EnableKeyboard(true) -- Ensure the EditBox can receive keyboard input
+            editBox:EnableMouse(true) -- Ensure the EditBox can receive mouse input
+            -- You may also force the user to press "Enter" to finalize the selection
+            -- and then notify them to press Ctrl+C to copy
+            print("Text selected! Press Ctrl+C to copy.")
         end)
     f.selectButton = selectButton
 end
@@ -113,40 +139,35 @@ local function createRemoveButton( f )
         self:GetParent().Text:EnableKeyboard( false )   
         self:GetParent().Text:SetText("") 
         self:GetParent().Text:ClearFocus()
-        item:clearExcludedItems()
+        wipe( ChaChing_ExcludedItemsList )
         f:Hide()
     end)
     f.removeButton = removeButton
 end
 local function createDismissButton( f )
     local dismissButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    dismissButton:SetPoint("BOTTOM", -190, 10)
+    dismissButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -10, -10)
     dismissButton:SetHeight(25)
-    dismissButton:SetWidth(75)
-    dismissButton:SetText("Dismiss")
+    dismissButton:SetWidth(25)
+    dismissButton:SetText("X")
+    dismissButton:SetNormalFontObject("GameFontNormalSmall")
     dismissButton:SetScript("OnClick", 
-    function(self)
-        f.Text:EnableMouse( false )    
-        f.Text:EnableKeyboard( false )   
-        f.Text:SetText(EMPTY_STR) 
-        f.Text:ClearFocus()
-        f:Hide()
-    end)
+        function(self)
+            f:Hide()
+        end)
     f.dismissButton = dismissButton
 end
+
 local function createClearButton( f )
     local clearButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    clearButton:SetPoint("BOTTOM", -190, 10)
+    clearButton:SetPoint("BOTTOMLEFT", 10, 10)
     clearButton:SetHeight(25)
-    clearButton:SetWidth(75)
-    clearButton:SetText("Dismiss")
+    clearButton:SetWidth(70)
+    clearButton:SetText("Clear")
     clearButton:SetScript("OnClick", 
         function(self)
-            self:GetParent().Text:EnableMouse( false )    
-            self:GetParent().Text:EnableKeyboard( false )   
             self:GetParent().Text:SetText("") 
             self:GetParent().Text:ClearFocus()
-			self:GetParent():Hide()
         end)
     f.clearButton = clearButton
 end
@@ -156,30 +177,31 @@ end
 ----------------------------------------------------------------------------------------------------
 local function createTextDisplay(f)
     f.SF = CreateFrame("ScrollFrame", "$parent_DF", f, "UIPanelScrollFrameTemplate")
-    f.SF:SetPoint("TOPLEFT", f, 12, -30)
-    f.SF:SetPoint("BOTTOMRIGHT", f, -30, 40)
+    f.SF:SetPoint("TOPLEFT", f, 12, -40)
+    f.SF:SetPoint("BOTTOMRIGHT", f, -30, 50)
 
     --                  Now create the EditBox
     f.Text = CreateFrame("EditBox", nil, f)
     f.Text:SetMultiLine(true)
-    f.Text:SetSize(FRAME_WIDTH_DEFAULT - 20, FRAME_HEIGHT_DEFAULT )
-    f.Text:SetPoint("TOPLEFT", f.SF)    -- ORIGINALLY TOPLEFT
-    f.Text:SetPoint("BOTTOMRIGHT", f.SF) -- ORIGINALLY BOTTOMRIGHT
+    f.Text:SetSize(FRAME_WIDTH_DEFAULT - 20, FRAME_HEIGHT_DEFAULT)
+    f.Text:SetPoint("TOPLEFT", f.SF)
+    f.Text:SetPoint("BOTTOMRIGHT", f.SF)
     f.Text:SetMaxLetters(99999)
-    f.Text:SetFontObject(GameFontNormalLarge) -- https://wowwiki.fandom.com/wiki/API_Button_SetTextFontObject
-    f.Text:SetHyperlinksEnabled( true )
-    f.Text:SetTextInsets(5, 5, 5, 5, 5)
+    f.Text:SetFontObject(GameFontNormalLarge)
+    f.Text:SetHyperlinksEnabled(true)
+    f.Text:SetTextInsets(5, 5, 5, 5)
     f.Text:SetAutoFocus(false)
-    f.Text:EnableMouse( false )
-    f.Text:EnableKeyboard( false )
+    f.Text:EnableMouse(true)
+    f.Text:EnableKeyboard(true)
     f.Text:SetScript("OnEscapePressed", 
         function(self) 
             self:ClearFocus() 
         end) 
     f.SF:SetScrollChild(f.Text)
 end
+
 local function createPostMsgFrame( title, width, height )
-    local f = createTopFrame( "Messages", DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT )
+    local f = createTopFrame( title, DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT )
     f:SetPoint("CENTER", DEFAULT_XPOS, DEFAULT_YPOS - 200 )
     f:SetFrameStrata("BACKGROUND")
     f:EnableMouse(true)
@@ -190,25 +212,22 @@ local function createPostMsgFrame( title, width, height )
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
 
-    f.title = f:CreateFontString(nil, "OVERLAY")
-    f.title:SetFontObject("GameFontHighlightLarge")
-    f.title:SetPoint("CENTER", f.TitleBg, "CENTER", 5, 0)
-    f.title:SetText( title)
-    
     createTextDisplay(f)
-
     createResizeButton(f)
-    createReloadButton(f, "BOTTOMLEFT",f, 5, 5)
-    createSelectButton(f, "BOTTOMRIGHT",f, 5, -10)
-    createClearButton(f, "BOTTOM",f, 5, 5)
+    -- createReloadButton(f)
+    createSelectButton(f)
+    createClearButton(f)
+    createDismissButton(f)
+
     return f
 end
+
 function mf:postMsg( msg )
-    if msgFrame == nil then
-        msgFrame = createPostMsgFrame( INFO_MSG_TITLE, 600, 400 )
+    if messageFrame == nil then
+        messageFrame = createPostMsgFrame( "ChaChing Messages", 600, 400 )
     end
-    msgFrame:Show()
-    msgFrame.Text:Insert( msg )
+    messageFrame:Show()
+    messageFrame.Text:Insert( msg )
 end
 
 function mf:createListFrame( frameTitle )
@@ -218,8 +237,9 @@ function mf:createListFrame( frameTitle )
     createTextDisplay(f)
     return f
 end
+
 local function createErrorMsgFrame(title)
-    local f = createTopFrame( "ErrorMsgFrame",700, 400 )
+    local f = createTopFrame( "ErrorMsgFrame", 700, 400 )
     f:SetPoint("CENTER", DEFAULT_XPOS, DEFAULT_YPOS)
     f:SetFrameStrata("BACKGROUND")
     f:EnableMouse(true)
@@ -230,25 +250,21 @@ local function createErrorMsgFrame(title)
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
 
-    f.title = f:CreateFontString(nil, "OVERLAY")
-    f.title:SetFontObject("GameFontHighlightLarge")
-    f.title:SetPoint("CENTER", f.TitleBg, "CENTER", 5, 0)
-    f.title:SetText( title )
-    
     createTextDisplay(f)
     createResizeButton(f)
-    createReloadButton(f, "BOTTOMLEFT",f, 5, 5)
-    createSelectButton(f, "BOTTOMRIGHT",f, 5, -10)
-    createClearButton(f, "BOTTOM",f, 5, 5)
+    createReloadButton(f)
+    createSelectButton(f)
+    createClearButton(f)
+    createDismissButton(f)
+
     return f
 end
-function mf:postResult( result )
 
-    if E:debuggingIsEnabled() then 
-        assert( result ~= nil, L["INPUT_PARAM_NIL"] )
-        assert( type(result) == "table", L["INVALID_TYPE"])
-        assert( #result == 3, L["PARAM_ILL_FORMED"] )
-
+function mf:postResult(result)
+    if dbg:debuggingIsEnabled() then 
+        assert(result ~= nil, L["INPUT_PARAM_NIL"])
+        assert(type(result) == "table", L["INVALID_TYPE"])
+        assert(#result == 3, L["PARAM_ILL_FORMED"])
     end
 
     if errorFrame == nil then
@@ -256,16 +272,16 @@ function mf:postResult( result )
     end
     local str = nil
     if result[3] ~= nil then
-        str = sprintf("%s\nSTACK TRACE:\n%s\n", result[2], result[3])
+        str = string.format("%s\nSTACK TRACE:\n%s\n", result[2], result[3])
     else
-        str = sprintf("%s", result[2] )
+        str = string.format("%s", result[2])
     end
 
-    errorFrame.Text:Insert( str )
+    errorFrame.Text:Insert(str)
     errorFrame:Show()
 end
 
 local fileName = "MsgFrame.lua"
 if core:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end
