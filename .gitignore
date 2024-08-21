@@ -1,0 +1,14 @@
+# Ignore all files in Testing and Prototype directories
+Docs/*
+Libs/*
+Testing/*
+Prototype/*
+
+# And ignore the workspace
+ChaChing.code-workspace
+
+# Ensure the directories themselves are not ignored
+!Docs/
+!Libs/
+!Testing/
+!Prototype/
