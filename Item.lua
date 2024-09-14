@@ -115,11 +115,10 @@ function item:showExcludedItems()
 
 	local n = #ChaChing_ExcludedItemsList
 
-	local str = string.format("The Following items will not be sold.\n", n )
+	local str = string.format("The Following %d items will not be sold.\n", n )
 	chachingListFrame.Text:Insert(str )
 	for i = 1, n do
 		local entry = string.format("%d: %s\n", i, ChaChing_ExcludedItemsList[i])
-
 		chachingListFrame.Text:Insert( entry  )
 	end
 	chachingListFrame:Show()
@@ -139,14 +138,21 @@ end
 
 local function getSalesAttributes( bagSlot, slot )
 
+	local itemInfo = C_Container.GetContainerItemInfo(bagSlot, slot )
+	if itemInfo == nil then return nil end
+	if itemInfo.hasNoValue then return nil end
+
 	local itemLink = GetContainerItemLink( bagSlot, slot )
-	if itemLink == nil then
-		return nil, nil, nil, nil, nil
-	end
+	if itemLink == nil then return nil end
 
-	local itemName, _, itemQuality, _, _, itemType, _, itemStackCount, _, _, sellPrice = C_Item.GetItemInfo( itemLink )
+	local itemCount = itemInfo.stackCount
 
-	return itemName, itemQuality, itemType, itemStackCount, sellPrice
+	local itemName, _, itemQuality, _, _, itemType, _, _, _, _, sellPrice = C_Item.GetItemInfo( itemLink )
+	if sellPrice == 0 then return nil end
+
+	-- dbg:print( "Bag ", bagSlot, ": itemName", itemName, ", sellPrice", sellPrice, ", itemCount", itemCount )
+
+	return itemName, itemQuality, itemType, itemCount, sellPrice
 end
 local function sellGreyItems()
 	if not sellGrey then return 0, 0 end
@@ -159,7 +165,8 @@ local function sellGreyItems()
         if bagName ~= nil then 
             local numSlots = GetContainerNumSlots( bagSlot )
             for slot = 1, numSlots do
-				local itemName, itemQuality, itemType, stackCount, itemSalesPrice = getSalesAttributes( bagSlot, slot )
+				-- itemName, itemQuality, itemType, itemCount, sellPrice
+				local itemName, itemQuality, itemType, itemCount, itemSalesPrice = getSalesAttributes( bagSlot, slot )
 				if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and itemSalesPrice ~= nil then
 					if itemQuality == QUALITY_POOR and itemSalesPrice > 0 then
 						UseContainerItem( bagSlot, slot )
@@ -183,6 +190,7 @@ local function sellWhiteItems()
         if bagName ~= nil then 
             local numSlots = GetContainerNumSlots( bagSlot )
             for slot = 1, numSlots do
+				-- itemName, itemQuality, itemType, itemCount, sellPrice
 				local itemName, itemQuality, itemType, itemCount, itemSalesPrice = getSalesAttributes( bagSlot, slot )
 				if itemName ~= nil and itemQuality ~= nil and itemCount ~= nil and itemType ~= nil and itemSalesPrice ~= nil then
 					if not itemIsExcluded( itemName ) then
@@ -219,19 +227,22 @@ local function createSellableItemsTable(bagId)
     local numSlots = GetContainerNumSlots(bagId)
 
     for slot = 1, numSlots do
-        -- Get the sales attributes of the item in the current slot
-        local itemName, _, itemType, itemCount, itemSalesPrice = getSalesAttributes(bagId, slot)
-
-        if itemName ~= nil and itemCount > 0 and itemSalesPrice > 0 then
-            -- Add the slot and item details to the sellableItems table
-            table.insert(sellableItems, {
+        -- Get the sales attributes of the item in the specified bag and slot
+		--    itemName, itemQuality, itemType, itemCount, sellPrice
+        local itemName, _, _, itemCount, itemSalesPrice = getSalesAttributes(bagId, slot )
+        if itemName ~= nil then
+		        table.insert(sellableItems, {
+				bagId, bagId,
                 slot = slot,
                 itemName = itemName,
                 itemCount = itemCount,
                 itemSalesPrice = itemSalesPrice
-            })
-        end
+            } )
+		end
     end
+	-- for _, entry in ipairs( sellableItems ) do
+	-- 	dbg:print( "Bag: ", entry.bagId, ", name", entry.itemName, "count", entry.itemCount, "price", entry.itemSalesPrice )
+	-- end
 
     return sellableItems
 end
@@ -253,8 +264,6 @@ local function sellItemsFromTable(bagId, sellableItems, index, totalEarnings, to
             totalEarnings = totalEarnings + (item.itemSalesPrice * item.itemCount)
             totalItemsSold = totalItemsSold + item.itemCount
             itemsSoldInBatch = itemsSoldInBatch + 1
-
-            -- dbg:Print(string.format("Sold %s in slot %d for %d.\n", item.itemName, item.slot, item.itemSalesPrice * item.itemCount))
 
             -- Check if we've reached the batch limit
             if itemsSoldInBatch >= BATCH_LIMIT then
@@ -281,7 +290,7 @@ local function verifyItemsSold(bagId, sellableItems)
 		if itemCount == nil then itemCount = 0 end
         if itemCount > 0 then
             table.insert(unsoldItems, item)
-            -- dbg:Print(string.format("Item %s in slot %d was not sold. Remaining count: %d.\n", item.itemName, item.slot, itemCount))
+            -- dbg:print(string.format("Item %s in slot %d was not sold. Remaining count: %d.\n", item.itemName, item.slot, itemCount))
         end
     end
 
@@ -292,16 +301,14 @@ end
 local function sellAllItemsInBag(bagId)
     -- 1. Create a table of sellable items
     local sellableItems = createSellableItemsTable(bagId)
-
     -- 2. Sell the items from the sellableItems table
     local totalEarnings, totalItemsSold = sellItemsFromTable(bagId, sellableItems)
-
     -- 3. Verify that all items were sold
     local unsoldItems = verifyItemsSold(bagId, sellableItems)
 
     if #unsoldItems > 0 then
         -- Retry selling the unsold items or log a warning
-        -- dbg:Print("Retrying unsold items...")
+        -- dbg:print("Retrying unsold items...")
         sellItemsFromTable(bagId, unsoldItems)
     end
 
@@ -309,80 +316,6 @@ local function sellAllItemsInBag(bagId)
 end
 
 -----------------------------------------------------------------------------------------------
---[[ 
-local BATCH_LIMIT = 6 -- Number of items to sell in each batch
-local SELL_DELAY = 0.5 -- Delay in seconds between batches
-
--- Function to sell all items in the specified bag
-local function sellAllItemsInBag(bagId, slot, totalEarnings, totalItemsSold)
-
-	-- Do all the error checking first
-
-	-- 1. check that the bagId is appropriate
-	if bagId < 0 and bagId > 4 then
-		error( string.format("%s ERROR: Incorrect BagId: %d\n", -- dbg:Prefix(), bagId ))
-	end
-    
-	-- 2. Get the name of the bag to verify a bag is installed.
-	local bagName = GetBagName(bagId)
-	if bagName == nil then 
-		error( string.format("%s ERROR: No bag installed at slot %d\n", -- dbg:Prefix(), bagId ))
-	end
-
-	-- 3. Ensure that the bag is checked before proceeding
-	if not bagIsChecked[bagId + 1] then 
-		return totalEarnings, totalItemsSold 
-	end
-
-	-- Now, let's get on with the process
-	
-    -- Initialize variables if they are not provided
-    totalEarnings = totalEarnings or 0
-    totalItemsSold = totalItemsSold or 0
-    local itemsSoldInBatch = 0
-    slot = slot or 1
-
-    -- Get the number of slots in the specified bag
-    local numSlots = GetContainerNumSlots(bagId)
-	local numFreeSlots = GetContainerNumFreeSlots(bagId)
-
-	-- if the bag is empty, return.
-	if numSlots == numFreeSlots then
-		return totalEarnings, totalItemsSold
-	end
-
-	-- at this point, the bag has at least 1 item to be sold.
-    for s = slot, numSlots do
-        
-        -- Get the sales attributes of the item in the current slot
-		local itemName, _, itemType, itemCount, itemSalesPrice = getSalesAttributes(bagId, s)
-
-		if itemName ~= nil and itemCount > 0 and itemSalesPrice > 0 then
-
-			-- Sell the item and update total earnings and items sold
-			C_Container.UseContainerItem(bagId, s)
-			totalEarnings = totalEarnings + (itemSalesPrice * itemCount)
-			totalItemsSold = totalItemsSold + itemCount
-			itemsSoldInBatch = itemsSoldInBatch + 1
-			-- dbg:Print(string.format("Sold %s in slot %d for %d.\n", itemName, s, itemSalesPrice * itemCount))
-
-			-- Check if we've reached the batch limit
-			if itemsSoldInBatch >= BATCH_LIMIT then
-				-- Schedule the next batch after a delay
-				C_Timer.After(SELL_DELAY, function()
-					sellAllItemsInBag(bagId, s + 1, totalEarnings, totalItemsSold)
-				end)
-
-				-- Return here to prevent further processing in the current loop
-				-- return totalEarnings, totalItemsSold
-			end
-        end
-    end
-
-    -- Final return after processing all slots
-    return totalEarnings, totalItemsSold
-end
- ]]-----------------------------------------------------------------------------------------------
 
 -- Main loop to process each bag
 local function sellItems()
@@ -400,21 +333,29 @@ local function sellItems()
 		end
 	end
 
+	local greyEarnings, numGrayItemsSold = sellGreyItems()
+	local whiteEarnings, numWhiteItemsSold = sellWhiteItems()
+	totalEarnings = totalEarnings + greyEarnings + whiteEarnings
+	totalItemsSold = totalItemsSold + numGrayItemsSold + numWhiteItemsSold
+
+	dbg:print( "totalEarnings", totalEarnings, "totalItemsSold", totalItemsSold )
 	-- Print final totals after all bags are processed
 	local totalEarningsStr = GetCoinTextureString( totalEarnings )
+	-- dbg:print( totalEarningsStr )
+	
 	local msg = nil
 	if totalItemsSold > 1 then
 		msg = string.format("Total Earnings: %s for %d items.\n", totalEarningsStr, totalItemsSold  )
+		-- dbg:print(msg)
 	end
 	if totalItemsSold == 1 then
 		msg = string.format("Total Earnings: %s on 1 item.\n", totalEarningsStr )
+		-- dbg:print(msg)
 	end
 	
-	if core:debuggingIsEnabled() then
-		mf:postMsg( string.format("\n%s %s\n", dbg:Prefix(), msg ))
-	end	
-
-	UIErrorsFrame:AddMessage( msg, 1.0, 0.0, 0.0 ) 
+	-- dbg:print( msg )
+	UIErrorsFrame:AddMessage( msg, 1.0, 1.0, 0.0 ) 
+	DEFAULT_CHAT_FRAME:AddMessage( msg, 1.0, 1.0, 0.0 )
 end
 
 -- Creates a button  and places it within the Merchant frame.
@@ -425,3 +366,8 @@ ButtonChaChing:SetHeight(21)
 ButtonChaChing:SetPoint("TopRight", -180, -30 )
 ButtonChaChing:RegisterForClicks("AnyUp")		
 ButtonChaChing:SetScript("Onclick", sellItems )
+
+local fileName = "Item.lua"
+if core:debuggingIsEnabled() then
+	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 1.0, 1.0, 0.0 )
+end

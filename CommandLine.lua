@@ -20,17 +20,17 @@ local L = ChaChing.L
 local helpMsg = "Not Yet Implemented"
 
 local function postHelpMsg()
-    mf:postMsg(L["HELP_MESSAGE"] or helpMsg)
+    mf:postMsg( string.format("See README.md\n"))
 end
 
 -- Command handler function
 local function ChaChingCommands(optionStr, editbox)
-    dbg:Print("Command received: " .. optionStr)
+    dbg:print("Command received: " .. optionStr)
 
     -- Pattern matching that skips leading whitespace and whitespace between option and argList
     -- Any whitespace at end of the argList is retained
     local _, _, option, argList = string.find(optionStr, "%s?(%w+)%s?(.*)")
-    dbg:Print("Option: " .. (option or "nil") .. ", Arguments: " .. (argList or "nil"))
+    dbg:print("Option: " .. (option or "nil") .. ", Arguments: " .. (argList or "nil"))
 
     if option == nil or option == "help" or option == "" or option == '?' then
         postHelpMsg()

@@ -12,7 +12,7 @@ local core = ChaChing.Core
 ---------------------------------------------------------------------------------------------------
 --                      PUBLIC/EXPORTED FUNCTIONS
 ----------------------------------------------------------------------------------------------------
-function dbg:Prefix( stackTrace )
+function dbg:prefix( stackTrace )
 	if stackTrace == nil then stackTrace = debugstack(2) end
 	
 	local pieces = {strsplit( ":", stackTrace, 5 )}
@@ -28,8 +28,8 @@ function dbg:Prefix( stackTrace )
 	local prefix = string.format("[%s:%d] ", names[#names], lineNumber)
 	return prefix
 end
-function dbg:Print(...)
-    local prefix = dbg:Prefix( debugstack(2) )
+function dbg:print(...)
+    local prefix = dbg:prefix( debugstack(2) )
 
     -- The '...' collects all extra arguments passed to the function
     local args = {...}  -- This creates a table 'args' containing all extra arguments

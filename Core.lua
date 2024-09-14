@@ -10,7 +10,6 @@ ChaChing.Core = {}
 local core = ChaChing.Core
 
 local DEBUGGING_ENABLED = true
-local isDebuggingEnabled = true
 
 local function getExpansionName( )
     local expansionLevel = GetExpansionLevel()
@@ -32,11 +31,10 @@ end
 local addonExpansionName = getExpansionName()
 local addonVersion = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
 
-function core:getAddonInfo()
-    local version = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
-    local expansion = getExpansionName()
+function core:getExpansionName()
+    local expansionName = getExpansionName()
 
-	return version, expansion
+	return expansionName
 end
 function core:debuggingIsEnabled()
     return DEBUGGING_ENABLED

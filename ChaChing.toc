@@ -1,7 +1,13 @@
-## Interface: 11503, 30403, 40400, 100207, 110000, 110002
+## Interface: 11503, 30403, 40400, 100207, 110000, 110002, 110005
 ## -----------------------------------------------------------------------
 ## Title: ChaChing
 ## Version: 1.0.0
+## X-MAJOR: 1
+## X-MINOR: 0
+## X-PATCH: 0
+## X-Expansion: Classic, Cataclysm, Retail
+## X-github: https://github.com/mtp1032/WoWThreads
+## 24 May, 2023
 ## Notes: Supports the bulk sales of items by quality or bag.
 ## SavedVariablesPerCharacter: ChaChing_ExcludedItemsList, CHACHING_SAVED_OPTIONS, ChaChingDB
 ## 9 November, 2022

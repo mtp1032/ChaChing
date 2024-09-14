@@ -24,6 +24,7 @@ local DEFAULT_FRAME_WIDTH = 600
 local DEFAULT_FRAME_HEIGHT = 500
 
 local messageFrame = nil
+local errorMsgFrame = nil
 
  ---------------------------------------------------------------------------------------------------
  --                     Create the MAIN FRAME
@@ -94,7 +95,6 @@ local function createResizeButton( f )
         FRAME_WIDTH, FRAME_HEIGHT = f:GetSize()
 	end)
 end
-
 local function createReloadButton( f )
     local reloadButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     reloadButton:SetPoint("BOTTOM", -200, 10)
@@ -157,7 +157,6 @@ local function createDismissButton( f )
         end)
     f.dismissButton = dismissButton
 end
-
 local function createClearButton( f )
     local clearButton = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     clearButton:SetPoint("BOTTOMLEFT", 10, 10)
@@ -227,7 +226,7 @@ function mf:postMsg( msg )
         messageFrame = createPostMsgFrame( "ChaChing Messages", 600, 400 )
     end
     messageFrame:Show()
-    messageFrame.Text:Insert( msg )
+    messageFrame.Text:SetText( msg )
 end
 
 function mf:createListFrame( frameTitle )
@@ -261,15 +260,16 @@ local function createErrorMsgFrame(title)
 end
 
 function mf:postResult(result)
-    if dbg:debuggingIsEnabled() then 
+    if coreL:debuggingIsEnabled() then 
         assert(result ~= nil, L["INPUT_PARAM_NIL"])
         assert(type(result) == "table", L["INVALID_TYPE"])
         assert(#result == 3, L["PARAM_ILL_FORMED"])
     end
 
-    if errorFrame == nil then
-        errorFrame = createErrorMsgFrame("Error Message(s)")
+    if errorMsgFrame == nil then
+        errorMsgFrame = createErrorMsgFrame("ChaChing Error Message(s)")
     end
+    
     local str = nil
     if result[3] ~= nil then
         str = string.format("%s\nSTACK TRACE:\n%s\n", result[2], result[3])
@@ -277,8 +277,11 @@ function mf:postResult(result)
         str = string.format("%s", result[2])
     end
 
-    errorFrame.Text:Insert(str)
-    errorFrame:Show()
+    -- Append text to the EditBox
+    local existingText = errorMsgFrame.Text:GetText() or ""
+    errorMsgFrame.Text:SetText(existingText .. "\n" .. str)
+
+    errorMsgFrame:Show()
 end
 
 local fileName = "MsgFrame.lua"
