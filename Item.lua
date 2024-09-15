@@ -354,8 +354,10 @@ local function sellItems()
 	end
 	
 	-- dbg:print( msg )
-	UIErrorsFrame:AddMessage( msg, 1.0, 1.0, 0.0 ) 
-	DEFAULT_CHAT_FRAME:AddMessage( msg, 1.0, 1.0, 0.0 )
+	core:notifyEarnings( msg, 10 )
+	-- UIErrorsFrame:AddMessage( msg, 1.0, 1.0, 0.0 ) 
+	DEFAULT_CHAT_FRAME:AddMessage( msg, 0
+	.0, 1.0, 0.0 )
 end
 
 -- Creates a button  and places it within the Merchant frame.
