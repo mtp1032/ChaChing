@@ -7,11 +7,11 @@ local _, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.Item = {}
 
-local item  = ChaChing.Item
-local L 	= ChaChing.L
-local core 	= ChaChing.Core
-local dbg  	= ChaChing.DebugTools
-local mf	= ChaChing.MsgFrame
+local item  	= ChaChing.Item
+local L 		= ChaChing.L
+local core 		= ChaChing.Core
+local dbg  		= ChaChing.DebugTools
+local msgFrame	= ChaChing.MsgFrame
 
 local GetBagName 				= _G.C_Container.GetBagName 
 local GetContainerItemID 		= _G.C_Container.GetContainerItemID
@@ -30,7 +30,7 @@ local QUALITY_COMMON 	= 1
 CHACHING_SAVED_OPTIONS		= nil
 ChaChing_ExcludedItemsList 	= nil
 
-local chachingListFrame = mf:createListFrame("Excluded Items")
+local chachingListFrame = msgFrame:createListFrame("Excluded Items")
 local bagIsChecked 		= {}
 local sellGrey 			= true
 local sellWhite 		= false
@@ -298,7 +298,7 @@ local function verifyItemsSold(bagId, sellableItems)
 end
 
 -- Wrapper function to sell all items in the specified bag with verification
-local function sellAllItemsInBag(bagId)
+local function sellItemsInBag(bagId)
     -- 1. Create a table of sellable items
     local sellableItems = createSellableItemsTable(bagId)
     -- 2. Sell the items from the sellableItems table
@@ -326,7 +326,7 @@ local function sellItems()
 		if isBagChecked(bagId) then
 			
 			-- Initialize earnings and itemsSold for this bag
-			local earnings, itemsSold = sellAllItemsInBag( bagId )
+			local earnings, itemsSold = sellItemsInBag( bagId )
 			-- Accumulate the results
 			totalEarnings = totalEarnings + earnings
 			totalItemsSold = totalItemsSold + itemsSold
@@ -339,6 +339,11 @@ local function sellItems()
 	totalItemsSold = totalItemsSold + numGrayItemsSold + numWhiteItemsSold
 
 	dbg:print( "totalEarnings", totalEarnings, "totalItemsSold", totalItemsSold )
+	if totalItemsSold == 0 then 
+		core:notifyEarnings( "No Items Sold.", 10 )
+		return
+	end
+	
 	-- Print final totals after all bags are processed
 	local totalEarningsStr = GetCoinTextureString( totalEarnings )
 	-- dbg:print( totalEarningsStr )
@@ -356,8 +361,10 @@ local function sellItems()
 	-- dbg:print( msg )
 	core:notifyEarnings( msg, 10 )
 	-- UIErrorsFrame:AddMessage( msg, 1.0, 1.0, 0.0 ) 
-	DEFAULT_CHAT_FRAME:AddMessage( msg, 0
-	.0, 1.0, 0.0 )
+
+	dbg:print()
+	msgFrame:post( msg )
+	DEFAULT_CHAT_FRAME:AddMessage( msg, 0.0, 1.0, 0.0 )
 end
 
 -- Creates a button  and places it within the Merchant frame.

@@ -1,4 +1,4 @@
-## Interface: 11503, 30403, 40400, 100207, 110000, 110002, 110005
+## Interface: 11504, 11503, 11507, 20504, 30403, 40400, 40401, 40401,40402, 110005, 110000, 110002, 110105
 ## -----------------------------------------------------------------------
 ## Title: ChaChing
 ## Version: 1.0.0
@@ -35,6 +35,7 @@ Libs\AceDB-3.0\AceDB-3.0.xml
 Core.lua  
 EnUS_ChaChing.lua
 DebugTools.lua 
+##Libs\MsgFramePrototype.lua
 MsgFrame.lua
 Item.lua
 OptionsMenu.lua

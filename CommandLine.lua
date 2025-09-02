@@ -6,9 +6,9 @@ local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.CommandLine = {}
 
-local core = ChaChing.Core
-local mf = ChaChing.MsgFrame
-local dbg = ChaChing.DebugTools
+local core      = ChaChing.Core
+local msgFrame  = ChaChing.MsgFrame
+local dbg       = ChaChing.DebugTools
 
 local L = ChaChing.L
 
@@ -20,7 +20,7 @@ local L = ChaChing.L
 local helpMsg = "Not Yet Implemented"
 
 local function postHelpMsg()
-    mf:postMsg( string.format("See README.md\n"))
+    msgFrame:post( string.format("See README.md\n"))
 end
 
 -- Command handler function
@@ -42,7 +42,7 @@ local function ChaChingCommands(optionStr, editbox)
     if option == "set" then
         if argList == "debug" then
             core:enableDebugging()
-            mf:postMsg("Debugging enabled.")
+            msgFrame:post("Debugging enabled.")
             return
         end
     end

@@ -7,10 +7,10 @@ local AddonName, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.MsgFrame = {}
 
-local mf    = ChaChing.MsgFrame
-local core  = ChaChing.Core
-local dbg   = ChaChing.DebugTools
-local item  = ChaChing.Item
+local core      = ChaChing.Core
+local dbg       = ChaChing.DebugTools
+local item      = ChaChing.Item
+local msgFrame  = ChaChing.MsgFrame
 
 local L = ChaChing.L
 
@@ -221,7 +221,7 @@ local function createPostMsgFrame( title, width, height )
     return f
 end
 
-function mf:postMsg( msg )
+function msgFrame:post( msg )
     if messageFrame == nil then
         messageFrame = createPostMsgFrame( "ChaChing Messages", 600, 400 )
     end
@@ -229,7 +229,7 @@ function mf:postMsg( msg )
     messageFrame.Text:SetText( msg )
 end
 
-function mf:createListFrame( frameTitle )
+function msgFrame:createListFrame( frameTitle )
     local f = createTopFrame( frameTitle, 500, 300 )
     createRemoveButton(f)
     createDismissButton(f)
@@ -259,7 +259,7 @@ local function createErrorMsgFrame(title)
     return f
 end
 
-function mf:postResult(result)
+function msgFrame:postResult(result)
     if coreL:debuggingIsEnabled() then 
         assert(result ~= nil, L["INPUT_PARAM_NIL"])
         assert(type(result) == "table", L["INVALID_TYPE"])
