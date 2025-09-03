@@ -2,7 +2,6 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 14 June, 2019
 --------------------------------------------------------------------------------------
-local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.CommandLine = {}
 

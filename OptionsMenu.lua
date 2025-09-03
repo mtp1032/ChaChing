@@ -2,7 +2,6 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 11 January, 2023
 --------------------------------------------------------------------------------------
-local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.OptionsMenu = {}
 local options = ChaChing.OptionsMenu

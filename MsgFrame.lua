@@ -3,13 +3,11 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 12 January, 2019
 ----------------------------------------------------------------------------------------
-local AddonName, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.MsgFrame = {}
 
 local core      = ChaChing.Core
 local dbg       = ChaChing.DebugTools
-local item      = ChaChing.Item
 local msgFrame  = ChaChing.MsgFrame
 
 local L = ChaChing.L

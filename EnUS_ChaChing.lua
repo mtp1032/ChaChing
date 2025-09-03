@@ -3,13 +3,12 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 16 July, 2023
 --
-local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.EnUS_ChaChing = {}
 
 local enus = ChaChing.EnUS_ChaChing 
 local core = ChaChing.Core
-local dbg  = ChaChing.DebugTools
+
 local L = setmetatable({}, { __index = function(t, k)
 	local v = tostring(k)
 	rawset(t, k, v)
@@ -22,9 +21,10 @@ local MAJOR = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MAJOR")
 local MINOR = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MINOR")
 local PATCH = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-PATCH")
 
-local version = string.format("v%s.%s.%s", MAJOR, MINOR, PATCH )
-local expansionName = core:getExpansionName()
-L["ADDON_NAME_AND_VERSION"] = string.format("%s - %s (%s)", ADDON_NAME, version, expansionName )
+local addonName, addonVersion, addonExpansion = core:getAddonInfo()
+local addonVersion = string.format("v%s.%s.%s", MAJOR, MINOR, PATCH )
+local addonExpansion = core:getExpansionName()
+L["ADDON_NAME_AND_VERSION"] = string.format("%s - %s (%s)", addonName, addonVersion, addonExpansion )
 
 local LOCALE = GetLocale()      -- BLIZZ
 if LOCALE == "enUS" then

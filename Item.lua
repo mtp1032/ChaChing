@@ -3,7 +3,6 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 14 June, 2019
 --------------------------------------------------------------------------------------
-local _, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.Item = {}
 

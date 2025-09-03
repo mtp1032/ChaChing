@@ -3,7 +3,6 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 9 March, 2021
 --------------------------------------------------------------------------------------
-local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.DebugTools = {}
 local dbg = ChaChing.DebugTools

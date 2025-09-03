@@ -3,13 +3,13 @@
 -- AUTHOR: Shadowraith@Feathermoon
 -- ORIGINAL DATE: 6 October, 2019`(Formerly, Sandbox.lua)
 
-local ADDON_NAME, ChaChing = ...
 ChaChing = ChaChing or {}
 ChaChing.Core = {}
 
 local core = ChaChing.Core
 
 local DEBUGGING_ENABLED = true
+local ADDON_NAME = "ChaChing"
 
 local function getExpansionName( )
     local expansionLevel = GetExpansionLevel()
@@ -28,13 +28,10 @@ local function getExpansionName( )
     return expansionNames[expansionLevel] -- Directly return the mapped name
 end
 
-local addonExpansionName = getExpansionName()
-local addonVersion = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
-
-function core:getExpansionName()
-    local expansionName = getExpansionName()
-
-	return expansionName
+function core:getAddonInfo()
+    local addonExpansion = getExpansionName()
+    local addonVersion = C_AddOns.GetAddOnMetadata( ADDON_NAME, "Version")
+    return ADDON_NAME, addonVersion, addonExpansion
 end
 function core:debuggingIsEnabled()
     return DEBUGGING_ENABLED
@@ -46,30 +43,29 @@ function core:disableDebugging()
     DEBUGGING_ENABLED = false
 end
 
-local notificationFrame = CreateFrame("Frame", "notificationFrame", UIParent)
-    notificationFrame:SetSize(300, 50)  -- Width, Height
-    notificationFrame:SetPoint("CENTER", 0, GetScreenHeight() * 0.375)  -- Positioning at X=0 and 3/4 from the bottom to the top
-    notificationFrame:Hide()  -- Initially hide the frame
+-- local notificationFrame = CreateFrame("Frame", "notificationFrame", UIParent)
+--     notificationFrame:SetSize(300, 50)  -- Width, Height
+--     notificationFrame:SetPoint("CENTER", 0, GetScreenHeight() * 0.375)  -- Positioning at X=0 and 3/4 from the bottom to the top
+--     notificationFrame:Hide()  -- Initially hide the frame
 
--- Create the text inside the frame
-local notificationText = notificationFrame:CreateFontString(nil, "OVERLAY")
-    notificationText:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")  -- Set the font, size, and outline
-    notificationText:SetPoint("CENTER", notificationFrame, "CENTER")  -- Center the text within the frame
-    notificationText:SetTextColor(0.0, 1.0, 0.0)  -- Red color for the text
-    notificationText:SetShadowOffset(1, -1)  -- Black shadow to match Blizzard's combat text
+-- -- Create the text inside the frame
+-- local notificationText = notificationFrame:CreateFontString(nil, "OVERLAY")
+--     notificationText:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")  -- Set the font, size, and outline
+--     notificationText:SetPoint("CENTER", notificationFrame, "CENTER")  -- Center the text within the frame
+--     notificationText:SetTextColor(0.0, 1.0, 0.0)  -- Red color for the text
+--     notificationText:SetShadowOffset(1, -1)  -- Black shadow to match Blizzard's combat text
 
--- Function to display the notification
-function core:notifyEarnings( message, duration )
-    notificationText:SetText(message)
-    notificationText:SetTextColor(0.0, 1.0, 0.0)  -- Green color for the text
-    notificationText:SetShadowOffset(1, -1)  -- Black shadow to match Blizzard's combat text
-    notificationFrame:Show()
-    -- Set up a fade-out effect
-    -- duration, example, 5 seconds
-    -- Ending Alpha. 0 is the visibility.
-    UIFrameFadeOut( notificationFrame, duration, 1, 0)
-    
-end
+-- -- Function to display the notification
+-- function core:notifyEarnings( message, duration )
+--     notificationText:SetText(message)
+--     notificationText:SetTextColor(0.0, 1.0, 0.0)  -- Green color for the text
+--     notificationText:SetShadowOffset(1, -1)  -- Black shadow to match Blizzard's combat text
+--     notificationFrame:Show()
+--     -- Set up a fade-out effect
+--     -- duration, example, 5 seconds
+--     -- Ending Alpha. 0 is the visibility.
+--     UIFrameFadeOut( notificationFrame, duration, 1, 0)
+-- end
 
 
 local fileName = "Core.lua"
