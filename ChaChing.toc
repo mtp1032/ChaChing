@@ -35,7 +35,6 @@ Libs\AceDB-3.0\AceDB-3.0.xml
 Core.lua  
 EnUS_ChaChing.lua
 DebugTools.lua 
-##Libs\MsgFramePrototype.lua
 MsgFrame.lua
 Item.lua
 OptionsMenu.lua
