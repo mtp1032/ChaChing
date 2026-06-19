@@ -1,85 +1,141 @@
 # ChaChing 💰
 
-*Real-time transaction rewards & financial feedback platform*
+**World of Warcraft Auction House Companion**  
+*Smart selling decisions with instant "Cha-Ching!" feedback*
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
+- [ChaChing 💰](#chaching-)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Features](#features)
+  - [How It Works](#how-it-works)
   - [Installation](#installation)
-  - [Environment Setup](#environment-setup)
-  - [Running the App](#running-the-app)
-- [Core Functionality](#core-functionality)
-  - [User Authentication](#user-authentication)
-  - [Transaction Tracking](#transaction-tracking)
-  - [ChaChing Rewards System](#chaching-rewards-system)
-  - [Notifications & Feedback](#notifications--feedback)
-- [API Documentation](#api-documentation)
-- [Database Schema](#database-schema)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-- [Roadmap](#roadmap)
-- [Contact & Support](#contact--support)
+  - [Usage](#usage)
+  - [Commands](#commands)
+  - [Configuration](#configuration)
+  - [Supported Versions](#supported-versions)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Future Plans](#future-plans)
 
 ---
 
-## Overview
+## About
 
-**ChaChing** turns every financial transaction into a rewarding, delightful experience.  
-It provides **instant positive reinforcement** ("Cha-Ching!" sound + visual celebration) when users make smart spending, saving, or investing decisions — helping people build better financial habits through gamification and real-time feedback.
+**ChaChing** is a lightweight World of Warcraft addon that helps you make smarter Auction House decisions.  
 
-Whether you're an individual trying to stay on budget, a family teaching kids financial literacy, or a fintech app looking to boost user engagement — ChaChing makes money moves feel good.
-
----
-
-## Key Features
-
-- 🎉 Instant "Cha-Ching!" audio + visual celebration on qualifying transactions
-- 💸 Smart transaction categorization & tagging
-- 🏆 Rewards system with points, badges, and streaks
-- 📱 Real-time mobile & web notifications
-- 👨‍👩‍👧‍👦 Family/shared account support
-- 📊 Beautiful spending insights and progress dashboards
-- 🔄 Bank & payment app integrations (Plaid, Open Banking, etc.)
-- 🎯 Custom savings goals with visual progress rings
-- 🌍 Multi-currency support
+It analyzes your items, suggests optimal sell prices, and gives you satisfying **instant "Cha-Ching!" audio + visual feedback** when you make a good sale — turning mundane vendor/AH tasks into a rewarding experience.
 
 ---
 
-## Tech Stack
+## Features
 
-| Layer              | Technology                          |
-|--------------------|-------------------------------------|
-| Frontend           | Next.js 15 (App Router) + TypeScript + TailwindCSS |
-| Backend            | Node.js / NestJS (or Python FastAPI — TBD) |
-| Database           | PostgreSQL + Prisma ORM             |
-| Real-time          | Socket.io / Supabase Realtime       |
-| Auth               | NextAuth.js / Clerk                 |
-| Payments/Integrations | Plaid, Stripe                     |
-| Hosting            | Vercel (frontend) + Render / Railway / AWS |
-| Audio & Animations | Howler.js + Framer Motion + Lottie  |
+- ✅ Intelligent price suggestions based on current market data
+- ✅ Instant "Cha-Ching!" sound + celebration animation on successful sales
+- ✅ Smart item valuation and undercutting logic
+- ✅ Sell / Vendor decision engine
+- ✅ Exclusion lists (never auto-sell certain items)
+- ✅ Mini-map icon + slash commands
+- ✅ Lightweight & performant (pure Lua)
+- ✅ Localization support
+- ✅ Debug tools for power users
 
 ---
 
-## Project Structure
+## How It Works
 
-```bash
-chaching/
-├── apps/
-│   ├── web/              # Next.js frontend
-│   └── mobile/           # React Native / Expo (future)
-├── packages/
-│   ├── ui/               # Shared UI components
-│   ├── utils/            # Shared utilities
-│   └── types/            # Shared TypeScript types
-├── docs/                 # Documentation
-├── prisma/               # Database schema
-├── .github/              # Workflows
-└── README.md
+1. Scan the Auction House or open your bags
+2. ChaChing evaluates each item
+3. It recommends **Sell**, **Vendor**, or **Keep**
+4. When you sell at a good price → you hear the iconic **Cha-Ching!** and see a visual reward
+
+---
+
+## Installation
+
+1. Download the latest release (or clone this repo)
+2. Extract the `ChaChing` folder
+3. Copy it into your WoW AddOns directory:
+   - **Retail**: `World of Warcraft\_retail_\Interface\AddOns\`
+   - **TBC Classic / Anniversary**: `World of Warcraft\_classic_\Interface\AddOns\`
+4. Restart WoW or reload UI (`/reload`)
+
+---
+
+## Usage
+
+- `/chaching` or `/cc` — Open main menu
+- `/cc scan` — Force a market scan
+- `/cc config` — Open settings
+
+The mini-map icon also provides quick access.
+
+---
+
+## Commands
+
+| Command              | Description                     |
+|----------------------|---------------------------------|
+| `/cc`                | Toggle main window              |
+| `/cc scan`           | Refresh market data             |
+| `/cc sell`           | Quick sell evaluation           |
+| `/cc debug`          | Toggle debug mode               |
+| `/cc reset`          | Reset saved settings            |
+
+---
+
+## Configuration
+
+All settings are saved per-character and can be adjusted in-game via the options panel.
+
+---
+
+## Supported Versions
+
+- **Retail** (The War Within + future patches)
+- **Classic Era**
+- **Season of Discovery**
+- **TBC Anniversary / Classic**
+
+---
+
+## Contributing
+
+Pull requests are welcome!  
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Future Plans
+
+- Enhanced Auction House scanning
+- Integration with external price databases (future)
+- Mobile/web companion app (long-term vision)
+- Guild sharing of price data
+
+---
+
+**Made with ❤️ for fellow gold makers and loot hoarders.**
+
+---
+
+**Ready to replace your current README?**  
+
+Just copy the content above into `README.md`, commit it with a message like:
+
+> docs: update README to WoW addon focus
+
+Then push.
+
+After that, tell me and we’ll do the next piece (e.g. proper `ChaChing.toc` file, folder cleanup, etc.).  
+
+Want any tweaks to this README before you commit it?
