@@ -1,0 +1,229 @@
+ChaChing
+Enables a player to sell, automatically, the following type of items:
+
+All items of white quality except crafting reagents, cloth, and food the provides stats. For these, ChaChing will have a menu allowing these items to be automatically sold.
+
+All Soulbound items that cannot be used.
+1. Recipes that the player already knows, or does not have skill, e.g., a soulbound blacksmith recipe to an alchemist.
+2. Armor or weapons that the player cannot use (e.g., priest loots a soulbound plate item). If the player is an enchanter then if the
+item is green, blue, or epic, the item may not be sole.
+3. All grey items.
+ChaChing Item‑Vendoring Decision Tree (Deterministic, Final)
+Below is the exact order you should evaluate items.
+This ensures correctness, performance, and predictable behavior.
+
+STEP 0 — Gather Item Data
+Do this once per item:
+
+itemID, classID, subclassID, equipLoc = C_Item.GetItemInfoInstant(link)
+
+name, link, quality, level, minLevel, itemType, itemSubType, stack, equipLoc2, texture, sellPrice, classID2, subclassID2, bindType, expacID, setID, isReagent = GetItemInfo(link)
+
+Tooltip scan only when needed (later steps)
+
+STEP 1 — If item is grey (quality 0) → SELL
+Grey items are always vendor trash.
+
+Terminal rule.
+
+STEP 2 — If item is NOT soulbound → STOP (never auto‑sell)
+You only auto‑sell soulbound items or white items (handled later).
+
+Check:
+
+bindType == 1 (Bind on Pickup)
+
+OR tooltip contains “Soulbound”
+
+If not soulbound → STOP.
+
+STEP 3 — If item is white (quality 1) → go to WHITE‑ITEM RULESET
+White items have their own logic.
+Jump to the white‑item section below.
+
+If not white → continue.
+
+STEP 4 — If item is green/blue/epic AND player is an enchanter → DO NOT SELL
+Check:
+
+quality ∈ {2,3,4}
+
+IsSpellKnown(7411) (Enchanting)
+
+If both true → STOP.
+
+This prevents vendoring disenchantable items.
+
+STEP 5 — If item is a recipe → apply RECIPE RULESET
+Recipes require tooltip logic.
+Jump to the recipe section below.
+
+If not a recipe → continue.
+
+STEP 6 — If item is armor or weapon → apply EQUIPABILITY RULESET
+This handles:
+
+Wrong armor type
+
+Wrong weapon type
+
+Class restrictions
+
+Level restrictions
+
+“Cannot use” cases
+
+If player cannot use → SELL.
+
+If player can use → STOP.
+
+STEP 7 — If item is soulbound and unusable for any other reason → SELL
+Covers:
+
+Trinkets with class restrictions
+
+Offhands for classes that cannot use them
+
+Shields for non‑shield classes
+
+Relics (Classic)
+
+Profession‑restricted gear
+
+If unusable → SELL.
+
+If usable → STOP.
+
+STEP 8 — If none of the above matched → DO NOT SELL
+This is the safe fallback.
+
+WHITE‑ITEM RULESET (Step 3 branch)
+White items are special because they are not soulbound but still eligible for auto‑sell.
+
+White items are sold UNLESS they fall into one of the protected categories:
+1. Crafting reagents
+If isReagent == true → STOP.
+
+2. Cloth
+Check:
+
+classID == 4 (Armor)
+
+subclassID == 1 (Cloth)
+
+If cloth → STOP.
+
+3. Food that provides stats
+Tooltip scan for:
+
+“Well Fed”
+
+“Stamina”
+
+“Strength”
+
+“Agility”
+
+“Intellect”
+
+“Spirit”
+
+“Versatility”
+
+“Haste”
+
+“Mastery”
+
+“Critical Strike”
+
+If found → STOP.
+
+If none of the above → SELL
+
+RECIPE RULESET (Step 5 branch)
+1. If recipe is already known → SELL
+Tooltip contains:
+
+“Already known”
+
+“You already know that recipe”
+
+2. If recipe cannot be learned by this character → SELL
+Tooltip contains:
+
+Wrong profession
+
+Wrong class
+
+Wrong specialization
+
+Wrong expansion skill requirement
+
+3. Otherwise → DO NOT SELL
+
+EQUIPABILITY RULESET (Step 6 branch)
+1. If item is not armor or weapon → return to main tree
+Armor = classID 4
+Weapons = classID 2
+
+2. Check class armor proficiency
+Example:
+
+Priest → Cloth only
+
+Mage → Cloth only
+
+Shaman → Mail (after level 40)
+
+Paladin → Plate (after level 40)
+
+If armor type > player’s proficiency → SELL.
+
+3. Check weapon proficiency
+You maintain a table:
+
+Priests: Staves, Wands, Daggers, Maces
+
+Warriors: All melee, bows, guns, crossbows
+
+Etc.
+
+If player cannot use weapon type → SELL.
+
+4. Check class restrictions
+Tooltip:
+
+“Classes: Warrior, Paladin”
+If player’s class not listed → SELL.
+
+5. Check level requirement
+If minLevel > playerLevel → STOP (cannot sell; player may level into it)
+
+6. If all checks pass → DO NOT SELL
+
+FINAL GUARANTEE
+This decision tree ensures:
+
+Every item is classified exactly once
+
+No contradictory rules
+
+No accidental selling of valuable items
+
+No selling of disenchantable items for enchanters
+
+No selling of usable gear
+
+No selling of useful white items
+
+No selling of recipes the player might want
+
+All junk is sold automatically
+
+It is deterministic, stable, and easy to maintain.
+
+If you want, I can now generate:
+A. A complete Lua implementation of this decision tree
+B. A debug‑mode printout explaining why each item was sold
+C. A saved‑variables schema for user‑configurable exceptions
+D. A performance‑optimized version that minimizes tooltip scans
