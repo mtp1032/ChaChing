@@ -1,5 +1,9 @@
--- DebugTools.lua
--- Debug utilities for ChaChing
+--=========================================================
+-- FILE: DebugTools.lua
+-- AUTHOR: leave blank for now
+-- COMMENTS: https://www.curseforge.com/members/mtpeterson1948
+-- ORIGINAL DATE: 16 June, 2026
+--=========================================================
 
 ChaChing = ChaChing or {}
 if not ChaChing.enUS.loaded then

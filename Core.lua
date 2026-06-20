@@ -1,5 +1,9 @@
--- Core.lua
--- ChaChing - World of Warcraft Auction House & Vendor Companion
+--=========================================================
+-- FILE: Core.lua
+-- AUTHOR: leave blank for now
+-- COMMENTS: https://www.curseforge.com/members/mtpeterson1948
+-- ORIGINAL DATE: 16 June, 2026
+--=========================================================
 
 ChaChing = ChaChing or {}
 ChaChing.Core = {}

@@ -1,5 +1,9 @@
--- CommandLine.lua
--- New replacement file for ChaChing
+--=========================================================
+-- FILE: CommandLine.lua
+-- AUTHOR: leave blank for now
+-- COMMENTS: https://www.curseforge.com/members/mtpeterson1948
+-- ORIGINAL DATE: 16 June, 2026
+--=========================================================
 
 ChaChing = ChaChing or {}
 ChaChing.CommandLine = ChaChing.CommandLine or {}
@@ -10,7 +14,6 @@ local core = ChaChing.Core
 local dbg = ChaChing.DebugTools
 local utils = ChaChing.Utilities
 local L = ChaChing.Localization
-
 
 local function PrintHelp()
     print("|cffffd700ChaChing Commands:|r")
