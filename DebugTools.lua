@@ -1,52 +1,72 @@
---------------------------------------------------------------------------------------
 -- DebugTools.lua
--- AUTHOR: Michael Peterson
--- ORIGINAL DATE: 9 March, 2021
---------------------------------------------------------------------------------------
+-- Debug utilities for ChaChing
+
 ChaChing = ChaChing or {}
-ChaChing.DebugTools = {}
-local dbg = ChaChing.DebugTools
-local core = ChaChing.Core
-
----------------------------------------------------------------------------------------------------
---                      PUBLIC/EXPORTED FUNCTIONS
-----------------------------------------------------------------------------------------------------
-function dbg:prefix( stackTrace )
-	if stackTrace == nil then stackTrace = debugstack(2) end
-	
-	local pieces = {strsplit( ":", stackTrace, 5 )}
-	local segments = {strsplit( "\\", pieces[1], 5 )}
-
-	local fileName = segments[#segments]
-	
-	local strLen = string.len( fileName )
-	local fileName = string.sub( fileName, 1, strLen - 2 )
-	local names = strsplittable( "\/", fileName )
-	local lineNumber = tonumber(pieces[2])
-
-	local prefix = string.format("[%s:%d] ", names[#names], lineNumber)
-	return prefix
+if not ChaChing.enUS.loaded then
+	DEFAULT_CHAT_FRAME:AddMessage("enUS.lua failed to load", 1, 0, 0)
+    return
 end
+ChaChing.DebugTools = {}
+
+local core = ChaChing.Core
+local dbg = ChaChing.DebugTools
+local L = ChaChing.L
+
+
+-- ================================================================
+-- Internal Helper
+-- ================================================================
+local function getDebugPrefix()
+    local stack = debugstack(3)  -- Go one level deeper for better accuracy
+    local file, line = stack:match("([%w_%.]+%.lua):(%d+)")
+
+    if file and line then
+        return string.format("[%s:%s] ", file, line)
+    end
+
+    return "[ChaChing:??] "
+end
+
+-- ================================================================
+-- Public Debug Functions
+-- ================================================================
+function dbg:prefix()
+    return getDebugPrefix()
+end
+
 function dbg:print(...)
-    local prefix = dbg:prefix( debugstack(2) )
+    if not ChaChing.Core:IsDebuggingEnabled() then
+        return
+    end
 
-    -- The '...' collects all extra arguments passed to the function
-    local args = {...}  -- This creates a table 'args' containing all extra arguments
+    local prefix = getDebugPrefix()
+    local args = {...}
 
-    -- Convert all arguments into strings to ensure proper formatting for print with
-    -- the 'prefix' as the first element of the string to be printed.
+    -- Convert everything to string and print with prefix
     local output = {prefix}
     for i, v in ipairs(args) do
         table.insert(output, tostring(v))
     end
 
-    -- Use the unpack function to pass all elements of 'output' as separate arguments 
-    -- to the built-in print function
     _G.print(unpack(output))
 end
 
-if core:debuggingIsEnabled() then
-    local fileName = "DebugTools.lua"
-	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 0.0, 1.0, 0.0 )
+-- Quick toggle helpers
+function dbg:enable()
+    ChaChing.Core:enableDebugging()
 end
 
+function dbg:disable()
+    ChaChing.Core:disableDebugging()
+end
+
+-- ================================================================
+-- Load Confirmation
+-- ================================================================
+ChaChing.DebugTools.loaded = true
+
+if core:debuggingIsEnabled() then
+    DEFAULT_CHAT_FRAME:AddMessage("DebugTools.lua loaded", 0, 1, 0 )
+end
+ChaChing.DebugTools.loaded = true
+return ChaChing.DebugTools.loaded

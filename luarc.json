@@ -1,0 +1,20 @@
+{
+  "Lua.runtime.version": "Lua 5.1",
+
+  "Lua.diagnostics.disable": [
+    "unused-local",
+    "lowercase-global",
+    "implicit-global"
+  ],
+
+  "Lua.diagnostics.globals": [
+    "ChaChing",
+    "ChaChingDB",
+    "ChaChingCharDB",
+    "CHACHING_SAVED_OPTIONS",
+    "dbg"
+  ],
+
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.workspace.library": ["$VSCODE_WOW_API"]
+}

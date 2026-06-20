@@ -2,9 +2,18 @@
 -- Shared helper functions for ChaChing
 
 ChaChing = ChaChing or {}
-ChaChing.Utilities = ChaChing.Utilities or {}
 
-local Util = ChaChing.Utilities
+if not ChaChing.DebugTools.loaded then
+    local str = string.format("DebugTools failed to load.\n")
+    DEFAULT_CHAT_FRAME:AddMessage( str, 0,1,0)
+    return
+end
+local core = ChaChing.Core
+local L = ChaChing.Localization
+local dbg = ChaChing.DebugTools
+local utils = ChaChing.Utilities
+local exclusion = ChaChing.Exclusion
+local SellTable = ChaChing.SellTable
 
 -- ================================================================
 -- Tooltip Scanning (Safe for Retail + Classic)
@@ -138,11 +147,11 @@ function ChaChing:DumpItemInfo(bag, slot)
     local itemID, classID, subclassID, equipLoc = C_Item.GetItemInfoInstant(link)
     local name, _, quality, _, minLevel = C_Item.GetItemInfo(link)
 
-    dbg.print(string.format("Item: %s | ID:%d | Quality:%d | Class:%d/%d", 
+    dbg.print(string.format("Item: %s | ID:%d | Quality:%d | Class:%d/%d",
         link or "nil", itemID or 0, quality or -1, classID or -1, subclassID or -1))
 end
 
 -- Load message
 if ChaChing.Core and ChaChing.Core:debuggingIsEnabled() then
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffd700ChaChing Utilities.lua|r loaded", 0, 1, 0)
+    DEFAULT_CHAT_FRAME:AddMessage("Utilities.lua loaded", 0, 1, 0)
 end

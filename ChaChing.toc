@@ -1,0 +1,28 @@
+## Interface: 120007
+## Title: ChaChing
+## Notes: YABS - Yet Another Bulk Selling Addon, but with extensive filtering.
+## Author: mtp1032
+## X-MAJOR: 0
+## X-MINOR: 1
+## X-PATCH: 0
+## Version: 0.1.0
+## SavedVariables: ChaChingDB
+## SavedVariablesPerCharacter: CHACHING_SAVED_OPTIONS, ChaChingCharDB
+
+## Dependencies: WoWThreads
+## OptionalDependencies:
+
+## Description: Using filters, ChaChing provides players the ability to customizebulk sales.
+
+# Core
+Core.lua
+Localization\enUS.lua
+DebugTools.lua
+Utilities.lua
+
+# Logic
+Exclusion.lua
+SellTable.lua
+SellEngine.lua
+Events.lua
+CommandLine.Lua

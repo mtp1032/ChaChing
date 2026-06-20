@@ -1,72 +1,80 @@
 -- Core.lua
--- AUTHOR: mtpeterson1948@gmail.com
--- ORIGINAL DATE: 6 October, 2019 (Formerly, Sandbox.lua)
+-- ChaChing - World of Warcraft Auction House & Vendor Companion
 
--- ================================================================
--- Core Initialization
--- ================================================================
 ChaChing = ChaChing or {}
 ChaChing.Core = {}
-local ADDON_NAME = "ChaChing"
+local core = ChaChing.Core
 
-local DEBUGGING_ENABLED = true
+local ADDON_NAME = "ChaChing"
+local addonVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "dev"
 
 -- ================================================================
--- Local Helper Functions
+-- Debug System
+-- ================================================================
+local DEBUGGING_ENABLED = true
+
+function core:debuggingIsEnabled()
+    return DEBUGGING_ENABLED or (ChaChing.DEBUGGING == true)
+end
+
+function core:enableDebugging()
+    DEBUGGING_ENABLED = true
+    print("|cFF00FF00[ChaChing]|r Debug mode enabled")
+end
+
+function core:disableDebugging()
+    DEBUGGING_ENABLED = false
+    print("|cFF00FF00[ChaChing]|r Debug mode disabled")
+end
+
+-- ================================================================
+-- Addon Information
 -- ================================================================
 local function getExpansionName()
     local expansionLevel = GetExpansionLevel()
 
     local expansionNames = {
-        [LE_EXPANSION_CLASSIC]                  = "Classic (Vanilla)",
-        [LE_EXPANSION_BURNING_CRUSADE]          = "Classic (Burning Crusade)",
-        [LE_EXPANSION_WRATH_OF_THE_LICH_KING]   = "Classic (Wrath of the Lich King)",
-        [LE_EXPANSION_CATACLYSM]                = "Classic (Cataclysm)",
-        [LE_EXPANSION_MISTS_OF_PANDARIA]        = "Classic (Mists of Pandaria)",
-        [LE_EXPANSION_WARLORDS_OF_DRAENOR]      = "Warlords of Draenor",
-        [LE_EXPANSION_LEGION]                   = "Legion",
-        [LE_EXPANSION_BATTLE_FOR_AZEROTH]       = "Battle for Azeroth",
-        [LE_EXPANSION_SHADOWLANDS]              = "Shadowlands",
-        [LE_EXPANSION_DRAGONFLIGHT]             = "Dragonflight",
-        [LE_EXPANSION_WAR_WITHIN]               = "The War Within",
-        [LE_EXPANSION_MIDNIGHT]                 = "Midnight"
+        [LE_EXPANSION_CLASSIC]                = "Classic",
+        [LE_EXPANSION_BURNING_CRUSADE]        = "Burning Crusade",
+        [LE_EXPANSION_WRATH_OF_THE_LICH_KING] = "Wrath of the Lich King",
+        [LE_EXPANSION_CATACLYSM]              = "Cataclysm",
+        [LE_EXPANSION_MISTS_OF_PANDARIA]      = "Mists of Pandaria",
+        [LE_EXPANSION_WARLORDS_OF_DRAENOR]    = "Warlords of Draenor",
+        [LE_EXPANSION_LEGION]                 = "Legion",
+        [LE_EXPANSION_BATTLE_FOR_AZEROTH]     = "Battle for Azeroth",
+        [LE_EXPANSION_SHADOWLANDS]            = "Shadowlands",
+        [LE_EXPANSION_DRAGONFLIGHT]           = "Dragonflight",
+        [LE_EXPANSION_WAR_WITHIN]             = "The War Within",
     }
+
+    -- Safe handling for future expansions
+    if expansionLevel == LE_EXPANSION_MIDNIGHT then
+        return "Midnight"
+    end
 
     return expansionNames[expansionLevel] or "Unknown Expansion"
 end
 
--- ================================================================
--- Core API
--- ================================================================
-function ChaChing.Core:getAddonInfo()
-    local addonVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
-    local addonExpansion = getExpansionName()
-    return ADDON_NAME, addonVersion, addonExpansion
-end
-
-function ChaChing.Core:debuggingIsEnabled()
-    return DEBUGGING_ENABLED
-end
-
-function ChaChing.Core:enableDebugging()
-    DEBUGGING_ENABLED = true
-    ChaChing.DEBUGGING = true
-end
-
-function ChaChing.Core:disableDebugging()
-    DEBUGGING_ENABLED = false
-    ChaChing.DEBUGGING = false
+function core:GetAddonInfo()
+    local expansion = getExpansionName()
+    return ADDON_NAME, addonVersion, expansion
 end
 
 -- ================================================================
--- MARK AS LOADED (MUST BE THE VERY LAST LINES)
+-- Initialization
 -- ================================================================
+function ChaChing.Core:Initialize()
+    if core:debuggingIsEnabled() then
+        local name, version, expansion = self:GetAddonInfo()
+    end
+end
+
+-- Mark as loaded
 ChaChing.Core.loaded = true
-ChaChing.DEBUGGING   = DEBUGGING_ENABLED   -- Make it easily accessible to other files
 
--- Optional: Print load confirmation when debugging is on
-if ChaChing.DEBUGGING then
-    local name, version, expansion = ChaChing.Core:getAddonInfo()
-    print(string.format("|cFF00FF00[ChaChing]|r %s v%s loaded successfully (%s)", 
-          name, version or "dev", expansion))
+-- Auto-initialize
+ChaChing.Core:Initialize()
+-- Load message
+if ChaChing.Core and ChaChing.Core:debuggingIsEnabled() then
+    DEFAULT_CHAT_FRAME:AddMessage("Core.lua loaded", 0, 1, 0)
 end

@@ -2,7 +2,14 @@
 -- New replacement file for ChaChing
 
 ChaChing = ChaChing or {}
+ChaChing.CommandLine = ChaChing.CommandLine or {}
+
+local SellEngine = ChaChing.SellEngine
+local exclusion = ChaChing.Exclusion
+local core = ChaChing.Core
 local dbg = ChaChing.DebugTools
+local utils = ChaChing.Utilities
+local L = ChaChing.Localization
 
 
 local function PrintHelp()
@@ -75,6 +82,9 @@ end
 -- Register slash commands
 SLASH_CHACHING1 = "/chaching"
 SLASH_CHACHING2 = "/cc"
+SLASH_CHACHING3 = "/ching"
+SLASH_CHACHING4 = "/cha"
+
 SlashCmdList["CHACHING"] = ChatCommandHandler
 
 -- Optional: Auto-scan when opening merchant (can be toggled later via options)
@@ -96,7 +106,6 @@ frame:SetScript("OnEvent", function(self, event)
 end)
 
 -- Print load message
-if ChaChing.Core:debuggingIsEnabled() then
-    local name, version, exp = ChaChing.Core:getAddonInfo()
-    DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffffd700%s v%s|r loaded for %s", name, version, exp), 0, 1, 0)
+if core:debuggingIsEnabled() then
+    DEFAULT_CHAT_FRAME:AddMessage("CommandLine.lua loaded", 0, 1, 0)
 end

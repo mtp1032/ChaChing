@@ -3,8 +3,17 @@ ChaChing = ChaChing or {}
 ChaChing.SellEngine = ChaChing.SellEngine or {}
 
 local SellEngine = ChaChing.SellEngine
+local exclusion = ChaChing.Exclusion
 local core = ChaChing.Core
+local dbg = ChaChing.DebugTools
+local utils = ChaChing.Utilities
+local L = ChaChing.Localization
 
+if not ChaChing.SellTable.loaded then
+   local str = string.format("SellTable.lua must be loaded before SellEngine.lua")
+    DEFAULT_CHAT_FRAME:AddMessage(str, 1, 0, 0)
+    return
+end
 
 local BATCH_LIMIT = 12
 local SELL_DELAY = 0.75
@@ -87,3 +96,6 @@ if core:debuggingIsEnabled() then
     local fileName = "SellEngine.lua"
 	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 0, 1, 0)
 end
+
+ChaChing.SellEngine.loaded = true
+return ChaChing.SellEngine.loaded

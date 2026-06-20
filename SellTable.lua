@@ -2,9 +2,17 @@
 ChaChing = ChaChing or {}
 ChaChing.SellTable = ChaChing.SellTable or {}
 
-local SellTable = ChaChing.SellTable
-local dbg = ChaChing.DebugTools
+if not ChaChing.Exclusion.loaded then
+    local str = string.format("Exclusion.lua must be loaded before SellTable.lua")
+    DEFAULT_CHAT_FRAME:AddMessage(str, 1, 0, 0)
+    return
+end
 local core = ChaChing.Core
+local L = ChaChing.Localization
+local dbg = ChaChing.DebugTools
+local utils = ChaChing.Utilities
+local exclusion = ChaChing.Exclusion
+local SellTable = ChaChing.SellTable
 
 SellTable.Items = SellTable.Items or {}      -- array of sellable items
 SellTable.Lookup = SellTable.Lookup or {}    -- "bag-slot" -> true
@@ -83,7 +91,10 @@ function SellTable:GetCount()
     return #SellTable.Items
 end
 
+
 if core:debuggingIsEnabled() then
     local fileName = "SellTable.lua"
 	DEFAULT_CHAT_FRAME:AddMessage( string.format("%s loaded", fileName), 0, 1, 0)
 end
+ChaChing.SellTable.loaded = true
+
